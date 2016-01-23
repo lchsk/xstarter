@@ -140,28 +140,28 @@ void no_results()
         free_item(my_items[i]);
 }
 
-void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color)
-{	int length, x, y;
-	float temp;
-
-	if(win == NULL)
-		win = stdscr;
-	getyx(win, y, x);
-	if(startx != 0)
-		x = startx;
-	if(starty != 0)
-		y = starty;
-	if(width == 0)
-		width = 80;
-
-	length = strlen(string);
-	temp = (width - length)/ 2;
-	x = startx + (int)temp;
-	wattron(win, color);
-	mvwprintw(win, y, x, "%s", "asb");
-	wattroff(win, color);
-	refresh();
-}
+// void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color)
+// {	int length, x, y;
+// 	float temp;
+// 
+// 	if(win == NULL)
+// 		win = stdscr;
+// 	getyx(win, y, x);
+// 	if(startx != 0)
+// 		x = startx;
+// 	if(starty != 0)
+// 		y = starty;
+// 	if(width == 0)
+// 		width = 80;
+// 
+// 	length = strlen(string);
+// 	temp = (width - length)/ 2;
+// 	x = startx + (int)temp;
+// 	wattron(win, color);
+// 	mvwprintw(win, y, x, "%s", "asb");
+// 	wattroff(win, color);
+// 	refresh();
+// }
 
 void init_term_gui()
 {
@@ -264,6 +264,12 @@ void free_search()
         g_queue_free(tmp);
 }
 
+void open_app(int id)
+{
+    char* t = g_queue_peek_nth(tmp, id);
+    popen(t, "w");
+}
+
 void run_term()
 {
     move(1, 0);
@@ -276,6 +282,10 @@ void run_term()
                 break;
             case KEY_UP:
                 menu_driver(my_menu, REQ_UP_ITEM);
+                break;
+            case 10:
+                open_app(item_index(current_item(my_menu)));
+                // pos_menu_cursor(my_menu);
                 break;
             // case KEY_NPAGE:
             //     menu_driver(my_menu, REQ_SCR_DPAGE);
