@@ -25,7 +25,7 @@ get_string_list_from_config(GKeyFile const* conf_file, char const* section, char
 
     if (raw_dirs == NULL) return NULL;
 
-    str_array_t* dirs = str_array_new(strdup(raw_dirs), ",");
+    str_array_t* dirs = str_array_new((raw_dirs), ",");
 
     return dirs;
 }

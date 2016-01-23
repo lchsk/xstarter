@@ -9,6 +9,12 @@
 #include "term.h"
 #include "utils.h"
 
+#include <menu.h>
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#define CTRLD 	4
+
+
 int main()
 {
     load_config();
@@ -17,12 +23,23 @@ int main()
 
     init_search();
 
+    // search("atom");
+    // printf_results();
+
     init_term_gui();
     run_term();
     free_term_gui();
 
-    free_search();
+
+
+    ITEM **my_items;
+	int c;
+	MENU *my_menu;
+	int n_choices, i;
+	ITEM *cur_item;
+
     free_cache();
+    free_search();
     free_config();
 
     // if ( ! running_from_term()) {

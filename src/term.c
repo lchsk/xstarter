@@ -2,8 +2,30 @@
 #include "scan.h"
 #include <ncurses.h>
 #include <menu.h>
+#include <form.h>
 
 GQueue* tmp = NULL;
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#define CTRLD 	2
+#define KEY_ESCAPE 27
+MENU *my_menu;
+ITEM **my_items;
+int n_choices;
+int c;
+WINDOW *my_menu_win;
+#define MAX_INPUT_LENGTH 20
+char query[MAX_INPUT_LENGTH];
+int qlen = 0;
+
+char *choices[] = {
+(char *)NULL,
+};
+
+FIELD *field[2];
+FORM  *my_form;
+
+int rem = 0;
 
 void printf_results()
 {
@@ -11,6 +33,16 @@ void printf_results()
         char* t = g_queue_peek_nth(tmp, i);
         printf("%s\n", t);
     }
+}
+
+void prepare_for_new_results() {
+    unpost_menu(my_menu);
+    _nc_Disconnect_Items(my_menu);
+
+    for (int i = 0; i < n_choices; i++) {
+        free_item(my_items[i]);
+    }
+    free(my_items);
 }
 
 void search(char* query)
@@ -22,66 +54,82 @@ void search(char* query)
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         char* t = g_queue_peek_nth(cache, i);
         if (strstr(t, query) != NULL) {
-            g_queue_push_tail(tmp, t);
+            g_queue_push_tail(tmp, (t));
         }
     }
+
 }
-
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-#define CTRLD 	2
-#define KEY_ESCAPE 27
-MENU *my_menu;
-ITEM **my_items;
-int n_choices;
-int c;
-WINDOW *my_menu_win;
-char query[10];
-int qlen = 0;
-
-char *choices[] = {
-(char *)NULL,
-};
-
-int rem = 0;
 
 void set_items()
 {
     rem = 1;
     int tmp_len = 3;
-    tmp_len = g_queue_get_length(tmp) + 1;
+    unpost_menu(my_menu);
     char* path;
     int i = 0;
+    int items_found = g_queue_get_length(tmp);
 
-    unpost_menu(my_menu);
+        for(int i = 0; i < n_choices; ++i) {
+            free_item(my_items[i]);
+        }
 
-    char** op = malloc(tmp_len * sizeof(char*));
+        n_choices = items_found + 1;
+        my_items = (ITEM **)calloc(n_choices, sizeof(ITEM *));
 
-    for (int i = 0; i < tmp_len; i++)
-        op[i] = malloc(100);
+        for (int i = 0; i < g_queue_get_length(tmp); i++) {
+            char* t = g_queue_peek_nth(tmp, i);
 
-    while ((path = g_queue_pop_head(tmp)) != NULL) {
-        strcpy(op[i++], strdup(path));
+            my_items[i] = new_item(
+                strdup
+                (t),
+            "");
+        }
+
+        set_menu_items(my_menu, my_items);
+        post_menu(my_menu);
     }
-
-    n_choices = tmp_len;
-    my_items = (ITEM **)calloc(n_choices, sizeof(ITEM *));
-    for(int i = 0; i < n_choices; ++i) {
-        my_items[i] = new_item(strdup(op[i]), "");
-    }
-
-    set_menu_items(my_menu, my_items);
-
-    post_menu(my_menu);
     refresh();
 
-    for (int i = 0; i < n_choices; i++)
-        free(op[i]);
+void create_menu()
+{
+}
+void update_menu()
+{
+    int start = 0;
+   int end = 0;
+   int results_cnt = g_queue_get_length(tmp);
 
-    free(op);
+   if(results_cnt == 0)
+   {
+      no_results();
+      return;
+   }
+   my_items = (ITEM **) calloc(results_cnt + 1,sizeof(ITEM *));
+   for (int i = 0; i < g_queue_get_length(tmp); i++) {
+       char* t = g_queue_peek_nth(tmp, i);
 
+       my_items[i] = new_item(t, (char*) NULL);
+   }
+   my_items[results_cnt] = new_item((char *) NULL, (char *) NULL);
+   set_menu_items(my_menu, my_items);
+   post_menu(my_menu);
+   refresh();
+   n_choices = results_cnt;
+}
+void no_results()
+{
+    my_items = (ITEM **) calloc(2,sizeof(ITEM *));
+   char * choices[] = {"NO RESULTS", (char *) NULL};
+   my_items[0] = new_item(choices[0], (char *) NULL);
+   my_items[1] = new_item((char *) NULL, (char *) NULL);
+   set_menu_items(my_menu, my_items);
+   post_menu(my_menu);
+   // wrefresh(list_window);
+   refresh();
+   n_choices = 2;
 }
 
-void remove_items()
+ void remove_items()
 {
     if (rem == 0) return;
 
@@ -125,13 +173,31 @@ void init_term_gui()
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_CYAN, COLOR_BLACK);
 
-    n_choices = ARRAY_SIZE(choices);
-    my_items = (ITEM **)calloc(n_choices, sizeof(ITEM *));
+    field[0] = new_field(
+        1, // columns?
+        10, // width
+        1, // pos y
+        0, // pos x
+        0,
+        0
+    );
+    field[1] = NULL;
 
-    for(i = 0; i < n_choices; ++i)
-        my_items[i] = new_item(choices[i], "");
+    my_form = new_form(field);
+    post_form(my_form);
+    refresh();
 
-    my_menu = new_menu((ITEM **)my_items);
+    my_items = (ITEM **) calloc(2,sizeof(ITEM *));
+    char * choices[] = {"Search Results", (char *) NULL};
+    my_items[0] = new_item(choices[0], (char *) NULL);
+    my_items[1] = new_item((char *) NULL, (char *) NULL);
+    my_menu = new_menu((ITEM**) my_items);
+    // set_menu_win(my_menu, list_window);
+    // der_window = derwin(list_window, h-2,w-2, 1, 1);
+    //set_menu_sub(my_menu, derwin(list_window, h-2,w-2, 1, 1));
+    // set_menu_sub(my_menu, der_window);
+    // set_menu_format(my_menu, h-2, 1);
+    
 
     my_menu_win = newwin(30, 70, 4, 4);
     keypad(my_menu_win, TRUE);
@@ -149,6 +215,9 @@ void init_term_gui()
     mvwaddch(my_menu_win, 2, 39, ACS_RTEE);
 
     // post_menu(my_menu);
+    set_menu_mark(my_menu, " > ");
+    post_menu(my_menu);
+    n_choices = 2;
     wrefresh(my_menu_win);
 
     attron(COLOR_PAIR(2));
@@ -163,7 +232,15 @@ void free_term_gui()
     unpost_menu(my_menu);
     free_menu(my_menu);
 
-    remove_items();
+    for (int i = 0; i < n_choices; i++) {
+        free_item(my_items[i]);
+    }
+    free(my_items);
+
+    unpost_form(my_form);
+    free_form(my_form);
+    free_field(field[0]);
+
     endwin();
 }
 
@@ -178,21 +255,6 @@ void free_search()
         g_queue_free(tmp);
 }
 
-static void handle_input(int c, int direction)
-{
-    if (direction == 1) {
-        // new character
-        query[qlen] = (char) c;
-        qlen++;
-    } else if (qlen > 0) {
-        // character removed
-        qlen--;
-        mvaddch(1, qlen, ' ');
-        query[qlen] = '\0';
-    }
-}
-
-
 void run_term()
 {
     move(1, 0);
@@ -206,30 +268,45 @@ void run_term()
             case KEY_UP:
                 menu_driver(my_menu, REQ_UP_ITEM);
                 break;
-            case KEY_NPAGE:
-                menu_driver(my_menu, REQ_SCR_DPAGE);
-                break;
-            case KEY_PPAGE:
-                menu_driver(my_menu, REQ_SCR_UPAGE);
-                break;
+            // case KEY_NPAGE:
+            //     menu_driver(my_menu, REQ_SCR_DPAGE);
+            //     break;
+            // case KEY_PPAGE:
+            //     menu_driver(my_menu, REQ_SCR_UPAGE);
+            //     break;
             case KEY_BACKSPACE:
-                handle_input(c, -1);
-                mvprintw(1, 0, query);
-                search(query);
-                remove_items();
-                set_items();
-                move(1, qlen);
+                if (qlen >= 1) {
+                    form_driver(my_form, REQ_DEL_PREV);
+                    qlen--;
+                    form_driver(my_form, REQ_VALIDATION);
+                    snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
+                    // char kwery2[qlen];
+                    char* kwery2 = malloc(qlen);
+                    memcpy(kwery2, query, qlen);
+                    // handle_input(c, -1);
+                    // mvprintw(1, 0, query);
+                    // search(kwery2);
+                    prepare_for_new_results();
+                    search((kwery2));
+                    update_menu();
+                    // remove_items();
+                    // set_items();
+                    // move(1, qlen);
+                    free(kwery2);
+                }
                 break;
             default:
-                handle_input(c, 1);
-                mvprintw(1, 0, query);
-                search(query);
-                remove_items();
-                set_items();
-                move(1, qlen);
+                form_driver(my_form, c);
+                form_driver(my_form, REQ_VALIDATION);
+                snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
+                qlen++;
+                char kwery[qlen];
+                memcpy(kwery, query, qlen);
+                prepare_for_new_results();
+                search((kwery));
+                update_menu();
         }
 
         wrefresh(my_menu_win);
     }
-
 }
