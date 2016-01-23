@@ -27,10 +27,9 @@ int main()
     // printf_results();
 
     init_term_gui();
+    
     run_term();
     free_term_gui();
-
-
 
     ITEM **my_items;
 	int c;

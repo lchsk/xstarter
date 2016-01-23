@@ -27,6 +27,9 @@ FORM  *my_form;
 
 int rem = 0;
 
+static int max_rows;
+static int max_cols;
+
 void printf_results()
 {
     for (int i = 0; i < g_queue_get_length(tmp); i++) {
@@ -166,12 +169,14 @@ void init_term_gui()
     int i;
 
     initscr();
-    start_color();
+    // start_color();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_CYAN, COLOR_BLACK);
+
+    getmaxyx(stdscr, max_rows, max_cols);
 
     field[0] = new_field(
         1, // columns?
@@ -187,35 +192,39 @@ void init_term_gui()
     post_form(my_form);
     refresh();
 
-    my_items = (ITEM **) calloc(2,sizeof(ITEM *));
-    char * choices[] = {"Search Results", (char *) NULL};
-    my_items[0] = new_item(choices[0], (char *) NULL);
-    my_items[1] = new_item((char *) NULL, (char *) NULL);
+    my_items = (ITEM **) calloc(1,sizeof(ITEM *));
+    // char * choices[] = {(char *) NULL};
+    // my_items[0] = new_item(choices[0], (char *) NULL);
+    my_items[0] = new_item((char *) NULL, (char *) NULL);
     my_menu = new_menu((ITEM**) my_items);
     // set_menu_win(my_menu, list_window);
     // der_window = derwin(list_window, h-2,w-2, 1, 1);
     //set_menu_sub(my_menu, derwin(list_window, h-2,w-2, 1, 1));
     // set_menu_sub(my_menu, der_window);
     // set_menu_format(my_menu, h-2, 1);
-    
 
-    my_menu_win = newwin(30, 70, 4, 4);
+    my_menu_win = newwin(
+        30, // rows
+        max_cols, // cols
+        3,
+        0
+    );
     keypad(my_menu_win, TRUE);
 
     set_menu_win(my_menu, my_menu_win);
-    set_menu_sub(my_menu, derwin(my_menu_win, 6, 68, 30, 1));
+    // set_menu_sub(my_menu, derwin(my_menu_win, 1000, 38, 1, 1));
     set_menu_format(my_menu, 6, 1);
 
-    set_menu_mark(my_menu, "* ");
+    set_menu_mark(my_menu, " ");
 
     box(my_menu_win, 0, 0);
-    // print_in_middle(my_menu_win, 1, 0, 40, "My Menu", COLOR_PAIR(1));
-    mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
-    mvwhline(my_menu_win, 2, 1, ACS_HLINE, 38);
-    mvwaddch(my_menu_win, 2, 39, ACS_RTEE);
+    wborder(my_menu_win, ' ', ' ', ' ',' ',' ',' ',' ',' ');
 
-    // post_menu(my_menu);
-    set_menu_mark(my_menu, " > ");
+    // print_in_middle(my_menu_win, 1, 0, 40, "My Menu", COLOR_PAIR(1));
+    // mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
+    // mvwhline(my_menu_win, 2, 1, ACS_HLINE, 38);
+    // mvwaddch(my_menu_win, 2, 39, ACS_RTEE);
+
     post_menu(my_menu);
     n_choices = 2;
     wrefresh(my_menu_win);
