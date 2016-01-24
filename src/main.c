@@ -27,19 +27,14 @@ int main()
     // printf_results();
 
     init_term_gui();
-    
     run_term();
     free_term_gui();
-
-    ITEM **my_items;
-	int c;
-	MENU *my_menu;
-	int n_choices, i;
-	ITEM *cur_item;
 
     free_cache();
     free_search();
     free_config();
+
+    open_app();
 
     // if ( ! running_from_term()) {
     //     popen("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter", "w");

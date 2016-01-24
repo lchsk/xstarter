@@ -8,7 +8,6 @@ static GQueue* paths = NULL;
 static config_t* CONF = NULL;
 static config_main_t* section_main = NULL;
 
-
 // void list_of_strings(GQueue* list, char** data, int len)
 // {
 //     if (list == NULL) return;

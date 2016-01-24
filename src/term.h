@@ -15,4 +15,6 @@ void create_menu();
 void update_menu();
 void no_results();
 
+// int open_app();
+
 #endif

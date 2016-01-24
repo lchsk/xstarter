@@ -1,14 +1,17 @@
-#include "term.h"
-#include "scan.h"
 #include <ncurses.h>
 #include <menu.h>
 #include <form.h>
+
+#include "term.h"
+#include "scan.h"
+#include "utils.h"
 
 GQueue* tmp = NULL;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define CTRLD 	2
 #define KEY_ESCAPE 27
+#define KEY_ENTER 10
 MENU *my_menu;
 ITEM **my_items;
 int n_choices;
@@ -29,6 +32,7 @@ int rem = 0;
 
 static int max_rows;
 static int max_cols;
+static int _open_app = 0;
 
 void printf_results()
 {
@@ -140,29 +144,6 @@ void no_results()
         free_item(my_items[i]);
 }
 
-// void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color)
-// {	int length, x, y;
-// 	float temp;
-// 
-// 	if(win == NULL)
-// 		win = stdscr;
-// 	getyx(win, y, x);
-// 	if(startx != 0)
-// 		x = startx;
-// 	if(starty != 0)
-// 		y = starty;
-// 	if(width == 0)
-// 		width = 80;
-// 
-// 	length = strlen(string);
-// 	temp = (width - length)/ 2;
-// 	x = startx + (int)temp;
-// 	wattron(win, color);
-// 	mvwprintw(win, y, x, "%s", "asb");
-// 	wattroff(win, color);
-// 	refresh();
-// }
-
 void init_term_gui()
 {
     set_escdelay(25);
@@ -264,10 +245,14 @@ void free_search()
         g_queue_free(tmp);
 }
 
-void open_app(int id)
+static void
+_set_app_to_open(int id)
 {
     char* t = g_queue_peek_nth(tmp, id);
-    popen(t, "w");
+    // popen(t, "w");
+    _open_app = 1;
+    app_to_open(strdup(t));
+    // _app_path = strdup(t);
 }
 
 void run_term()
@@ -283,16 +268,16 @@ void run_term()
             case KEY_UP:
                 menu_driver(my_menu, REQ_UP_ITEM);
                 break;
-            case 10:
-                open_app(item_index(current_item(my_menu)));
+            case KEY_ENTER:
+                _set_app_to_open(item_index(current_item(my_menu)));
                 // pos_menu_cursor(my_menu);
                 break;
-            // case KEY_NPAGE:
-            //     menu_driver(my_menu, REQ_SCR_DPAGE);
-            //     break;
-            // case KEY_PPAGE:
-            //     menu_driver(my_menu, REQ_SCR_UPAGE);
-            //     break;
+            case KEY_NPAGE:
+                menu_driver(my_menu, REQ_SCR_DPAGE);
+                break;
+            case KEY_PPAGE:
+                menu_driver(my_menu, REQ_SCR_UPAGE);
+                break;
             case KEY_BACKSPACE:
                 if (qlen >= 1) {
                     form_driver(my_form, REQ_DEL_PREV);
@@ -327,5 +312,9 @@ void run_term()
         }
 
         wrefresh(my_menu_win);
+
+        if (_open_app == 1) {
+            break;
+        }
     }
 }
