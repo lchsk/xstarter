@@ -17,6 +17,11 @@
 
 int main()
 {
+    // if ( ! running_from_term()) {
+    //     system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter");
+    //     // system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter", "w");
+    //     return 0;
+    // }
     load_config();
 
     load_cache();
@@ -34,12 +39,10 @@ int main()
     free_search();
     free_config();
 
+    // printf("opening...\n");
     open_app();
 
-    // if ( ! running_from_term()) {
-    //     popen("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter", "w");
-    //     return 0;
-    // }
+
 
   // popen("firefox", "w");
 }

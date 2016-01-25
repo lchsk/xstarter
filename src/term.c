@@ -159,6 +159,8 @@ void init_term_gui()
 
     getmaxyx(stdscr, max_rows, max_cols);
 
+    printw("%d %d\n", max_rows, max_cols);
+
     field[0] = new_field(
         1, // columns?
         10, // width
@@ -246,13 +248,21 @@ void free_search()
 }
 
 static void
-_set_app_to_open(int id)
+_set_app_to_open()
 {
-    char* t = g_queue_peek_nth(tmp, id);
-    // popen(t, "w");
-    _open_app = 1;
-    app_to_open(strdup(t));
-    // _app_path = strdup(t);
+    ITEM* item = current_item(my_menu);
+
+    if (item) {
+        int id = item_index(item);
+        char* t = g_queue_peek_nth(tmp, id);
+        // printw("%d\n", strlen(t));
+        // if (strlen(t) <= 1)
+        //     return;
+        // popen(t, "w");
+        _open_app = 1;
+        app_to_open(strdup(t));
+        // _app_path = strdup(t);
+    }
 }
 
 void run_term()
@@ -269,7 +279,7 @@ void run_term()
                 menu_driver(my_menu, REQ_UP_ITEM);
                 break;
             case KEY_ENTER:
-                _set_app_to_open(item_index(current_item(my_menu)));
+                _set_app_to_open();
                 // pos_menu_cursor(my_menu);
                 break;
             case KEY_NPAGE:
@@ -300,15 +310,17 @@ void run_term()
                 }
                 break;
             default:
-                form_driver(my_form, c);
-                form_driver(my_form, REQ_VALIDATION);
-                snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
-                qlen++;
-                char kwery[qlen];
-                memcpy(kwery, query, qlen);
-                prepare_for_new_results();
-                search((kwery));
-                update_menu();
+                if ((int) c < 256) {
+                    form_driver(my_form, c);
+                    form_driver(my_form, REQ_VALIDATION);
+                    snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
+                    qlen++;
+                    char kwery[qlen];
+                    memcpy(kwery, query, qlen);
+                    prepare_for_new_results();
+                    search((kwery));
+                    update_menu();
+                }
         }
 
         wrefresh(my_menu_win);
