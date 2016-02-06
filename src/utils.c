@@ -15,7 +15,15 @@ void open_app()
         // pid = fork ();
         // if (pid == 0)
         {
-            system("nohup firefox &");
+            // system("nohup firefox &");
+            // char cmd_str[128];
+            // strcpy(cmd_str, "nohup ");
+            // strcat(cmd_str, _app_to_open_path);
+            // strcat(cmd_str, " &");
+            char buf[256];
+            snprintf(buf, sizeof buf, "%s %s %s", "nohup", _app_to_open_path, "&");
+            system(buf);
+            system("echo > /dev/null");
 
             // char* c  = popen(_app_to_open_path, "r");
             // sleep(5);
@@ -33,9 +41,8 @@ void open_app()
 
             /* This is the child process.  Execute the shell command. */
             // printf("CHILD\n");
-
-            // execl (SHELL, SHELL, "-c", _app_to_open_path, NULL);
         }
+            // execl (SHELL, SHELL, "-c", _app_to_open_path, NULL);
         // else if (pid < 0)
         /* The fork failed.  Report failure.  */
         // status = -1;

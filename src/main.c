@@ -18,6 +18,7 @@
 int main()
 {
     if ( ! running_from_term()) {
+        // popen("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter", "w");
         system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter");
         return 0;
     } else {
