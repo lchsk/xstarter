@@ -10,25 +10,40 @@ static char* _app_to_open_path;
 void open_app()
 {
     if (_app_to_open_path) {
-
         int status;
         pid_t pid;
-        pid = fork ();
-        if (pid == 0)
+        // pid = fork ();
+        // if (pid == 0)
         {
+            system("nohup firefox &");
+
+            // char* c  = popen(_app_to_open_path, "r");
+            // sleep(5);
+
+            // system(_app_to_open_path);
+            // sleep(5);
+
+            // printf("/usr/bin/firefox");
+            // fflush(stdout);
+            // system("nohup > /dev/null firefox &");
+            // popen("nohup > /dev/null firefox &", "w");
+
+            // popen("nohup firefox &", "r");
+            // return 666;
+
             /* This is the child process.  Execute the shell command. */
             // printf("CHILD\n");
 
-            execl (SHELL, SHELL, "-c", _app_to_open_path, NULL);
+            // execl (SHELL, SHELL, "-c", _app_to_open_path, NULL);
         }
-        else if (pid < 0)
+        // else if (pid < 0)
         /* The fork failed.  Report failure.  */
-        status = -1;
-        else {
+        // status = -1;
+        // else {
             // parent
             // printf ("PARENT\n");
             // _exit(0);
-        }
+        // }
         // execl (SHELL, SHELL, "-c", _app_to_open_path, NULL);
         // _exit (EXIT_FAILURE);
         // char* c  = popen(_app_to_open_path, "r");
