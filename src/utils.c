@@ -10,21 +10,21 @@ static char* _app_to_open_path;
 void open_app()
 {
     if (_app_to_open_path) {
-        int status;
-        pid_t pid;
-        {
-            char buf[256];
-            snprintf(
-                buf,
-                sizeof(buf),
-                "%s 2> /dev/null %s %s",
-                "nohup",
-                _app_to_open_path,
-                "&"
-            );
-            system(buf);
-            system("echo > /dev/null");
-        }
+
+        // Buffer for the command
+        char buf[256];
+
+        snprintf(
+            buf,
+            sizeof(buf),
+            "%s 2> /dev/null %s %s",
+            "nohup",
+            _app_to_open_path,
+            "&"
+        );
+
+        system(buf);
+        system("echo > /dev/null");
     }
 }
 

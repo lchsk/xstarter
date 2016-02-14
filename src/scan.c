@@ -49,7 +49,7 @@ listdir(char* name, int level)
             listdir(path, level + 1);
         } else {
             struct stat sb;
-            memset(buf, NULL, sizeof(buf));
+            memset(buf, (unsigned char)' ', sizeof(buf));
             strcpy(buf, name);
             strcat(buf, "/");
             strcat(buf, entry->d_name);

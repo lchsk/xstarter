@@ -1,15 +1,14 @@
 #define _GNU_SOURCE
-// #include <stdio.h>
-// #include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-// #include <glib.h>
+#include <glib.h>
+#include <menu.h>
 
-// #include "settings.h"
-// #include "scan.h"
-// #include "term.h"
-// #include "utils.h"
-
-// #include <menu.h>
+#include "settings.h"
+#include "scan.h"
+#include "term.h"
+#include "utils.h"
 
 int main()
 {
