@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,7 +13,6 @@
 #include "scan.h"
 #include "settings.h"
 #include "utils_string.h"
-
 
 static void refresh_cache();
 

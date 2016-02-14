@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <ncurses.h>
 #include <menu.h>
 #include <form.h>
@@ -11,7 +15,7 @@ GQueue* tmp = NULL;
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define CTRLD 	2
 #define KEY_ESCAPE 27
-#define KEY_ENTER 10
+#define KEY_RETURN 10
 MENU *my_menu;
 ITEM **my_items;
 int n_choices;
@@ -44,6 +48,10 @@ void printf_results()
 
 void prepare_for_new_results() {
     unpost_menu(my_menu);
+
+    // if (my_menu && my_menu->items)
+    //     ResetConnectionInfo(my_menu, my_menu->items);
+    // TODO: this causes a warning
     _nc_Disconnect_Items(my_menu);
 
     for (int i = 0; i < n_choices; i++) {
@@ -94,8 +102,7 @@ void set_items()
 
         set_menu_items(my_menu, my_items);
         post_menu(my_menu);
-    }
-    refresh();
+}
 
 void create_menu()
 {
@@ -278,7 +285,7 @@ void run_term()
             case KEY_UP:
                 menu_driver(my_menu, REQ_UP_ITEM);
                 break;
-            case KEY_ENTER:
+            case KEY_RETURN:
                 _set_app_to_open();
                 // pos_menu_cursor(my_menu);
                 break;
