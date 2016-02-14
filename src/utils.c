@@ -17,7 +17,7 @@ void open_app()
         snprintf(
             buf,
             sizeof(buf),
-            "%s 2> /dev/null %s %s",
+            "%s > /dev/null 2>&1 %s %s",
             "nohup",
             _app_to_open_path,
             "&"
