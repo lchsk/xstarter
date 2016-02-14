@@ -8,17 +8,8 @@ static GQueue* paths = NULL;
 static config_t* CONF = NULL;
 static config_main_t* section_main = NULL;
 
-// void list_of_strings(GQueue* list, char** data, int len)
-// {
-//     if (list == NULL) return;
-// 
-//     for (int i = 0; i < len; i++) {
-//         g_queue_push_tail(list, data[i]);
-//     }
-// }
-
 str_array_t*
-get_string_list_from_config(GKeyFile const* conf_file, char const* section, char const* key)
+get_string_list_from_config(GKeyFile* conf_file, char const* section, char const* key)
 {
     char* raw_dirs = g_key_file_get_string(conf_file, section, key, NULL);
 
@@ -31,14 +22,19 @@ get_string_list_from_config(GKeyFile const* conf_file, char const* section, char
 
 void load_config()
 {
-    GError *error = NULL;
+    GError* error = NULL;
 
     conf_file = g_key_file_new ();
 
-    if (!g_key_file_load_from_file (conf_file, "/home/lchsk/projects/xstarter/bin/default.conf", G_KEY_FILE_NONE, &error))
-    {
-        g_error (error->message);
-        // return -1;
+    if (
+        ! g_key_file_load_from_file(
+            conf_file,
+            "/home/lchsk/projects/xstarter/bin/default.conf",
+            G_KEY_FILE_NONE,
+            &error
+        )
+    ){
+        // TODO: handle non-existing config file
     }
 
     section_main = malloc(sizeof(config_main_t));
@@ -49,8 +45,18 @@ void load_config()
     };
 
     section_main->dirs = get_string_list_from_config(conf_file, "Main", "dirs");
-    section_main->no_gui = g_key_file_get_boolean (conf_file, "Main", "no_gui", false);
-    section_main->executables_only = g_key_file_get_boolean (conf_file, "Main", "executables_only", true);
+    section_main->no_gui = g_key_file_get_boolean(
+        conf_file,
+        "Main",
+        "no_gui",
+        &error
+    );
+    section_main->executables_only = g_key_file_get_boolean(
+        conf_file,
+        "Main",
+        "executables_only",
+        &error
+    );
 
     g_key_file_free(conf_file);
 }

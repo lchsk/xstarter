@@ -1,7 +1,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <stdbool.h>
 #include <glib.h>
 #include "utils_string.h"
 
@@ -33,8 +32,8 @@ typedef struct {
     // char* name;
 
     str_array_t* dirs;
-    bool no_gui;
-    bool executables_only;
+    int no_gui;
+    int executables_only;
 } config_main_t;
 
 typedef struct {
