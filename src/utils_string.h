@@ -21,5 +21,6 @@ typedef struct str_array_t {
 str_array_t* str_array_new(char* input_str, char const* delimiters);
 
 void str_array_free(str_array_t* str_array);
+char* get_application_path();
 
 #endif

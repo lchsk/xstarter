@@ -53,7 +53,7 @@ listdir(char* name, int level)
             strcat(buf, entry->d_name);
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
                 count++;
-                g_queue_push_tail(search_paths, 
+                g_queue_push_tail(search_paths,
                     strdup
                     (buf));
             }

@@ -10,10 +10,23 @@
 #include "term.h"
 #include "utils.h"
 
-int main()
+int main(int argc, char** argv)
 {
+    char* path = get_application_path();
+
+    char buf[256];
+
+    snprintf(
+        buf,
+        sizeof(buf),
+        "rxvt-unicode -e %s",
+        path
+    );
+
     if ( ! running_from_term()) {
-        system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter");
+        // system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter");
+        // system("rxvt-unicode -e ./xstarter");
+        system(buf);
         return 0;
     } else {
         load_config();
@@ -32,4 +45,3 @@ int main()
         open_app();
     }
 }
-
