@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     snprintf(
         buf,
         sizeof(buf),
-        "rxvt-unicode -e %s",
+        "nohup \"rxvt-unicode -e %s\" &",
         path
     );
 
