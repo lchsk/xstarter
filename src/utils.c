@@ -14,17 +14,13 @@ void open_app()
         // Buffer for the command
         char buf[256];
 
-        snprintf(
-            buf,
-            sizeof(buf),
-            "%s > /dev/null 2>&1 %s %s",
-            "nohup",
-            _app_to_open_path,
-            "&"
-        );
-
-        system(buf);
-        system("echo > /dev/null");
+		snprintf(
+				 buf,
+				 sizeof(buf),
+				 "echo %s> /tmp/.xstarter",
+				 _app_to_open_path
+				 );
+		system(buf);
     }
 }
 

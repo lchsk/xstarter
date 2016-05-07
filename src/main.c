@@ -19,15 +19,26 @@ int main(int argc, char** argv)
     snprintf(
         buf,
         sizeof(buf),
-        "nohup \"rxvt-unicode -e %s\" &",
+        "rxvt-unicode -e %s",
         path
     );
 
     if ( ! running_from_term()) {
-        // system("rxvt-unicode -e /home/lchsk/projects/xstarter/bin/xstarter");
-        // system("rxvt-unicode -e ./xstarter");
-        system(buf);
-        return 0;
+	    system(buf);
+
+	char buf3[256];
+	char buf4[256];
+	FILE *fp;
+	fp = fopen("/tmp/.xstarter", "r");
+	fgets(buf3, 256, fp);
+	fclose(fp);
+	system("rm -f /tmp/.xstarter");
+
+	snprintf(buf4, sizeof(buf4), "%s", buf3);
+
+
+	system(buf4);
+
     } else {
         load_config();
         load_cache();
@@ -44,4 +55,6 @@ int main(int argc, char** argv)
 
         open_app();
     }
+
+
 }

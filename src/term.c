@@ -262,13 +262,8 @@ _set_app_to_open()
     if (item) {
         int id = item_index(item);
         char* t = g_queue_peek_nth(tmp, id);
-        // printw("%d\n", strlen(t));
-        // if (strlen(t) <= 1)
-        //     return;
-        // popen(t, "w");
         _open_app = 1;
         app_to_open(strdup(t));
-        // _app_path = strdup(t);
     }
 }
 
@@ -300,19 +295,20 @@ void run_term()
                     form_driver(my_form, REQ_DEL_PREV);
                     qlen--;
                     form_driver(my_form, REQ_VALIDATION);
-                    snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
-                    // char kwery2[qlen];
+                    snprintf(
+                        query,
+                        MAX_INPUT_LENGTH,
+                        "%s",
+                        field_buffer(field[0], 0)
+                    );
+
                     char* kwery2 = malloc(qlen);
                     memcpy(kwery2, query, qlen);
-                    // handle_input(c, -1);
-                    // mvprintw(1, 0, query);
-                    // search(kwery2);
+
                     prepare_for_new_results();
                     search((kwery2));
                     update_menu();
-                    // remove_items();
-                    // set_items();
-                    // move(1, qlen);
+
                     free(kwery2);
                 }
                 break;
