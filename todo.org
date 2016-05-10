@@ -1,0 +1,8 @@
+* Development
+
+** TODO Move reading cmd line input somewhere else (+ help)
+** TODO Read configuration file from $HOME directory
+** TODO Read terminal from a config file
+** TODO Get rid of get_application_path() stuff
+** TODO Add make install in CMake
+** TODO Emacs key-bindings (C-g, C-n, C-p, C-s, C-r)

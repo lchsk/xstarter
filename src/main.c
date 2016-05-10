@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-    char* path = get_application_path();
+    /* char* path = get_application_path(); */
 
     load_config();
     load_cache();
