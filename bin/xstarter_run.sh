@@ -3,7 +3,7 @@
 DIR=`dirname $0`
 term=$("$DIR/xstarter" "-t")
 
-`$term -e "$DIR/xstarter" "-p"`
+`$term -e "$DIR/xstarter" "-f"`
 
 path=`cat "/tmp/.xstarter"`
 rm -f "/tmp/.xstarter"

@@ -26,7 +26,10 @@
 // adjust_by_use = true
 
 
-
+typedef struct {
+	int mode;
+	int help;
+} cmdline_t;
 
 typedef struct {
     // char* name;
@@ -42,6 +45,9 @@ typedef struct {
 
 void load_config();
 void free_config();
+
+/* TODO: config should take config_t as argument */
 config_t* config();
+void read_cmdline(cmdline_t* cmdline, int argc, char** argv);
 
 #endif

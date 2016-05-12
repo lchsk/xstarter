@@ -11,36 +11,45 @@
 #include "term.h"
 #include "utils.h"
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-	int c;
-	int mode = MODE_OPEN_IMMEDIATELY;
+	/* char* path = get_application_path(); */
+	int error = 0;
 
-	while ((c = getopt(argc, argv, "tp")) != -1) {
-		switch(c) {
-		case 't':
-			printf("rxvt-unicode");
-			return 0;
-		case 'p':
-			mode = MODE_SAVE_TO_FILE;
-			break;
-		}
+	cmdline_t* cmdline = malloc(sizeof(cmdline_t));
+	read_cmdline(cmdline, argc, argv);
+
+	if (cmdline->help == 1) {
+		usage();
+	} else if (cmdline->mode == MODE_RETURN_TERMINAL) {
+		printf("xterm");
+	} else if (
+		cmdline->mode == MODE_OPEN_IMMEDIATELY
+		|| cmdline->mode == MODE_SAVE_TO_FILE
+	) {
+		load_config();
+		load_cache();
+
+		init_search();
+		init_term_gui();
+
+		run_term();
+
+		free_term_gui();
+		free_cache();
+		free_search();
+		free_config();
+
+		open_app(cmdline->mode);
+	} else {
+		printf("Unknown application mode");
+		error = 1;
 	}
 
-    /* char* path = get_application_path(); */
+	if (cmdline) {
+		free(cmdline);
+	}
 
-    load_config();
-    load_cache();
-
-    init_search();
-    init_term_gui();
-
-    run_term();
-
-    free_term_gui();
-    free_cache();
-    free_search();
-    free_config();
-
-    open_app(mode);
+	return error;
 }

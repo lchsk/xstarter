@@ -1,5 +1,7 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include "settings.h"
+#include "utils.h"
 #include "utils_string.h"
 
 static GKeyFile *conf_file = NULL;
@@ -76,4 +78,37 @@ void free_config()
 config_t* config()
 {
     return CONF;
+}
+
+void
+usage()
+{
+	printf("usage:");
+}
+
+void
+read_cmdline(cmdline_t* cmdline, int argc, char** argv)
+{
+	int c;
+
+	/* Default settings: */
+
+	cmdline->mode = MODE_OPEN_IMMEDIATELY;
+	cmdline->help = 0;
+
+	while ((c = getopt(argc, argv, "tfh")) != -1) {
+		switch(c) {
+		case 't':
+			/* printf("rxvt-unicode"); */
+			/* get user's terminal from config */
+			cmdline->mode = MODE_RETURN_TERMINAL;
+			break;
+		case 'f':
+			cmdline->mode = MODE_SAVE_TO_FILE;
+			break;
+		case 'h':
+			cmdline->help = 1;
+		}
+	}
+
 }

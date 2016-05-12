@@ -9,37 +9,38 @@ static char* _app_to_open_path;
 
 void open_app(const int mode)
 {
-    if (_app_to_open_path) {
-        char command[256];
+	if (_app_to_open_path) {
+		char command[256];
 
-        if (mode == MODE_SAVE_TO_FILE) {
-            snprintf(
-                command,
-                sizeof(command),
-                "echo %s> /tmp/.xstarter",
-                _app_to_open_path
-            );
-        } else if (mode == MODE_OPEN_IMMEDIATELY) {
-            snprintf(
-                command,
-                sizeof(command),
-                "nohup %s 2> /dev/null &",
-                _app_to_open_path
-            );
-        }
+		if (mode == MODE_SAVE_TO_FILE) {
+			snprintf(
+				command,
+				sizeof(command),
+				"echo %s> /tmp/.xstarter",
+				_app_to_open_path
+			);
+		} else if (mode == MODE_OPEN_IMMEDIATELY) {
+			snprintf(
+				command,
+				sizeof(command),
+				"nohup %s 2> /dev/null &",
+				_app_to_open_path
+			);
+		}
 
-        system(command);
-    }
+		system(command);
+	}
 }
 
 void
 app_to_open(char* path)
 {
-    _app_to_open_path = path;
+	_app_to_open_path = path;
 }
 
+/* TODO: remove */
 int
 running_from_term()
 {
-    return isatty(0);
+	return isatty(0);
 }
