@@ -32,10 +32,8 @@ typedef struct {
 } cmdline_t;
 
 typedef struct {
-    // char* name;
-
     str_array_t* dirs;
-    int no_gui;
+	gchar* terminal;
     int executables_only;
 } config_main_t;
 

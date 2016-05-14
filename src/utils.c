@@ -1,9 +1,12 @@
 #include <unistd.h>
-#include "utils.h"
+#include <sys/types.h>
+#include <pwd.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "utils.h"
 
 static char* _app_to_open_path;
 
@@ -44,3 +47,23 @@ running_from_term()
 {
 	return isatty(0);
 }
+
+int
+get_config_path(char* home_dir)
+{
+	char* dir = NULL;
+	if ((dir = (getenv("HOME"))) == NULL) {
+		struct passwd* pw = getpwuid(getuid());
+		dir = pw->pw_dir;
+	}
+
+	if (dir != NULL) {
+		strcpy(home_dir, dir);
+		return 0;
+	}
+
+	return 1;
+}
+
+
+

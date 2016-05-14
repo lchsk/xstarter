@@ -11,9 +11,18 @@ static config_t* CONF = NULL;
 static config_main_t* section_main = NULL;
 
 str_array_t*
-get_string_list_from_config(GKeyFile* conf_file, char const* section, char const* key)
+get_string_list_from_config(
+    GKeyFile* conf_file,
+	char const* section,
+	char const* key
+)
 {
-    char* raw_dirs = g_key_file_get_string(conf_file, section, key, NULL);
+    char* raw_dirs = g_key_file_get_string(
+        conf_file,
+		section,
+		key,
+		NULL
+    );
 
     if (raw_dirs == NULL) return NULL;
 
@@ -22,16 +31,29 @@ get_string_list_from_config(GKeyFile* conf_file, char const* section, char const
     return dirs;
 }
 
-void load_config()
+void
+load_config()
 {
     GError* error = NULL;
 
     conf_file = g_key_file_new ();
 
-    if (
+	char home_dir[64];
+	char path[256];
+
+	if (! get_config_path(home_dir)) {
+		snprintf(
+			 path,
+			 sizeof(path),
+			 "%s/.xstarter",
+			 home_dir
+		);
+	}
+
+	if (
         ! g_key_file_load_from_file(
             conf_file,
-            "/home/lchsk/projects/xstarter/bin/default.conf",
+        	path,
             G_KEY_FILE_NONE,
             &error
         )
@@ -46,11 +68,15 @@ void load_config()
         .section_main = section_main
     };
 
-    section_main->dirs = get_string_list_from_config(conf_file, "Main", "dirs");
-    section_main->no_gui = g_key_file_get_boolean(
+    section_main->dirs = get_string_list_from_config(
+		   conf_file,
+		   "Main",
+		   "dirs"
+    );
+    section_main->terminal = g_key_file_get_string(
         conf_file,
         "Main",
-        "no_gui",
+        "terminal",
         &error
     );
     section_main->executables_only = g_key_file_get_boolean(
@@ -67,6 +93,7 @@ void free_config()
 {
     if (section_main) {
         str_array_free(section_main->dirs);
+		free(section_main->terminal);
         free(section_main);
     }
 

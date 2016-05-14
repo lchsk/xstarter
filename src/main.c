@@ -11,6 +11,7 @@
 #include "term.h"
 #include "utils.h"
 
+
 int
 main(int argc, char** argv)
 {
@@ -20,10 +21,14 @@ main(int argc, char** argv)
 	cmdline_t* cmdline = malloc(sizeof(cmdline_t));
 	read_cmdline(cmdline, argc, argv);
 
+
 	if (cmdline->help == 1) {
 		usage();
 	} else if (cmdline->mode == MODE_RETURN_TERMINAL) {
-		printf("xterm");
+		load_config();
+		char* terminal = config()->section_main->terminal;
+		printf("%s", terminal);
+		free_config();
 	} else if (
 		cmdline->mode == MODE_OPEN_IMMEDIATELY
 		|| cmdline->mode == MODE_SAVE_TO_FILE
