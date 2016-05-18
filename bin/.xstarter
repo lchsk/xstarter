@@ -1,17 +1,17 @@
 # Configuration file for xstarter
 
 [Main]
-# List of directories that should be visited by xstarter
+# List of paths that should be visited by xstarter
 # when searching for executables.
-# Use , (comma) for separating items.
+# Use , (comma) to separate items.
 # You can use environment variables, e.g. $PATH
 # Default value: $PATH
 dirs = $PATH
 
-# Name of terminal emulator used by xstarter when not run
+# Name of the terminal emulator used by xstarter when not run
 # from the terminal.
 # Default value: xterm
-terminal=rxvt
+terminal=xterm
 
 executables_only = true
 
