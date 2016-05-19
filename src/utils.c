@@ -65,5 +65,17 @@ get_config_path(char* home_dir)
 	return 1;
 }
 
+void
+dump_debug(const char* str)
+{
+	char debug[1024];
 
+    snprintf(
+        debug,
+        1024,
+        "echo %s>> ~/debug_xstarter",
+        str
+    );
 
+	system(debug);
+}

@@ -23,19 +23,6 @@ if [[ "$term" == *"rxvt"* ]]; then
 	$($term -e "$DIR/xstarter" "-f")
 fi
 
-if [ "$term" == "xterm" ] || [ "$term" == "gnome-terminal" ] || [ "$term" == "xfce4-terminal" ]; then
-	cmd1="\"$DIR/xstarter\" \"-f\""
-	cmd2=""
-	cmd="gnome-terminal -e \"$cmd1\""
-elif [ "$term" == "konsole" ] || [[ "$term" == *"rxvt"* ]]; then
-	cmd1="$DIR/xstarter"
-	cmd2="-f"
-	cmd="$term -e $cmd1 $cmd2"
-fi
-
-# cmd1="$DIR/xstarter"
-# cmd2="-f"
-
 path=`cat "/tmp/.xstarter"`
 rm -f "/tmp/.xstarter"
 

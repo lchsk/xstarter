@@ -21,7 +21,6 @@ main(int argc, char** argv)
 	cmdline_t* cmdline = malloc(sizeof(cmdline_t));
 	read_cmdline(cmdline, argc, argv);
 
-
 	if (cmdline->help == 1) {
 		usage();
 	} else if (cmdline->mode == MODE_RETURN_TERMINAL) {

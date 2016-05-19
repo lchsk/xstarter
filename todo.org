@@ -2,7 +2,21 @@
 
 ** TODO Move reading cmd line input somewhere else (+ help)
 ** TODO Read configuration file from $HOME directory
-** TODO Read terminal from a config file
+** DONE Backspace working properly
+   CLOSED: [2016-05-19 Thu 20:49]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-19 Thu 20:49]
+   :END:
+** DONE Read terminal from a config file
+   CLOSED: [2016-05-19 Thu 18:34]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-19 Thu 18:34]
+   :END:
 ** TODO Get rid of get_application_path() stuff
 ** TODO Add make install in CMake
 ** TODO Emacs key-bindings (C-g, C-n, C-p, C-s, C-r)
+** TODO Working with non-existing config file
+** TODO Fuzzy search
+** TODO Recording most popular/recently used
+** TODO Man page/version/help
+** TODO Colours

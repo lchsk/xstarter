@@ -13,4 +13,6 @@ void open_app(const int mode);
 
 int get_config_path(char* path);
 
+void dump_debug(const char* str);
+
 #endif

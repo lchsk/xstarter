@@ -13,7 +13,7 @@
 GQueue* tmp = NULL;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-#define CTRLD 	2
+#define CTRLD   2
 #define KEY_ESCAPE 27
 #define KEY_RETURN 10
 MENU *my_menu;
@@ -23,7 +23,7 @@ int c;
 WINDOW *my_menu_win;
 #define MAX_INPUT_LENGTH 20
 char query[MAX_INPUT_LENGTH];
-int qlen = 0;
+int query_len = 0;
 
 char *choices[] = {
 (char *)NULL,
@@ -133,14 +133,14 @@ void update_menu()
 void no_results()
 {
     my_items = (ITEM **) calloc(2,sizeof(ITEM *));
-   char * choices[] = {"NO RESULTS", (char *) NULL};
-   my_items[0] = new_item(choices[0], (char *) NULL);
-   my_items[1] = new_item((char *) NULL, (char *) NULL);
-   set_menu_items(my_menu, my_items);
-   post_menu(my_menu);
-   // wrefresh(list_window);
-   refresh();
-   n_choices = 2;
+    char * choices[] = {"No results", (char *) NULL};
+    my_items[0] = new_item(choices[0], (char *) NULL);
+    my_items[1] = new_item((char *) NULL, (char *) NULL);
+    set_menu_items(my_menu, my_items);
+    post_menu(my_menu);
+    // wrefresh(list_window);
+    refresh();
+    n_choices = 2;
 }
 
  void remove_items()
@@ -270,6 +270,7 @@ _set_app_to_open()
 void run_term()
 {
     move(1, 0);
+
     while((c = getch()) != KEY_ESCAPE)
     {
         switch(c)
@@ -291,10 +292,12 @@ void run_term()
                 menu_driver(my_menu, REQ_SCR_UPAGE);
                 break;
             case KEY_BACKSPACE:
-                if (qlen >= 1) {
+                if (query_len >= 1) {
+                    query_len--;
+
                     form_driver(my_form, REQ_DEL_PREV);
-                    qlen--;
                     form_driver(my_form, REQ_VALIDATION);
+
                     snprintf(
                         query,
                         MAX_INPUT_LENGTH,
@@ -302,14 +305,17 @@ void run_term()
                         field_buffer(field[0], 0)
                     );
 
-                    char* kwery2 = malloc(qlen);
-                    memcpy(kwery2, query, qlen);
+                    char* new_query = malloc(query_len + 1);
+                    memcpy(new_query, query, query_len);
+                    new_query[query_len] = '\0';
 
                     prepare_for_new_results();
-                    search((kwery2));
+
+                    search(new_query);
+
                     update_menu();
 
-                    free(kwery2);
+                    free(new_query);
                 }
                 break;
             default:
@@ -317,9 +323,9 @@ void run_term()
                     form_driver(my_form, c);
                     form_driver(my_form, REQ_VALIDATION);
                     snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
-                    qlen++;
-                    char kwery[qlen];
-                    memcpy(kwery, query, qlen);
+                    query_len++;
+                    char kwery[query_len];
+                    memcpy(kwery, query, query_len);
                     prepare_for_new_results();
                     search((kwery));
                     update_menu();
