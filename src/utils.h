@@ -3,6 +3,9 @@
 
 /* MODES */
 
+#define True (1)
+#define False (0)
+
 #define MODE_OPEN_IMMEDIATELY (1)
 #define MODE_SAVE_TO_FILE  (2)
 #define MODE_RETURN_TERMINAL (3)
