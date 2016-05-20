@@ -170,7 +170,7 @@ void init_term_gui()
 
     field[0] = new_field(
         1, // columns?
-        10, // width
+        20, // width
         1, // pos y
         0, // pos x
         0,
@@ -322,12 +322,23 @@ void run_term()
                 if ((int) c < 256) {
                     form_driver(my_form, c);
                     form_driver(my_form, REQ_VALIDATION);
-                    snprintf(query, MAX_INPUT_LENGTH, "%s", field_buffer(field[0], 0));
+
+                    snprintf(
+							 query,
+							 MAX_INPUT_LENGTH,
+							 "%s",
+							 field_buffer(field[0], 0)
+					);
+
                     query_len++;
-                    char kwery[query_len];
-                    memcpy(kwery, query, query_len);
+                    char new_query[query_len];
+
+                    memcpy(new_query, query, query_len);
+					new_query[query_len] = '\0';
+
                     prepare_for_new_results();
-                    search((kwery));
+
+                    search(new_query);
                     update_menu();
                 }
         }
