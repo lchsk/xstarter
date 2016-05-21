@@ -32,11 +32,36 @@ get_string_list_from_config(
 }
 
 static void
-set_default_configuration(config_main_t* section_main)
+set_default_dirs(config_t* conf)
 {
-    section_main->dirs = str_array_new(strdup("$PATH"), ",");
+    conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
+}
+
+static void
+set_default_terminal(config_t* conf)
+{
     section_main->terminal = strdup("xterm");
-    section_main->executables_only = 1;
+}
+
+static void
+set_default_executables_only(config_t* conf)
+{
+    section_main->executables_only = True;
+}
+
+static void
+set_default_emacs_bindings(config_t* conf)
+{
+    section_main->emacs_bindings = True;
+}
+
+static void
+set_default_configuration(config_t* conf)
+{
+    set_default_dirs(conf);
+    set_default_terminal(conf);
+    set_default_executables_only(conf);
+    set_default_emacs_bindings(conf);
 }
 
 void
@@ -44,7 +69,7 @@ load_config()
 {
     GError* error = NULL;
 
-    conf_file = g_key_file_new ();
+    conf_file = g_key_file_new();
 
     char home_dir[64];
     char path[256];
@@ -81,21 +106,44 @@ load_config()
             "dirs"
        );
 
+       if (error != NULL) {
+           set_default_dirs(CONF);
+       }
+
        section_main->terminal = g_key_file_get_string(
            conf_file,
            "Main",
            "terminal",
            &error
        );
+
+       if (error != NULL) {
+           set_default_terminal(CONF);
+       }
+
        section_main->executables_only = g_key_file_get_boolean(
            conf_file,
            "Main",
            "executables_only",
            &error
        );
+
+       if (error != NULL) {
+           set_default_executables_only(CONF);
+       }
+
+       section_main->emacs_bindings = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "emacs_bindings",
+           &error
+       );
+
+       if (error != NULL) {
+           set_default_emacs_bindings(CONF);
+       }
     } else {
-        // TODO: handle non-existing config file
-        set_default_configuration(section_main);
+        set_default_configuration(CONF);
     }
 
     g_key_file_free(conf_file);

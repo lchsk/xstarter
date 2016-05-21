@@ -36,6 +36,7 @@ typedef struct {
     str_array_t* dirs;
     gchar* terminal;
     int executables_only;
+    int emacs_bindings;
 } config_main_t;
 
 typedef struct {
