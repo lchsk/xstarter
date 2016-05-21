@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <libgen.h>
+#include <ctype.h>
 
 #include <ncurses.h>
 #include <menu.h>
 #include <form.h>
 
+#include "settings.h"
 #include "term.h"
 #include "scan.h"
 #include "utils.h"
@@ -304,36 +306,61 @@ set_app_to_run()
     }
 }
 
+static int
+read_emacs_keys(const char* name)
+{
+    // TODO: Add C-v and M-v
+
+    if (strcmp(name, "^N") == 0) {
+        return KEY_DOWN;
+    } else if (strcmp(name, "^P") == 0) {
+        return KEY_UP;
+    } else if (strcmp(name, "^C") == 0) {
+        return KEY_ESCAPE;
+    } else if (strcmp(name, "^W") == 0) {
+        // TODO: Delete whole line
+    } else if (strcmp(name, "^D") == 0) {
+        return KEY_BACKSPACE;
+    }
+
+    return -1;
+}
+
 void run_term()
 {
+    config_t* conf = config();
+
     move(1, 0);
 
     int c;
 
     while((c = getch()) != KEY_ESCAPE)
     {
-        switch(c)
-        {
-            case KEY_DOWN:
+        if (conf->section_main->emacs_bindings) {
+            int key = read_emacs_keys(keyname(c));
+
+            if (key != -1) {
+                if (key == KEY_ESCAPE)
+                    break;
+                c = key;
+            }
+        }
+
+        if (c == KEY_DOWN) {
                 menu_driver(menu_list, REQ_DOWN_ITEM);
                 update_info_bar(True);
-                break;
-            case KEY_UP:
+        } else if (c == KEY_UP) {
                 menu_driver(menu_list, REQ_UP_ITEM);
                 update_info_bar(True);
-                break;
-            case KEY_RETURN:
+        } else if (c == KEY_RETURN) {
                 set_app_to_run(True);
-                break;
-            case KEY_NPAGE:
+        } else if (c == KEY_NPAGE) {
                 menu_driver(menu_list, REQ_SCR_DPAGE);
                 update_info_bar(True);
-                break;
-            case KEY_PPAGE:
+        } else if (c == KEY_PPAGE) {
                 menu_driver(menu_list, REQ_SCR_UPAGE);
                 update_info_bar(True);
-                break;
-            case KEY_BACKSPACE:
+        } else if (c == KEY_BACKSPACE) {
                 if (query_len >= 1) {
                     query_len--;
 
@@ -359,32 +386,27 @@ void run_term()
 
                     free(new_query);
                 }
+        } else if (isprint(c)){
+            form_driver(form, c);
+            form_driver(form, REQ_VALIDATION);
 
-                break;
-            default:
-                // TODO: only letters/digits
-                if ((int) c < 256) {
-                    form_driver(form, c);
-                    form_driver(form, REQ_VALIDATION);
+            snprintf(
+                query,
+                MAX_INPUT_LENGTH,
+                "%s",
+                field_buffer(field[0], 0)
+            );
 
-                    snprintf(
-                        query,
-                        MAX_INPUT_LENGTH,
-                        "%s",
-                        field_buffer(field[0], 0)
-					);
+            query_len++;
+            char new_query[query_len];
 
-                    query_len++;
-                    char new_query[query_len];
+            memcpy(new_query, query, query_len);
+            new_query[query_len] = '\0';
 
-                    memcpy(new_query, query, query_len);
-					new_query[query_len] = '\0';
+            prepare_for_new_results();
 
-                    prepare_for_new_results();
-
-                    search(new_query);
-                    update_menu();
-                }
+            search(new_query);
+            update_menu();
         }
 
         wrefresh(window);

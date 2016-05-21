@@ -18,7 +18,11 @@
    :END:
 ** TODO Get rid of get_application_path() stuff
 ** TODO Add make install in CMake
-** TODO Emacs key-bindings (C-g, C-n, C-p, C-s, C-r, C-l)
+** DONE Emacs key-bindings (C-g, C-n, C-p, C-s, C-r, C-l)
+   CLOSED: [2016-05-21 Sat 16:51]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-21 Sat 16:51]
+   :END:
 ** DONE Working with non-existing config file
    CLOSED: [2016-05-20 Fri 23:51]
    :LOGBOOK:
@@ -29,6 +33,7 @@
 ** TODO Man page/version/help
 ** TODO Colours / (in config)
 ** TODO Cache
+** TODO Visible cursor
 ** DONE Show only basenames
    CLOSED: [2016-05-21 Sat 15:58]
    :LOGBOOK:
