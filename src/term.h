@@ -1,9 +1,6 @@
 #ifndef TERM_H
 #define TERM_H
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
-/* #define CTRLD 2 */
 #define KEY_ESCAPE 27
 #define KEY_RETURN 10
 

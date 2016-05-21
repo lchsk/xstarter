@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <libgen.h>
 
 #include <ncurses.h>
 #include <menu.h>
@@ -69,6 +70,7 @@ search(char* query)
     }
 }
 
+/* TODO: setting items here probably not needed */
 void
 set_items()
 {
@@ -83,9 +85,9 @@ set_items()
     list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
 
     for (int i = 0; i < g_queue_get_length(results); i++) {
-        char* t = g_queue_peek_nth(results, i);
+        char* path = g_queue_peek_nth(results, i);
 
-        list_items[i] = new_item(strdup(t), "");
+        list_items[i] = new_item(strdup(path), "");
     }
 
     set_menu_items(menu_list, list_items);
@@ -98,29 +100,66 @@ create_menu()
 {
 }
 
+static void
+clean_line(int line_y)
+{
+    move(line_y, 0);
+    clrtoeol();
+}
+
+static void
+update_info_bar(int items_found)
+{
+    if (items_found) {
+        char* path = g_queue_peek_nth(
+            results,
+            item_index(
+                current_item(menu_list)
+            )
+        );
+
+        clean_line(LINES - 1);
+        clean_line(LINES - 2);
+
+        char status[100];
+
+        snprintf(status, 100, "Results: %d", choices_cnt);
+
+        mvprintw(LINES - 2, 0, status);
+        mvprintw(LINES - 1, 0, path);
+    } else {
+        clean_line(LINES - 1);
+        clean_line(LINES - 2);
+    }
+
+    refresh();
+}
+
 void
 update_menu()
 {
-    int results_cnt = g_queue_get_length(results);
+    choices_cnt = g_queue_get_length(results);
 
-    if (results_cnt == 0) {
+    if (choices_cnt == 0) {
         no_results();
+        update_info_bar(False);
         return;
     }
 
-    list_items = (ITEM**) calloc(results_cnt + 1, sizeof(ITEM *));
+    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
 
-    for (int i = 0; i < g_queue_get_length(results); i++) {
-        char* t = g_queue_peek_nth(results, i);
+    for (int i = 0; i < choices_cnt; i++) {
+        char* path = g_queue_peek_nth(results, i);
 
-        list_items[i] = new_item(t, (char*) NULL);
+        list_items[i] = new_item(basename(path), (char*) NULL);
     }
 
-    list_items[results_cnt] = new_item((char*) NULL, (char*) NULL);
+    list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
     set_menu_items(menu_list, list_items);
     post_menu(menu_list);
-    refresh();
-    choices_cnt = results_cnt;
+    /* refresh(); */
+
+    update_info_bar(True);
 }
 void
 no_results()
@@ -151,16 +190,23 @@ void
 init_term_gui()
 {
     set_escdelay(25);
-    /* int i; */
 
     initscr();
-    /* start_color(); */
+    start_color();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
-    /* init_color(10, 300, 20, 550); */
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-    init_pair(2, 10, COLOR_BLACK);
+    /* init_color(10, 200, 20, 550); */
+    /* if (can_change_color()) { */
+
+
+    /* } else{ */
+
+    /* } */
+
+    /* init_color(COLOR_RED, 200, 320, 600); */
+    init_pair(1, COLOR_RED, COLOR_RED);
+    init_pair(2, COLOR_GREEN, COLOR_RED);
 
     int max_rows;
     int max_cols;
@@ -205,12 +251,12 @@ init_term_gui()
 
     post_menu(menu_list);
     choices_cnt = 2;
-    wrefresh(window);
+    /* wrefresh(window); */
 
-    attron(COLOR_PAIR(2));
+    /* attron(COLOR_PAIR(2)); */
     mvprintw(0, 0, "This is xstarter. Start typing to search");
     mvprintw(LINES - 1, 0, "Arrow keys to navigate, <enter> to open, <esc> to quit");
-    attroff(COLOR_PAIR(2));
+    /* attroff(COLOR_PAIR(2)); */
     refresh();
 }
 
@@ -261,6 +307,7 @@ set_app_to_run()
 void run_term()
 {
     move(1, 0);
+
     int c;
 
     while((c = getch()) != KEY_ESCAPE)
@@ -269,18 +316,22 @@ void run_term()
         {
             case KEY_DOWN:
                 menu_driver(menu_list, REQ_DOWN_ITEM);
+                update_info_bar(True);
                 break;
             case KEY_UP:
                 menu_driver(menu_list, REQ_UP_ITEM);
+                update_info_bar(True);
                 break;
             case KEY_RETURN:
-                set_app_to_run();
+                set_app_to_run(True);
                 break;
             case KEY_NPAGE:
                 menu_driver(menu_list, REQ_SCR_DPAGE);
+                update_info_bar(True);
                 break;
             case KEY_PPAGE:
                 menu_driver(menu_list, REQ_SCR_UPAGE);
+                update_info_bar(True);
                 break;
             case KEY_BACKSPACE:
                 if (query_len >= 1) {

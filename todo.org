@@ -27,4 +27,10 @@
 ** TODO Fuzzy search
 ** TODO Recording most popular/recently used
 ** TODO Man page/version/help
-** TODO Colours
+** TODO Colours / (in config)
+** TODO Cache
+** DONE Show only basenames
+   CLOSED: [2016-05-21 Sat 15:58]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-21 Sat 15:58]
+   :END:
