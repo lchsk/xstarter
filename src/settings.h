@@ -4,9 +4,10 @@
 #include <glib.h>
 #include "utils_string.h"
 
-/* Name of the configuration file that should be in a HOME directory */
+/* Name of the configuration file that
+   should be in a HOME/.xstarter.d directory */
 
-#define CONFIG_FILE ".xstarter"
+#define CONFIG_FILE "xstarter"
 
 // [Main]
 // dirs = $PATH, $MYPATH, /home/lchsk/

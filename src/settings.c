@@ -34,25 +34,26 @@ get_string_list_from_config(
 static void
 set_default_dirs(config_t* conf)
 {
-    conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
+    char t[] = "$PATH";
+    conf->section_main->dirs = str_array_new(t, ",");
 }
 
 static void
 set_default_terminal(config_t* conf)
 {
-    section_main->terminal = strdup("xterm");
+    conf->section_main->terminal = strdup("xterm");
 }
 
 static void
 set_default_executables_only(config_t* conf)
 {
-    section_main->executables_only = True;
+    conf->section_main->executables_only = True;
 }
 
 static void
 set_default_emacs_bindings(config_t* conf)
 {
-    section_main->emacs_bindings = True;
+    conf->section_main->emacs_bindings = True;
 }
 
 static void
@@ -81,12 +82,13 @@ load_config()
         .section_main = section_main
     };
 
-    if (! get_config_path(home_dir)) {
+    /* if (! get_config_path(home_dir)) { */
+    if (xstarter_dir_avail) {
         snprintf(
             path,
             sizeof(path),
             "%s/%s",
-            home_dir,
+            xstarter_dir,
             CONFIG_FILE
         );
     } else {

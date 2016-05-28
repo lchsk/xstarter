@@ -30,6 +30,7 @@
    :END:
 ** TODO Fuzzy search
 ** TODO Recording most popular/recently used
+** TODO Keys (1-9) to start an app from the list
 ** TODO Man page/version/help
 ** TODO Colours / (in config)
 ** TODO Cache
@@ -39,3 +40,4 @@
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2016-05-21 Sat 15:58]
    :END:
+** TODO More supported terminals
