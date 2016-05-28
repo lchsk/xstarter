@@ -79,7 +79,7 @@ load_config()
         conf_file,
         path,
         G_KEY_FILE_NONE,
-        &error
+        NULL
     )) {
         // Read directories from config
 
@@ -105,6 +105,8 @@ load_config()
 
        if (error != NULL) {
            set_default_terminal(CONF);
+           g_error_free(error);
+           error = NULL;
        }
 
        section_main->executables_only = g_key_file_get_boolean(
@@ -116,6 +118,8 @@ load_config()
 
        if (error != NULL) {
            set_default_executables_only(CONF);
+           g_error_free(error);
+           error = NULL;
        }
 
        section_main->emacs_bindings = g_key_file_get_boolean(
@@ -127,6 +131,8 @@ load_config()
 
        if (error != NULL) {
            set_default_emacs_bindings(CONF);
+           g_error_free(error);
+           error = NULL;
        }
     } else {
         set_default_configuration(CONF);
