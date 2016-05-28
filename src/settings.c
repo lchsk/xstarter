@@ -10,32 +10,10 @@ static GQueue* paths = NULL;
 static config_t* CONF = NULL;
 static config_main_t* section_main = NULL;
 
-static str_array_t*
-get_string_list_from_config(
-    GKeyFile* conf_file,
-    char const* section,
-    char const* key
-)
-{
-    char* raw_dirs = g_key_file_get_string(
-        conf_file,
-        section,
-        key,
-        NULL
-    );
-
-    if (raw_dirs == NULL) return NULL;
-
-    str_array_t* dirs = str_array_new((raw_dirs), ",");
-
-    return dirs;
-}
-
 static void
 set_default_dirs(config_t* conf)
 {
-    char t[] = "$PATH";
-    conf->section_main->dirs = str_array_new(t, ",");
+    conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
 }
 
 static void
@@ -78,6 +56,7 @@ load_config()
     section_main = malloc(sizeof(config_main_t));
 
     CONF = malloc(sizeof(config_t));
+
     *CONF = (config_t) {
         .section_main = section_main
     };
@@ -102,15 +81,20 @@ load_config()
         G_KEY_FILE_NONE,
         &error
     )) {
-        section_main->dirs = get_string_list_from_config(
+        // Read directories from config
+
+        char* raw_dirs = g_key_file_get_string(
             conf_file,
             "Main",
-            "dirs"
-       );
+            "dirs",
+            NULL
+            );
 
-       if (error != NULL) {
-           set_default_dirs(CONF);
-       }
+        if (raw_dirs == NULL) {
+            section_main->dirs = str_array_new(strdup("$PATH"), ",");
+        } else {
+            section_main->dirs = str_array_new(raw_dirs, ",");
+        }
 
        section_main->terminal = g_key_file_get_string(
            conf_file,

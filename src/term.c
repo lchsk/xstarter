@@ -44,16 +44,21 @@ printf_results()
 
 void
 prepare_for_new_results() {
-    unpost_menu(menu_list);
 
-    // TODO: this causes a warning
-    _nc_Disconnect_Items(menu_list);
+    if (menu_list) {
+        unpost_menu(menu_list);
 
-    for (int i = 0; i < choices_cnt; i++) {
-        free_item(list_items[i]);
+        // TODO: this causes a warning
+        _nc_Disconnect_Items(menu_list);
     }
 
-    free(list_items);
+    if (list_items) {
+        for (int i = 0; i < choices_cnt; i++) {
+            free_item(list_items[i]);
+        }
+
+        free(list_items);
+    }
 }
 
 void
@@ -115,14 +120,16 @@ no_results()
 
         char* choices[] = {"No results, sorry", (char *) NULL};
 
+        list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
+
         list_items[0] = new_item(choices[0], (char*) NULL);
         list_items[1] = new_item((char*) NULL, (char*) NULL);
     } else {
         choices_cnt = 1;
-    }
 
-    list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
-    list_items[0] = new_item((char*) NULL, (char*) NULL);
+        list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
+        list_items[0] = new_item((char*) NULL, (char*) NULL);
+    }
 
     set_menu_items(menu_list, list_items);
     post_menu(menu_list);
