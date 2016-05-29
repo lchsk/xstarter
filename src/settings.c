@@ -10,27 +10,6 @@ static GQueue* paths = NULL;
 static config_t* CONF = NULL;
 static config_main_t* section_main = NULL;
 
-static str_array_t*
-get_string_list_from_config(
-    GKeyFile* conf_file,
-    char const* section,
-    char const* key
-)
-{
-    char* raw_dirs = g_key_file_get_string(
-        conf_file,
-        section,
-        key,
-        NULL
-    );
-
-    if (raw_dirs == NULL) return NULL;
-
-    str_array_t* dirs = str_array_new((raw_dirs), ",");
-
-    return dirs;
-}
-
 static void
 set_default_dirs(config_t* conf)
 {
@@ -40,19 +19,19 @@ set_default_dirs(config_t* conf)
 static void
 set_default_terminal(config_t* conf)
 {
-    section_main->terminal = strdup("xterm");
+    conf->section_main->terminal = strdup("xterm");
 }
 
 static void
 set_default_executables_only(config_t* conf)
 {
-    section_main->executables_only = True;
+    conf->section_main->executables_only = True;
 }
 
 static void
 set_default_emacs_bindings(config_t* conf)
 {
-    section_main->emacs_bindings = True;
+    conf->section_main->emacs_bindings = True;
 }
 
 static void
@@ -77,16 +56,18 @@ load_config()
     section_main = malloc(sizeof(config_main_t));
 
     CONF = malloc(sizeof(config_t));
+
     *CONF = (config_t) {
         .section_main = section_main
     };
 
-    if (! get_config_path(home_dir)) {
+    /* if (! get_config_path(home_dir)) { */
+    if (xstarter_dir_avail) {
         snprintf(
             path,
             sizeof(path),
             "%s/%s",
-            home_dir,
+            xstarter_dir,
             CONFIG_FILE
         );
     } else {
@@ -98,17 +79,22 @@ load_config()
         conf_file,
         path,
         G_KEY_FILE_NONE,
-        &error
+        NULL
     )) {
-        section_main->dirs = get_string_list_from_config(
+        // Read directories from config
+
+        char* raw_dirs = g_key_file_get_string(
             conf_file,
             "Main",
-            "dirs"
-       );
+            "dirs",
+            NULL
+            );
 
-       if (error != NULL) {
-           set_default_dirs(CONF);
-       }
+        if (raw_dirs == NULL) {
+            section_main->dirs = str_array_new(strdup("$PATH"), ",");
+        } else {
+            section_main->dirs = str_array_new(raw_dirs, ",");
+        }
 
        section_main->terminal = g_key_file_get_string(
            conf_file,
@@ -119,6 +105,8 @@ load_config()
 
        if (error != NULL) {
            set_default_terminal(CONF);
+           g_error_free(error);
+           error = NULL;
        }
 
        section_main->executables_only = g_key_file_get_boolean(
@@ -130,6 +118,8 @@ load_config()
 
        if (error != NULL) {
            set_default_executables_only(CONF);
+           g_error_free(error);
+           error = NULL;
        }
 
        section_main->emacs_bindings = g_key_file_get_boolean(
@@ -141,6 +131,8 @@ load_config()
 
        if (error != NULL) {
            set_default_emacs_bindings(CONF);
+           g_error_free(error);
+           error = NULL;
        }
     } else {
         set_default_configuration(CONF);
@@ -170,20 +162,25 @@ config_t* config()
 void
 usage()
 {
-    printf("usage:");
+    printf("Usage: xstarter\n\n");
+    printf("Optional arguments:\n");
+    printf("\t-h\tShow help screen\n");
+    printf("\t-v\tShow xstarter version\n");
+    printf("\t-t\tReturn terminal from the configuration\n");
+    printf("\t\t(Intended for internal use)\n");
 }
 
-void
+int
 read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 {
     int c;
+    int quit = False;
 
     /* Default settings: */
 
     cmdline->mode = MODE_OPEN_IMMEDIATELY;
-    cmdline->help = 0;
 
-    while ((c = getopt(argc, argv, "tfh")) != -1) {
+    while ((c = getopt(argc, argv, "tfhv")) != -1) {
         switch(c) {
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;
@@ -191,8 +188,16 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
         case 'f':
             cmdline->mode = MODE_SAVE_TO_FILE;
             break;
+        case 'v':
+            printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
+            quit = True;
+            break;
         case 'h':
-            cmdline->help = 1;
+        default:
+            usage();
+            quit = True;
         }
     }
+
+    return quit;
 }

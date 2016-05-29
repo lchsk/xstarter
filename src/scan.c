@@ -17,7 +17,7 @@
 static void refresh_cache();
 
 int count = 0;
-int PATH = 3000;
+int PATH = 1024;
 
 static GQueue* search_paths = NULL;
 static GQueue* paths = NULL;
@@ -25,7 +25,7 @@ static GQueue* paths = NULL;
 static void
 listdir(char* name, int level)
 {
-    DIR *dir;
+    DIR* dir;
     struct dirent *entry;
 
     if (!(dir = opendir(name)))
@@ -33,24 +33,35 @@ listdir(char* name, int level)
     if (!(entry = readdir(dir)))
         return;
 
-    char buf[PATH + 1];
+    char buf[PATH];
 
     do {
         if (entry->d_type == DT_DIR) {
             char path[PATH];
-            int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
+            int len = snprintf(
+                path,
+                sizeof(path) - 1,
+                "%s/%s",
+                name,
+                entry->d_name
+                );
+
             path[len] = 0;
 
-            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            if (strcmp(entry->d_name, ".") == 0
+                || strcmp(entry->d_name, "..") == 0)
                 continue;
 
             listdir(path, level + 1);
         } else {
             struct stat sb;
+
             memset(buf, (unsigned char)' ', sizeof(buf));
+
             strcpy(buf, name);
             strcat(buf, "/");
             strcat(buf, entry->d_name);
+
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
                 count++;
                 g_queue_push_tail(search_paths,
@@ -63,7 +74,8 @@ listdir(char* name, int level)
     closedir(dir);
 }
 
-static void refresh_cache()
+static void
+refresh_cache()
 {
     paths = g_queue_new();
 
@@ -74,17 +86,14 @@ static void refresh_cache()
             char const* var = g_getenv(++dirs->data[i]);
 
             if (var != NULL) {
-                str_array_t* var_paths = str_array_new(
-                    strdup
-                    (var), ":");
+                str_array_t* var_paths = str_array_new(strdup(var), ":");
 
                 if (var_paths != NULL) {
                     for (int j = 0; j < var_paths->length; j++) {
                         if (var_paths->data[j] != NULL) {
                             g_queue_push_tail(
                                 paths,
-                                strdup
-                                (var_paths->data[j])
+                                strdup(var_paths->data[j])
                             );
                         }
                     }
@@ -92,31 +101,24 @@ static void refresh_cache()
                 str_array_free(var_paths);
             }
         } else {
-            // g_queue_push_tail(paths, (dirs->data[i]));
+            g_queue_push_tail(paths, strdup(dirs->data[i]));
         }
     }
 
     search_paths = g_queue_new();
 
     char* path;
-    // while ((path = g_queue_pop_head(paths)) != NULL) {
+
     for (int i = 0; i < g_queue_get_length(paths); i++) {
         char* t = g_queue_peek_nth(paths, i);
         listdir(t, 0);
     }
-    // }
 }
 
 void
 load_cache()
 {
-    // #pragma omp parallel sections
-    {
-        // #pragma omp section
-        {
-            refresh_cache();
-        }
-    }
+    refresh_cache();
 }
 
 void free_cache()

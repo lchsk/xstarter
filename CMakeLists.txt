@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-project(XStarter)
+project(xstarter)
 
 set(CMAKE_CXX_FLAGS "-g -Wall")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
@@ -33,3 +33,5 @@ target_link_libraries(xstarter
     ${CURSES_LIBRARIES}
     -lmenu
 )
+
+install (TARGETS xstarter DESTINATION bin)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=`dirname "$0"`
+DIR=`dirname "$0"`/bin
 term=$("$DIR/xstarter" "-t")
 
 if [ "$term" == "gnome-terminal" ]; then

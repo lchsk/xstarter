@@ -16,8 +16,8 @@ void printf_results();
 
 void run_term();
 
-void create_menu();
-void update_menu();
-void no_results();
+/* void create_menu(); */
+/* void update_menu(); */
+/* void no_results(); */
 
 #endif
