@@ -9,28 +9,11 @@
 
 #define CONFIG_FILE "xstarter.conf"
 
-// [Main]
-// dirs = $PATH, $MYPATH, /home/lchsk/
-// terminal = xterm
-// executables_only = true
-//
-// [Aliases]
-// aliases = true
-// aliases_filenames = .bashrc, .zshrc
-//
-// [Cache]
-// cache = true
-// cache_refresh = 24
-//
-// [Search]
-// search_from_start_only = false
-// ignore_case = true
-// allow_regexp = false
-// adjust_by_use = true
+#define PROGRAM_NAME "xstarter"
+#define XSTARTER_VERSION "0.1.0"
 
 typedef struct {
     int mode;
-    int help;
 } cmdline_t;
 
 typedef struct {
@@ -46,9 +29,10 @@ typedef struct {
 
 void load_config();
 void free_config();
+void usage();
 
 /* TODO: config should take config_t as argument */
 config_t* config();
-void read_cmdline(cmdline_t* cmdline, int argc, char** argv);
+int read_cmdline(cmdline_t* cmdline, int argc, char** argv);
 
 #endif

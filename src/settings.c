@@ -162,20 +162,25 @@ config_t* config()
 void
 usage()
 {
-    printf("usage:");
+    printf("Usage: xstarter\n\n");
+    printf("Optional arguments:\n");
+    printf("\t-h\tShow help screen\n");
+    printf("\t-v\tShow xstarter version\n");
+    printf("\t-t\tReturn terminal from the configuration\n");
+    printf("\t\t(Intended for internal use)\n");
 }
 
-void
+int
 read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 {
     int c;
+    int quit = False;
 
     /* Default settings: */
 
     cmdline->mode = MODE_OPEN_IMMEDIATELY;
-    cmdline->help = 0;
 
-    while ((c = getopt(argc, argv, "tfh")) != -1) {
+    while ((c = getopt(argc, argv, "tfhv")) != -1) {
         switch(c) {
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;
@@ -183,8 +188,16 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
         case 'f':
             cmdline->mode = MODE_SAVE_TO_FILE;
             break;
+        case 'v':
+            printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
+            quit = True;
+            break;
         case 'h':
-            cmdline->help = 1;
+        default:
+            usage();
+            quit = True;
         }
     }
+
+    return quit;
 }

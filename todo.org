@@ -16,8 +16,16 @@
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2016-05-19 Thu 18:34]
    :END:
-** TODO Get rid of get_application_path() stuff
-** TODO Add make install in CMake
+** DONE Get rid of get_application_path() stuff
+   CLOSED: [2016-05-30 Mon 00:46]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-30 Mon 00:46]
+   :END:
+** DONE Add make install in CMake
+   CLOSED: [2016-05-29 Sun 22:19]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-29 Sun 22:19]
+   :END:
 ** DONE Emacs key-bindings (C-g, C-n, C-p, C-s, C-r, C-l)
    CLOSED: [2016-05-21 Sat 16:51]
    :LOGBOOK:
@@ -35,7 +43,11 @@
    - State "DONE"       from "TODO"       [2016-05-29 Sun 20:20]
    :END:
 ** TODO Keys (1-9) to start an app from the list
-** TODO Man page/version/help
+** DONE Man page/version/help
+   CLOSED: [2016-05-30 Mon 00:46]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-30 Mon 00:46]
+   :END:
 ** TODO Colours / (in config)
 ** TODO Cache
 ** TODO Visible cursor
@@ -45,3 +57,4 @@
    - State "DONE"       from "TODO"       [2016-05-21 Sat 15:58]
    :END:
 ** TODO More supported terminals
+** TODO Error reporting

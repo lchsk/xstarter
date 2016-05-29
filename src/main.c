@@ -14,17 +14,16 @@
 int
 main(int argc, char** argv)
 {
-    /* char* path = get_application_path(); */
     int error = 0;
 
     xstarter_directory();
 
     cmdline_t* cmdline = malloc(sizeof(cmdline_t));
-    read_cmdline(cmdline, argc, argv);
 
-    if (cmdline->help) {
-        usage();
-    } else if (cmdline->mode == MODE_RETURN_TERMINAL) {
+    if (read_cmdline(cmdline, argc, argv))
+        exit(EXIT_SUCCESS);
+
+    if (cmdline->mode == MODE_RETURN_TERMINAL) {
         load_config();
         char* terminal = config()->section_main->terminal;
         printf("%s", terminal);
