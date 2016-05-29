@@ -7,7 +7,7 @@
 /* Name of the configuration file that
    should be in a HOME/.xstarter.d directory */
 
-#define CONFIG_FILE "xstarter"
+#define CONFIG_FILE "xstarter.conf"
 
 // [Main]
 // dirs = $PATH, $MYPATH, /home/lchsk/

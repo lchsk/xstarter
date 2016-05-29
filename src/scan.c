@@ -86,9 +86,7 @@ refresh_cache()
             char const* var = g_getenv(++dirs->data[i]);
 
             if (var != NULL) {
-                str_array_t* var_paths = str_array_new(
-                    strdup
-                    (var), ":");
+                str_array_t* var_paths = str_array_new(strdup(var), ":");
 
                 if (var_paths != NULL) {
                     for (int j = 0; j < var_paths->length; j++) {
