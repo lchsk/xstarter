@@ -29,7 +29,11 @@
    - State "DONE"       from "TODO"       [2016-05-20 Fri 23:51]
    :END:
 ** TODO Fuzzy search
-** TODO Recording most popular/recently used
+** DONE Recording most popular/recently used
+   CLOSED: [2016-05-29 Sun 20:20]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-05-29 Sun 20:20]
+   :END:
 ** TODO Keys (1-9) to start an app from the list
 ** TODO Man page/version/help
 ** TODO Colours / (in config)

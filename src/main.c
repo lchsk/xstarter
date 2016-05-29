@@ -33,10 +33,11 @@ main(int argc, char** argv)
         || cmdline->mode == MODE_SAVE_TO_FILE
     ) {
         load_config();
-        load_cache();
 
         init_search();
         init_term_gui();
+
+        load_cache();
 
         run_term();
 
