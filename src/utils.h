@@ -10,16 +10,14 @@
 #define MODE_SAVE_TO_FILE (2)
 #define MODE_RETURN_TERMINAL (3)
 
+// TODO: Move those to the configuration file
 #define RECENT_APPS_REMEMBERED (3)
-
-typedef struct {
-    char path[1024];
-} recently_open_t;
+#define RECENT_APPS_SHOWN (2)
 
 char xstarter_dir[1024];
 int xstarter_dir_avail;
 
-recently_open_t recent_apps[RECENT_APPS_REMEMBERED];
+char recent_apps[100][1024];
 int recent_apps_cnt;
 
 int running_from_term();

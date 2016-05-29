@@ -216,8 +216,8 @@ init_term_gui()
     post_form(form);
     refresh();
 
-    for (int i = 0; i < recent_apps_cnt; i++) {
-        g_queue_push_tail(results, recent_apps[i].path);
+    for (int i = 0; i < RECENT_APPS_SHOWN; i++) {
+        g_queue_push_tail(results, recent_apps[i]);
     }
 
     list_items = (ITEM**) calloc(2, sizeof(ITEM*));

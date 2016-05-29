@@ -20,7 +20,7 @@ record_open_file(const char* path)
 
         snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
 
-        FILE* file = fopen(recently_f, "wb");
+        FILE* file = fopen(recently_f, "w");
 
         if (file != NULL) {
             // Check if it's already in the list
@@ -30,7 +30,7 @@ record_open_file(const char* path)
             int items_to_save = recent_apps_cnt + 1;
 
             for (int i = 0; i < recent_apps_cnt; i++) {
-                if (strcmp(recent_apps[i].path, path) == 0) {
+                if (strcmp(recent_apps[i], path) == 0) {
                     path_index = i;
                     items_to_save -= 1;
                 }
@@ -38,31 +38,30 @@ record_open_file(const char* path)
 
             int last_index = recent_apps_cnt;
 
-            if (last_index >= RECENT_APPS_REMEMBERED)
+            if (last_index >= RECENT_APPS_REMEMBERED) {
                 last_index = recent_apps_cnt - 1;
+                items_to_save = RECENT_APPS_REMEMBERED;
+            }
 
             // Remove item already existing in the list
 
             if (path_index != -1) {
                 for (int i = path_index; i < last_index; i++) {
-                    strcpy(recent_apps[i].path, recent_apps[i + 1].path);
+                    strcpy(recent_apps[i], recent_apps[i + 1]);
                 }
             }
 
             // Move rest of the items
 
             for (int i = last_index; i > 0; i--) {
-                strcpy(recent_apps[i].path, recent_apps[i - 1].path);
+                strcpy(recent_apps[i], recent_apps[i - 1]);
             }
 
-            strcpy(recent_apps[0].path, path);
+            strcpy(recent_apps[0], path);
 
-            fwrite(
-                &recent_apps,
-                sizeof(recently_open_t),
-                items_to_save,
-                file
-                );
+            for (int i = 0; i < items_to_save; i++) {
+                fprintf(file, "%s\n", recent_apps[i]);
+            }
 
             fclose(file);
         }
@@ -80,15 +79,19 @@ read_recently_open_list()
 
         snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
 
-        fptr = fopen(recently_f, "rb");
+        fptr = fopen(recently_f, "r");
 
         if (fptr) {
-            recent_apps_cnt = fread(
-                recent_apps,
-                sizeof(recently_open_t),
-                RECENT_APPS_REMEMBERED,
-                fptr
-                );
+            char line[1024];
+
+            int i = 0;
+
+            while(fgets(line, 1024, fptr)) {
+                memmove(recent_apps[i], line, strlen(line) - 1);
+                i++;
+            }
+
+            recent_apps_cnt = i;
 
             fclose(fptr);
         }
