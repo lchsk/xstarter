@@ -11,8 +11,8 @@
 #define MODE_RETURN_TERMINAL (3)
 
 // TODO: Move those to the configuration file
-#define RECENT_APPS_REMEMBERED (3)
-#define RECENT_APPS_SHOWN (2)
+#define RECENT_APPS_REMEMBERED (100)
+#define RECENT_APPS_SHOWN (10)
 
 char xstarter_dir[1024];
 int xstarter_dir_avail;

@@ -210,17 +210,17 @@ init_term_gui()
 
     field[1] = NULL;
 
-    choices_cnt = 2;
-
     form = new_form(field);
     post_form(form);
     refresh();
 
-    for (int i = 0; i < RECENT_APPS_SHOWN; i++) {
-        g_queue_push_tail(results, recent_apps[i]);
+    for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
+        if (strcmp(recent_apps[choices_cnt], "") != 0) {
+            g_queue_push_tail(results, recent_apps[choices_cnt]);
+        }
     }
 
-    list_items = (ITEM**) calloc(2, sizeof(ITEM*));
+    list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
     list_items[0] = new_item((char*) NULL, (char*) NULL);
     menu_list = new_menu((ITEM**) list_items);
 
