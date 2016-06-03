@@ -50,7 +50,7 @@ item_at_pos(const GSequence* seq,  int pos)
     return g_sequence_get(it);
 }
 
-void
+static void
 prepare_for_new_results() {
 
     if (menu_list) {
@@ -69,7 +69,7 @@ prepare_for_new_results() {
     }
 }
 
-void
+static void
 search(char* query)
 {
     g_sequence_remove_range(
@@ -172,7 +172,7 @@ update_menu()
     update_info_bar(True);
 }
 
-void
+static void
 remove_items()
 {
     if (clear_items == False) return;
