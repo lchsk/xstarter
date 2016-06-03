@@ -42,6 +42,14 @@ static int run_app = False;
 /*     } */
 /* } */
 
+static char*
+item_at_pos(const GSequence* seq,  int pos)
+{
+    GSequenceIter* it = g_sequence_get_iter_at_pos(results, pos);
+
+    return g_sequence_get(it);
+}
+
 void
 prepare_for_new_results() {
 
@@ -91,12 +99,10 @@ static void
 update_info_bar(int items_found)
 {
     if (items_found) {
-        GSequenceIter* it = g_sequence_get_iter_at_pos(
+        char* path = item_at_pos(
             results,
             item_index(current_item(menu_list))
         );
-
-        char* path = g_sequence_get(it);
 
         clean_line(LINES - 1);
         clean_line(LINES - 2);
@@ -153,8 +159,7 @@ update_menu()
     list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
 
     for (int i = 0; i < choices_cnt; i++) {
-        GSequenceIter* it = g_sequence_get_iter_at_pos(results, i);
-        char* path = g_sequence_get(it);
+        char* path = item_at_pos(results, i);
 
         list_items[i] = new_item(basename(path), (char*) NULL);
     }
@@ -306,8 +311,7 @@ set_app_to_run()
     ITEM* item = current_item(menu_list);
 
     if (item) {
-        GSequenceIter* it = g_sequence_get_iter_at_pos(results, item_index(item));
-        char* app_path = g_sequence_get(it);
+        char* app_path = item_at_pos(results, item_index(item));
 
         run_app = True;
         app_to_open(strdup(app_path));
