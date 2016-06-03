@@ -13,7 +13,7 @@
 #include "scan.h"
 #include "utils.h"
 
-static GQueue* results = NULL;
+static GSequence* results = NULL;
 
 static WINDOW* window = NULL;
 static MENU* menu_list = NULL;
@@ -33,14 +33,14 @@ static int clear_items = False;
 static int run_app = False;
 
 /* TODO: Move it somewhere else or delete */
-void
-printf_results()
-{
-    for (int i = 0; i < g_queue_get_length(results); i++) {
-        char* t = g_queue_peek_nth(results, i);
-        printf("%s\n", t);
-    }
-}
+/* void */
+/* printf_results() */
+/* { */
+/*     for (int i = 0; i < g_queue_get_length(results); i++) { */
+/*         char* t = g_queue_peek_nth(results, i); */
+/*         printf("%s\n", t); */
+/*     } */
+/* } */
 
 void
 prepare_for_new_results() {
@@ -64,15 +64,18 @@ prepare_for_new_results() {
 void
 search(char* query)
 {
-    g_queue_clear(results);
+    g_sequence_remove_range(
+        g_sequence_get_begin_iter(results),
+        g_sequence_get_end_iter(results)
+    );
 
     GQueue* cache = get_cache();
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
-        char* t = g_queue_peek_nth(cache, i);
+        char* path = g_queue_peek_nth(cache, i);
 
-        if (strstr(t, query) != NULL) {
-            g_queue_push_tail(results, (t));
+        if (strstr(path, query) != NULL) {
+            g_sequence_append(results, path);
         }
     }
 }
@@ -88,12 +91,12 @@ static void
 update_info_bar(int items_found)
 {
     if (items_found) {
-        char* path = g_queue_peek_nth(
+        GSequenceIter* it = g_sequence_get_iter_at_pos(
             results,
-            item_index(
-                current_item(menu_list)
-            )
+            item_index(current_item(menu_list))
         );
+
+        char* path = g_sequence_get(it);
 
         clean_line(LINES - 1);
         clean_line(LINES - 2);
@@ -139,7 +142,7 @@ no_results()
 static void
 update_menu()
 {
-    choices_cnt = g_queue_get_length(results);
+    choices_cnt = g_sequence_get_length(results);
 
     if (choices_cnt == 0) {
         no_results();
@@ -150,7 +153,8 @@ update_menu()
     list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
 
     for (int i = 0; i < choices_cnt; i++) {
-        char* path = g_queue_peek_nth(results, i);
+        GSequenceIter* it = g_sequence_get_iter_at_pos(results, i);
+        char* path = g_sequence_get(it);
 
         list_items[i] = new_item(basename(path), (char*) NULL);
     }
@@ -216,7 +220,7 @@ init_term_gui()
 
     for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
         if (strcmp(recent_apps[choices_cnt], "") != 0) {
-            g_queue_push_tail(results, recent_apps[choices_cnt]);
+            g_sequence_append(results, recent_apps[choices_cnt]);
         }
     }
 
@@ -285,7 +289,7 @@ free_term_gui()
 void
 init_search()
 {
-    results = g_queue_new();
+    results = g_sequence_new(NULL);
     read_recently_open_list();
 }
 
@@ -293,7 +297,7 @@ void
 free_search()
 {
     if (results != NULL)
-        g_queue_free(results);
+        g_sequence_free(results);
 }
 
 static void
@@ -302,7 +306,9 @@ set_app_to_run()
     ITEM* item = current_item(menu_list);
 
     if (item) {
-        char* app_path = g_queue_peek_nth(results, item_index(item));
+        GSequenceIter* it = g_sequence_get_iter_at_pos(results, item_index(item));
+        char* app_path = g_sequence_get(it);
+
         run_app = True;
         app_to_open(strdup(app_path));
     }

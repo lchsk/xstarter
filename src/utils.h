@@ -24,12 +24,9 @@ int running_from_term();
 void app_to_open(char* path);
 void open_app(const int mode);
 
-/* int get_config_path(char* path); */
-
 void dump_debug(const char* str);
 void dump_debug_int(int d);
 
-/* void get_working_dir(); */
 void xstarter_directory();
 
 void read_recently_open_list();
