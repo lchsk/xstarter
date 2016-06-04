@@ -22,6 +22,7 @@ typedef struct {
     int executables_only;
     int emacs_bindings;
     int recent_apps_first;
+    int min_query_len;
 } config_main_t;
 
 typedef struct {

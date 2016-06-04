@@ -41,6 +41,12 @@ set_recent_apps_first(config_t* conf)
 }
 
 static void
+set_min_query_len(config_t* conf)
+{
+    conf->section_main->min_query_len = 1;
+}
+
+static void
 set_default_configuration(config_t* conf)
 {
     set_default_dirs(conf);
@@ -48,6 +54,7 @@ set_default_configuration(config_t* conf)
     set_default_executables_only(conf);
     set_default_emacs_bindings(conf);
     set_recent_apps_first(conf);
+    set_min_query_len(conf);
 }
 
 void
@@ -157,6 +164,20 @@ load_config()
            g_error_free(error);
            error = NULL;
        }
+
+       section_main->min_query_len = g_key_file_get_integer(
+           conf_file,
+           "Main",
+           "min_query_len",
+           &error
+       );
+
+       if (error != NULL) {
+           set_min_query_len(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
+
 
     } else {
         set_default_configuration(CONF);

@@ -54,9 +54,14 @@ prepare_for_new_results() {
 static void
 search(char* query)
 {
+    const config_t* conf = config();
+
+    if (query_len < conf->section_main->min_query_len) {
+        return;
+    }
+
     g_list_free(results);
     results = NULL;
-    const config_t* conf = config();
 
     GQueue* cache = get_cache();
 
