@@ -13,7 +13,7 @@
 #include "scan.h"
 #include "utils.h"
 
-static GSequence* results = NULL;
+static GList* results = NULL;
 
 static WINDOW* window = NULL;
 static MENU* menu_list = NULL;
@@ -31,24 +31,6 @@ static char* choices[] = {
 static int choices_cnt;
 static int clear_items = False;
 static int run_app = False;
-
-/* TODO: Move it somewhere else or delete */
-/* void */
-/* printf_results() */
-/* { */
-/*     for (int i = 0; i < g_queue_get_length(results); i++) { */
-/*         char* t = g_queue_peek_nth(results, i); */
-/*         printf("%s\n", t); */
-/*     } */
-/* } */
-
-static char*
-item_at_pos(const GSequence* seq,  int pos)
-{
-    GSequenceIter* it = g_sequence_get_iter_at_pos(results, pos);
-
-    return g_sequence_get(it);
-}
 
 static void
 prepare_for_new_results() {
@@ -72,18 +54,31 @@ prepare_for_new_results() {
 static void
 search(char* query)
 {
-    g_sequence_remove_range(
-        g_sequence_get_begin_iter(results),
-        g_sequence_get_end_iter(results)
-    );
+    g_list_free(results);
+    results = NULL;
 
     GQueue* cache = get_cache();
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         char* path = g_queue_peek_nth(cache, i);
 
-        if (strstr(path, query) != NULL) {
-            g_sequence_append(results, path);
+        if (strstr(basename(path), query) != NULL) {
+            results = g_list_prepend(results, path);
+        }
+    }
+
+    /* Get apps that were recently started to the top of the list */
+
+    int new_pos = 0;
+
+    for (int i = 0; i < recent_apps_cnt; i++) {
+         for (GList* l = results; l != NULL; l = l->next) {
+            if (strcmp(l->data, recent_apps[i]) == 0) {
+                results = g_list_insert(results, l->data, new_pos);
+                results = g_list_delete_link(results, l);
+
+                new_pos++;
+            }
         }
     }
 }
@@ -99,10 +94,11 @@ static void
 update_info_bar(int items_found)
 {
     if (items_found) {
-        char* path = item_at_pos(
+        GList* l = g_list_nth(
             results,
             item_index(current_item(menu_list))
         );
+        char* path = l->data;
 
         clean_line(LINES - 1);
         clean_line(LINES - 2);
@@ -148,7 +144,7 @@ no_results()
 static void
 update_menu()
 {
-    choices_cnt = g_sequence_get_length(results);
+    choices_cnt = g_list_length(results);
 
     if (choices_cnt == 0) {
         no_results();
@@ -159,7 +155,8 @@ update_menu()
     list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
 
     for (int i = 0; i < choices_cnt; i++) {
-        char* path = item_at_pos(results, i);
+        GList* l = g_list_nth(results, i);
+        char* path = l->data;
 
         list_items[i] = new_item(basename(path), (char*) NULL);
     }
@@ -223,9 +220,23 @@ init_term_gui()
     post_form(form);
     refresh();
 
+    int recent_apps_valid = True;
+
     for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
-        if (strcmp(recent_apps[choices_cnt], "") != 0) {
-            g_sequence_append(results, recent_apps[choices_cnt]);
+        if (recent_apps[choices_cnt] != NULL
+            && strcmp(recent_apps[choices_cnt], "") != 0
+            ) {
+            for (int i = 0; i < strlen(recent_apps[choices_cnt]); i++) {
+                if (! isprint(recent_apps[choices_cnt][i])) {
+                    recent_apps_valid = False;
+                    break;
+                }
+            }
+
+            if (! recent_apps_valid)
+                break;
+
+            results = g_list_append(results, recent_apps[choices_cnt]);
         }
     }
 
@@ -294,7 +305,7 @@ free_term_gui()
 void
 init_search()
 {
-    results = g_sequence_new(NULL);
+    results = NULL;
     read_recently_open_list();
 }
 
@@ -302,7 +313,7 @@ void
 free_search()
 {
     if (results != NULL)
-        g_sequence_free(results);
+        g_list_free(results);
 }
 
 static void
@@ -311,10 +322,13 @@ set_app_to_run()
     ITEM* item = current_item(menu_list);
 
     if (item) {
-        char* app_path = item_at_pos(results, item_index(item));
+        /* char* app_path = item_at_pos(results, item_index(item)); */
+        char* app_path = g_list_nth_data(results, item_index(item));
 
-        run_app = True;
-        app_to_open(strdup(app_path));
+        if (app_path != NULL) {
+            run_app = True;
+            app_to_open(strdup(app_path));
+        }
     }
 }
 
@@ -334,6 +348,7 @@ read_emacs_keys(const char* name)
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
     }
+    // TODO C-v
 
     return -1;
 }
