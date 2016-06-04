@@ -343,7 +343,7 @@ set_app_to_run()
 static int
 read_emacs_keys(const char* name)
 {
-    // TODO: Add C-v and M-v
+    // TODO: M-v
 
     if (strcmp(name, "^N") == 0) {
         return KEY_DOWN;
@@ -355,8 +355,9 @@ read_emacs_keys(const char* name)
         // TODO: Delete whole line
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
+    }else if (strcmp(name, "^V") == 0) {
+        return KEY_NPAGE;
     }
-    // TODO C-v
 
     return -1;
 }
