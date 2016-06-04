@@ -72,14 +72,19 @@ search(char* query)
     int new_pos = 0;
 
     for (int i = 0; i < recent_apps_cnt; i++) {
-         for (GList* l = results; l != NULL; l = l->next) {
+        GList* to_remove = NULL;
+
+        for (GList* l = results; l != NULL; l = l->next) {
             if (strcmp(l->data, recent_apps[i]) == 0) {
                 results = g_list_insert(results, l->data, new_pos);
-                results = g_list_delete_link(results, l);
 
+                to_remove = l;
                 new_pos++;
             }
         }
+
+        if (to_remove != NULL)
+            results = g_list_delete_link(results, to_remove);
     }
 }
 
@@ -322,7 +327,6 @@ set_app_to_run()
     ITEM* item = current_item(menu_list);
 
     if (item) {
-        /* char* app_path = item_at_pos(results, item_index(item)); */
         char* app_path = g_list_nth_data(results, item_index(item));
 
         if (app_path != NULL) {
