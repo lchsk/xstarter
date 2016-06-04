@@ -35,12 +35,19 @@ set_default_emacs_bindings(config_t* conf)
 }
 
 static void
+set_recent_apps_first(config_t* conf)
+{
+    conf->section_main->recent_apps_first = True;
+}
+
+static void
 set_default_configuration(config_t* conf)
 {
     set_default_dirs(conf);
     set_default_terminal(conf);
     set_default_executables_only(conf);
     set_default_emacs_bindings(conf);
+    set_recent_apps_first(conf);
 }
 
 void
@@ -61,7 +68,6 @@ load_config()
         .section_main = section_main
     };
 
-    /* if (! get_config_path(home_dir)) { */
     if (xstarter_dir_avail) {
         snprintf(
             path,
@@ -134,6 +140,20 @@ load_config()
            g_error_free(error);
            error = NULL;
        }
+
+       section_main->recent_apps_first = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "recent_apps_first",
+           &error
+       );
+
+       if (error != NULL) {
+           set_recent_apps_first(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
+
     } else {
         set_default_configuration(CONF);
     }
@@ -154,7 +174,7 @@ void free_config()
     }
 }
 
-config_t* config()
+const config_t* config()
 {
     return CONF;
 }

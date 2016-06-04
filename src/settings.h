@@ -21,6 +21,7 @@ typedef struct {
     gchar* terminal;
     int executables_only;
     int emacs_bindings;
+    int recent_apps_first;
 } config_main_t;
 
 typedef struct {
@@ -31,8 +32,7 @@ void load_config();
 void free_config();
 void usage();
 
-/* TODO: config should take config_t as argument */
-config_t* config();
+const config_t* config();
 int read_cmdline(cmdline_t* cmdline, int argc, char** argv);
 
 #endif

@@ -56,6 +56,7 @@ search(char* query)
 {
     g_list_free(results);
     results = NULL;
+    const config_t* conf = config();
 
     GQueue* cache = get_cache();
 
@@ -69,23 +70,25 @@ search(char* query)
 
     /* Get apps that were recently started to the top of the list */
 
-    int new_pos = 0;
+    if (conf->section_main->recent_apps_first) {
+        int new_pos = 0;
 
-    for (int i = 0; i < recent_apps_cnt; i++) {
-        GList* to_remove = NULL;
+        for (int i = 0; i < recent_apps_cnt; i++) {
+            GList* to_remove = NULL;
 
-        for (GList* l = results; l != NULL; l = l->next) {
-            if (strcmp(l->data, recent_apps[i]) == 0) {
-                results = g_list_insert(results, l->data, new_pos);
+            for (GList* l = results; l != NULL; l = l->next) {
+                if (strcmp(l->data, recent_apps[i]) == 0) {
+                    results = g_list_insert(results, l->data, new_pos);
 
-                to_remove = l;
-                new_pos++;
-                break;
+                    to_remove = l;
+                    new_pos++;
+                    break;
+                }
             }
-        }
 
-        if (to_remove != NULL)
-            results = g_list_delete_link(results, to_remove);
+            if (to_remove != NULL)
+                results = g_list_delete_link(results, to_remove);
+        }
     }
 }
 
@@ -360,7 +363,7 @@ read_emacs_keys(const char* name)
 
 void run_term()
 {
-    config_t* conf = config();
+    const config_t* conf = config();
 
     move(1, 0);
 
