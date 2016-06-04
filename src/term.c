@@ -80,6 +80,7 @@ search(char* query)
 
                 to_remove = l;
                 new_pos++;
+                break;
             }
         }
 
