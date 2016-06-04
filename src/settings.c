@@ -96,10 +96,14 @@ load_config()
             NULL
             );
 
-        if (raw_dirs == NULL) {
+        if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
             section_main->dirs = str_array_new(strdup("$PATH"), ",");
         } else {
             section_main->dirs = str_array_new(raw_dirs, ",");
+
+            if (section_main->dirs == NULL)
+                section_main->dirs = str_array_new(strdup("$PATH"), ",");
+
         }
 
        section_main->terminal = g_key_file_get_string(
@@ -109,7 +113,7 @@ load_config()
            &error
        );
 
-       if (error != NULL) {
+       if (error != NULL || strcmp(section_main->terminal, "") == 0) {
            set_default_terminal(CONF);
            g_error_free(error);
            error = NULL;
