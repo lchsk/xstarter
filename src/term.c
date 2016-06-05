@@ -51,29 +51,12 @@ prepare_for_new_results() {
     }
 }
 
+/* Get apps that were recently started to the top of the list */
+
 static void
-search(char* query)
+recent_apps_on_top()
 {
     const config_t* conf = config();
-
-    if (query_len < conf->section_main->min_query_len) {
-        return;
-    }
-
-    g_list_free(results);
-    results = NULL;
-
-    GQueue* cache = get_cache();
-
-    for (int i = 0; i < g_queue_get_length(cache); i++) {
-        char* path = g_queue_peek_nth(cache, i);
-
-        if (strstr(basename(path), query) != NULL) {
-            results = g_list_prepend(results, path);
-        }
-    }
-
-    /* Get apps that were recently started to the top of the list */
 
     if (conf->section_main->recent_apps_first) {
         int new_pos = 0;
@@ -95,6 +78,69 @@ search(char* query)
                 results = g_list_delete_link(results, to_remove);
         }
     }
+}
+
+static void
+search(char* query)
+{
+    const config_t* conf = config();
+
+    if (query_len < conf->section_main->min_query_len) {
+        return;
+    }
+
+    if (query[0] == ' ')
+        return;
+
+    GQueue* cache = get_cache();
+
+    int current_query_len = 1;
+    str_array_t* query_parts = NULL;
+
+    if (conf->section_main->allow_spaces) {
+        query_parts = str_array_new(strdup(query), " ");
+
+        if (
+            (query_len > 0 && query[query_len - 1] == ' ')
+            || query_parts == NULL
+        ) {
+            goto free_query_parts;
+        }
+
+        current_query_len = query_parts->length;
+    }
+
+    g_list_free(results);
+    results = NULL;
+
+    for (int i = 0; i < g_queue_get_length(cache); i++) {
+        char* path = g_queue_peek_nth(cache, i);
+        int found = True;
+
+        if (current_query_len == 1) {
+            if (strstr(basename(path), query) != NULL) {
+                results = g_list_prepend(results, path);
+            }
+        } else if (current_query_len > 1) {
+            for (int i = 0; i < current_query_len; i++) {
+                if (strcmp(query_parts->data[i], " ") == 0)
+                    continue;
+
+                if (strstr(basename(path), query_parts->data[i]) == NULL) {
+                    found = False;
+                    break;
+                }
+            }
+
+            if (found)
+                results = g_list_prepend(results, path);
+        }
+    }
+
+    recent_apps_on_top();
+
+free_query_parts:
+    str_array_free(query_parts);
 }
 
 static void

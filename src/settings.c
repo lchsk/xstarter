@@ -47,6 +47,12 @@ set_min_query_len(config_t* conf)
 }
 
 static void
+set_allow_spaces(config_t* conf)
+{
+    conf->section_main->allow_spaces = True;
+}
+
+static void
 set_default_configuration(config_t* conf)
 {
     set_default_dirs(conf);
@@ -55,6 +61,7 @@ set_default_configuration(config_t* conf)
     set_default_emacs_bindings(conf);
     set_recent_apps_first(conf);
     set_min_query_len(conf);
+    set_allow_spaces(conf);
 }
 
 void
@@ -178,7 +185,18 @@ load_config()
            error = NULL;
        }
 
+       section_main->allow_spaces = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "allow_spaces",
+           &error
+       );
 
+       if (error != NULL) {
+           set_allow_spaces(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
     } else {
         set_default_configuration(CONF);
     }

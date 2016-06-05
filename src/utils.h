@@ -4,6 +4,8 @@
 #define True (1)
 #define False (0)
 
+#define Boolean short
+
 /* MODES */
 
 #define MODE_OPEN_IMMEDIATELY (1)
@@ -26,6 +28,7 @@ void open_app(const int mode);
 
 void dump_debug(const char* str);
 void dump_debug_int(int d);
+void dump_debug_char(const char);
 
 void xstarter_directory();
 

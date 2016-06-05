@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <glib.h>
+#include "utils.h"
 #include "utils_string.h"
 
 /* Name of the configuration file that
@@ -18,11 +19,12 @@ typedef struct {
 
 typedef struct {
     str_array_t* dirs;
-    gchar* terminal;
-    int executables_only;
-    int emacs_bindings;
-    int recent_apps_first;
+    char* terminal;
+    Boolean executables_only;
+    Boolean emacs_bindings;
+    Boolean recent_apps_first;
     int min_query_len;
+    Boolean allow_spaces;
 } config_main_t;
 
 typedef struct {

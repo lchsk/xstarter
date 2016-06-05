@@ -171,6 +171,21 @@ dump_debug(const char* str)
 }
 
 void
+dump_debug_char(const char c)
+{
+	char debug[1024];
+
+    snprintf(
+        debug,
+        1024,
+        "echo %c>> ~/debug_xstarter",
+        c
+    );
+
+	system(debug);
+}
+
+void
 dump_debug_int(int d)
 {
 	char debug[1024];
