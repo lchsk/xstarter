@@ -4,6 +4,8 @@
 #define True (1)
 #define False (0)
 
+#define Boolean short
+
 /* MODES */
 
 #define MODE_OPEN_IMMEDIATELY (1)
@@ -11,8 +13,8 @@
 #define MODE_RETURN_TERMINAL (3)
 
 // TODO: Move those to the configuration file
-#define RECENT_APPS_REMEMBERED (3)
-#define RECENT_APPS_SHOWN (2)
+#define RECENT_APPS_REMEMBERED (100)
+#define RECENT_APPS_SHOWN (10)
 
 char xstarter_dir[1024];
 int xstarter_dir_avail;
@@ -24,12 +26,10 @@ int running_from_term();
 void app_to_open(char* path);
 void open_app(const int mode);
 
-/* int get_config_path(char* path); */
-
 void dump_debug(const char* str);
 void dump_debug_int(int d);
+void dump_debug_char(const char);
 
-/* void get_working_dir(); */
 void xstarter_directory();
 
 void read_recently_open_list();

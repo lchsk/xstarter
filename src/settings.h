@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <glib.h>
+#include "utils.h"
 #include "utils_string.h"
 
 /* Name of the configuration file that
@@ -18,9 +19,12 @@ typedef struct {
 
 typedef struct {
     str_array_t* dirs;
-    gchar* terminal;
-    int executables_only;
-    int emacs_bindings;
+    char* terminal;
+    Boolean executables_only;
+    Boolean emacs_bindings;
+    Boolean recent_apps_first;
+    int min_query_len;
+    Boolean allow_spaces;
 } config_main_t;
 
 typedef struct {
@@ -31,8 +35,7 @@ void load_config();
 void free_config();
 void usage();
 
-/* TODO: config should take config_t as argument */
-config_t* config();
+const config_t* config();
 int read_cmdline(cmdline_t* cmdline, int argc, char** argv);
 
 #endif

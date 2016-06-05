@@ -35,12 +35,33 @@ set_default_emacs_bindings(config_t* conf)
 }
 
 static void
+set_recent_apps_first(config_t* conf)
+{
+    conf->section_main->recent_apps_first = True;
+}
+
+static void
+set_min_query_len(config_t* conf)
+{
+    conf->section_main->min_query_len = 1;
+}
+
+static void
+set_allow_spaces(config_t* conf)
+{
+    conf->section_main->allow_spaces = True;
+}
+
+static void
 set_default_configuration(config_t* conf)
 {
     set_default_dirs(conf);
     set_default_terminal(conf);
     set_default_executables_only(conf);
     set_default_emacs_bindings(conf);
+    set_recent_apps_first(conf);
+    set_min_query_len(conf);
+    set_allow_spaces(conf);
 }
 
 void
@@ -61,7 +82,6 @@ load_config()
         .section_main = section_main
     };
 
-    /* if (! get_config_path(home_dir)) { */
     if (xstarter_dir_avail) {
         snprintf(
             path,
@@ -90,10 +110,14 @@ load_config()
             NULL
             );
 
-        if (raw_dirs == NULL) {
+        if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
             section_main->dirs = str_array_new(strdup("$PATH"), ",");
         } else {
             section_main->dirs = str_array_new(raw_dirs, ",");
+
+            if (section_main->dirs == NULL)
+                section_main->dirs = str_array_new(strdup("$PATH"), ",");
+
         }
 
        section_main->terminal = g_key_file_get_string(
@@ -103,7 +127,7 @@ load_config()
            &error
        );
 
-       if (error != NULL) {
+       if (error != NULL || strcmp(section_main->terminal, "") == 0) {
            set_default_terminal(CONF);
            g_error_free(error);
            error = NULL;
@@ -134,6 +158,45 @@ load_config()
            g_error_free(error);
            error = NULL;
        }
+
+       section_main->recent_apps_first = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "recent_apps_first",
+           &error
+       );
+
+       if (error != NULL) {
+           set_recent_apps_first(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
+
+       section_main->min_query_len = g_key_file_get_integer(
+           conf_file,
+           "Main",
+           "min_query_len",
+           &error
+       );
+
+       if (error != NULL) {
+           set_min_query_len(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
+
+       section_main->allow_spaces = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "allow_spaces",
+           &error
+       );
+
+       if (error != NULL) {
+           set_allow_spaces(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
     } else {
         set_default_configuration(CONF);
     }
@@ -154,7 +217,7 @@ void free_config()
     }
 }
 
-config_t* config()
+const config_t* config()
 {
     return CONF;
 }
