@@ -391,11 +391,18 @@ set_app_to_run()
     }
 }
 
+static void
+clean_query()
+{
+    strcpy(query, "");
+    query_len = 0;
+    form_driver(form, REQ_CLR_FIELD);
+    form_driver(form, REQ_VALIDATION);
+}
+
 static int
 read_emacs_keys(const char* name)
 {
-    // TODO: M-v
-
     if (strcmp(name, "^N") == 0) {
         return KEY_DOWN;
     } else if (strcmp(name, "^P") == 0) {
@@ -403,10 +410,11 @@ read_emacs_keys(const char* name)
     } else if (strcmp(name, "^C") == 0) {
         return KEY_ESCAPE;
     } else if (strcmp(name, "^W") == 0) {
-        // TODO: Delete whole line
+        clean_query();
+        return;
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
-    }else if (strcmp(name, "^V") == 0) {
+    } else if (strcmp(name, "^V") == 0) {
         return KEY_NPAGE;
     }
 
