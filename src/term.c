@@ -411,11 +411,13 @@ read_emacs_keys(const char* name)
         return KEY_ESCAPE;
     } else if (strcmp(name, "^W") == 0) {
         clean_query();
-        return;
+        return 0;
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
     } else if (strcmp(name, "^V") == 0) {
         return KEY_NPAGE;
+    } else if (strcmp(name, "M-6") == 0) {
+        return KEY_PPAGE;
     }
 
     return -1;
