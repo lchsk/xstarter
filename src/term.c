@@ -238,6 +238,30 @@ remove_items()
         free_item(list_items[i]);
 }
 
+static void
+show_recent_apps()
+{
+    int recent_apps_valid = True;
+
+    for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
+        if (recent_apps[choices_cnt] != NULL
+            && strcmp(recent_apps[choices_cnt], "") != 0
+            ) {
+            for (int i = 0; i < strlen(recent_apps[choices_cnt]); i++) {
+                if (! isprint(recent_apps[choices_cnt][i])) {
+                    recent_apps_valid = False;
+                    break;
+                }
+            }
+
+            if (! recent_apps_valid)
+                break;
+
+            results = g_list_append(results, recent_apps[choices_cnt]);
+        }
+    }
+}
+
 void
 init_term_gui()
 {
@@ -280,25 +304,27 @@ init_term_gui()
     post_form(form);
     refresh();
 
-    int recent_apps_valid = True;
+    show_recent_apps();
 
-    for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
-        if (recent_apps[choices_cnt] != NULL
-            && strcmp(recent_apps[choices_cnt], "") != 0
-            ) {
-            for (int i = 0; i < strlen(recent_apps[choices_cnt]); i++) {
-                if (! isprint(recent_apps[choices_cnt][i])) {
-                    recent_apps_valid = False;
-                    break;
-                }
-            }
+    /* int recent_apps_valid = True; */
 
-            if (! recent_apps_valid)
-                break;
+    /* for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) { */
+    /*     if (recent_apps[choices_cnt] != NULL */
+    /*         && strcmp(recent_apps[choices_cnt], "") != 0 */
+    /*         ) { */
+    /*         for (int i = 0; i < strlen(recent_apps[choices_cnt]); i++) { */
+    /*             if (! isprint(recent_apps[choices_cnt][i])) { */
+    /*                 recent_apps_valid = False; */
+    /*                 break; */
+    /*             } */
+    /*         } */
 
-            results = g_list_append(results, recent_apps[choices_cnt]);
-        }
-    }
+    /*         if (! recent_apps_valid) */
+    /*             break; */
+
+    /*         results = g_list_append(results, recent_apps[choices_cnt]); */
+    /*     } */
+    /* } */
 
     list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
     list_items[0] = new_item((char*) NULL, (char*) NULL);
@@ -392,12 +418,21 @@ set_app_to_run()
 }
 
 static void
-clean_query()
+reset_query()
 {
     strcpy(query, "");
     query_len = 0;
     form_driver(form, REQ_CLR_FIELD);
     form_driver(form, REQ_VALIDATION);
+
+    g_list_free(results);
+    results = NULL;
+
+    prepare_for_new_results();
+    show_recent_apps();
+    update_menu();
+    wrefresh(window);
+    refresh();
 }
 
 static int
@@ -410,7 +445,7 @@ read_emacs_keys(const char* name)
     } else if (strcmp(name, "^C") == 0) {
         return KEY_ESCAPE;
     } else if (strcmp(name, "^W") == 0) {
-        clean_query();
+        reset_query();
         return 0;
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
@@ -461,27 +496,31 @@ void run_term()
                 if (query_len >= 1) {
                     query_len--;
 
-                    form_driver(form, REQ_DEL_PREV);
-                    form_driver(form, REQ_VALIDATION);
+                    if (query_len == 0) {
+                        reset_query();
+                    } else {
+                        form_driver(form, REQ_DEL_PREV);
+                        form_driver(form, REQ_VALIDATION);
 
-                    snprintf(
-                        query,
-                        MAX_INPUT_LENGTH,
-                        "%s",
-                        field_buffer(field[0], 0)
-                    );
+                        snprintf(
+                            query,
+                            MAX_INPUT_LENGTH,
+                            "%s",
+                            field_buffer(field[0], 0)
+                            );
 
-                    char* new_query = malloc(query_len + 1);
-                    memcpy(new_query, query, query_len);
-                    new_query[query_len] = '\0';
+                        char* new_query = malloc(query_len + 1);
+                        memcpy(new_query, query, query_len);
+                        new_query[query_len] = '\0';
 
-                    prepare_for_new_results();
+                        prepare_for_new_results();
 
-                    search(new_query);
+                        search(new_query);
 
-                    update_menu();
+                        update_menu();
 
-                    free(new_query);
+                        free(new_query);
+                    }
                 }
         } else if (isprint(c)){
             form_driver(form, c);
