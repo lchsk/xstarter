@@ -306,26 +306,6 @@ init_term_gui()
 
     show_recent_apps();
 
-    /* int recent_apps_valid = True; */
-
-    /* for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) { */
-    /*     if (recent_apps[choices_cnt] != NULL */
-    /*         && strcmp(recent_apps[choices_cnt], "") != 0 */
-    /*         ) { */
-    /*         for (int i = 0; i < strlen(recent_apps[choices_cnt]); i++) { */
-    /*             if (! isprint(recent_apps[choices_cnt][i])) { */
-    /*                 recent_apps_valid = False; */
-    /*                 break; */
-    /*             } */
-    /*         } */
-
-    /*         if (! recent_apps_valid) */
-    /*             break; */
-
-    /*         results = g_list_append(results, recent_apps[choices_cnt]); */
-    /*     } */
-    /* } */
-
     list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
     list_items[0] = new_item((char*) NULL, (char*) NULL);
     menu_list = new_menu((ITEM**) list_items);
@@ -431,8 +411,6 @@ reset_query()
     prepare_for_new_results();
     show_recent_apps();
     update_menu();
-    wrefresh(window);
-    refresh();
 }
 
 static int
