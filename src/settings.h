@@ -25,6 +25,7 @@ typedef struct {
     Boolean recent_apps_first;
     int min_query_len;
     Boolean allow_spaces;
+    Boolean numeric_shortcuts;
 } config_main_t;
 
 typedef struct {

@@ -32,6 +32,10 @@ static int choices_cnt;
 static int clear_items = False;
 static int run_app = False;
 
+static const char* digits[9] = {
+    "1", "2", "3", "4", "5", "6", "7", "8", "9"
+};
+
 static void
 prepare_for_new_results() {
 
@@ -201,6 +205,7 @@ no_results()
     refresh();
 }
 
+
 static void
 update_menu()
 {
@@ -212,19 +217,27 @@ update_menu()
         return;
     }
 
+    const config_t* conf = config();
+
     list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
 
     for (int i = 0; i < choices_cnt; i++) {
         GList* l = g_list_nth(results, i);
         char* path = l->data;
 
-        list_items[i] = new_item(basename(path), (char*) NULL);
+        if (conf->section_main->numeric_shortcuts) {
+            if (i < 9)
+                list_items[i] = new_item(digits[i], basename(path));
+            else
+                list_items[i] = new_item(" ", basename(path));
+        } else {
+            list_items[i] = new_item(basename(path), (char*) NULL);
+        }
     }
 
     list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
     set_menu_items(menu_list, list_items);
     post_menu(menu_list);
-    /* refresh(); */
 
     update_info_bar(True);
 }
@@ -383,17 +396,33 @@ free_search()
 }
 
 static void
+open_app_later(const char* path)
+{
+    if (path != NULL) {
+        run_app = True;
+        app_to_open(strdup(path));
+    }
+}
+
+static void
 set_app_to_run()
 {
     ITEM* item = current_item(menu_list);
 
     if (item) {
-        char* app_path = g_list_nth_data(results, item_index(item));
+        open_app_later(g_list_nth_data(results, item_index(item)));
+    }
+}
 
-        if (app_path != NULL) {
-            run_app = True;
-            app_to_open(strdup(app_path));
-        }
+static void
+open_by_shortcut(int key)
+{
+    const config_t* conf = config();
+
+    if (conf->section_main->numeric_shortcuts && key >= 49 && key <= 57) {
+        /* Digits */
+
+        open_app_later(g_list_nth_data(results, key - 49));
     }
 }
 
@@ -455,6 +484,8 @@ void run_term()
                 c = key;
             }
         }
+
+        open_by_shortcut(c);
 
         if (c == KEY_DOWN) {
                 menu_driver(menu_list, REQ_DOWN_ITEM);

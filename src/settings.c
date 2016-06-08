@@ -53,6 +53,12 @@ set_allow_spaces(config_t* conf)
 }
 
 static void
+set_numeric_shortcuts(config_t* conf)
+{
+    conf->section_main->numeric_shortcuts = True;
+}
+
+static void
 set_default_configuration(config_t* conf)
 {
     set_default_dirs(conf);
@@ -62,6 +68,7 @@ set_default_configuration(config_t* conf)
     set_recent_apps_first(conf);
     set_min_query_len(conf);
     set_allow_spaces(conf);
+    set_numeric_shortcuts(conf);
 }
 
 void
@@ -197,6 +204,20 @@ load_config()
            g_error_free(error);
            error = NULL;
        }
+
+       section_main->numeric_shortcuts = g_key_file_get_boolean(
+           conf_file,
+           "Main",
+           "numeric_shortcuts",
+           &error
+       );
+
+       if (error != NULL) {
+           set_numeric_shortcuts(CONF);
+           g_error_free(error);
+           error = NULL;
+       }
+
     } else {
         set_default_configuration(CONF);
     }
