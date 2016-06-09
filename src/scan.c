@@ -5,10 +5,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <omp.h>
+/* #include <omp.h> */
 #include <glib.h>
 #include <limits.h>
 #include <string.h>
+/* #include <errno.h> */
 
 #include "scan.h"
 #include "settings.h"
@@ -16,7 +17,6 @@
 
 static void refresh_cache();
 
-int count = 0;
 int PATH = 1024;
 
 static GQueue* search_paths = NULL;
@@ -28,10 +28,13 @@ listdir(char* name, int level)
     DIR* dir;
     struct dirent *entry;
 
-    if (!(dir = opendir(name)))
+    if (! (dir = opendir(name))) {
         return;
-    if (!(entry = readdir(dir)))
+    }
+
+    if (! (entry = readdir(dir))) {
         return;
+    }
 
     char buf[PATH];
 
@@ -63,7 +66,6 @@ listdir(char* name, int level)
             strcat(buf, entry->d_name);
 
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
-                count++;
                 g_queue_push_tail(search_paths,
                     strdup
                     (buf));
@@ -111,6 +113,7 @@ refresh_cache()
 
     for (int i = 0; i < g_queue_get_length(paths); i++) {
         char* t = g_queue_peek_nth(paths, i);
+
         listdir(t, 0);
     }
 }
