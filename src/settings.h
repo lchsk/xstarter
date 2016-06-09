@@ -15,6 +15,7 @@
 
 typedef struct {
     int mode;
+    char* config_path;
 } cmdline_t;
 
 typedef struct {
@@ -32,11 +33,12 @@ typedef struct {
     config_main_t* section_main;
 } config_t;
 
-void load_config();
+void load_config(cmdline_t* cmdline);
 void free_config();
 void usage();
 
 const config_t* config();
 int read_cmdline(cmdline_t* cmdline, int argc, char** argv);
+void free_cmdline(cmdline_t* cmdline);
 
 #endif

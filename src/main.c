@@ -24,14 +24,14 @@ main(int argc, char** argv)
         exit(EXIT_SUCCESS);
 
     if (cmdline->mode == MODE_RETURN_TERMINAL) {
-        load_config();
+        load_config(cmdline);
         char* terminal = config()->section_main->terminal;
         printf("%s", terminal);
         free_config();
     } else if (cmdline->mode == MODE_OPEN_IMMEDIATELY
         || cmdline->mode == MODE_SAVE_TO_FILE
     ) {
-        load_config();
+        load_config(cmdline);
 
         init_search();
         init_term_gui();
@@ -51,9 +51,7 @@ main(int argc, char** argv)
         error = 1;
     }
 
-    if (cmdline) {
-        free(cmdline);
-    }
+    free_cmdline(cmdline);
 
     return error;
 }

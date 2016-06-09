@@ -72,7 +72,7 @@ set_default_configuration(config_t* conf)
 }
 
 void
-load_config()
+load_config(cmdline_t* cmdline)
 {
     GError* error = NULL;
 
@@ -89,7 +89,9 @@ load_config()
         .section_main = section_main
     };
 
-    if (xstarter_dir_avail) {
+    if (cmdline->config_path) {
+        snprintf(path, sizeof(path), "%s", cmdline->config_path);
+    } else if (xstarter_dir_avail) {
         snprintf(
             path,
             sizeof(path),
@@ -250,6 +252,7 @@ usage()
     printf("Optional arguments:\n");
     printf("\t-h\tShow help screen\n");
     printf("\t-v\tShow xstarter version\n");
+    printf("\t-c\tPath to the configuration file\n");
     printf("\t-t\tReturn terminal from the configuration\n");
     printf("\t\t(Intended for internal use)\n");
 }
@@ -264,8 +267,14 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 
     cmdline->mode = MODE_OPEN_IMMEDIATELY;
 
-    while ((c = getopt(argc, argv, "tfhv")) != -1) {
+    while ((c = getopt(argc, argv, "tfhvc:")) != -1) {
         switch(c) {
+        case 'c':
+            /* strcpy(cmdline->config_path, "britt"); */
+            cmdline->config_path = optarg;
+            /* cmdline->config_path = malloc(strlen(optarg)); */
+            /* strcpy(cmdline->config_path, optarg); */
+            break;
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;
             break;
@@ -284,4 +293,15 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
     }
 
     return quit;
+}
+
+void
+free_cmdline(cmdline_t* cmdline)
+{
+    if (cmdline) {
+        if (cmdline->config_path)
+            free(cmdline->config_path);
+
+        free(cmdline);
+    }
 }
