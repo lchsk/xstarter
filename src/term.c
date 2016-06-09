@@ -33,7 +33,7 @@ static int clear_items = False;
 static int run_app = False;
 
 static const char* digits[9] = {
-    "1", "2", "3", "4", "5", "6", "7", "8", "9"
+    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)"
 };
 
 static void
