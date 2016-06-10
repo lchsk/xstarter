@@ -21,6 +21,8 @@ static ITEM** list_items = NULL;
 static FORM* form = NULL;
 static FIELD* field[2] = {NULL};
 
+static int MAX_Y = 20;
+
 static char query[MAX_INPUT_LENGTH];
 static int query_len = 0;
 
@@ -28,9 +30,9 @@ static char* choices[] = {
     (char*) NULL,
 };
 
-static int choices_cnt;
-static int clear_items = False;
-static int run_app = False;
+static int choices_cnt = 0;
+static Boolean clear_items = False;
+static Boolean run_app = False;
 
 static const char* digits[9] = {
     "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)"
@@ -38,7 +40,6 @@ static const char* digits[9] = {
 
 static void
 prepare_for_new_results() {
-
     if (menu_list) {
         unpost_menu(menu_list);
 
@@ -119,7 +120,7 @@ search(char* query)
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         char* path = g_queue_peek_nth(cache, i);
-        int found = True;
+        Boolean found = True;
 
         if (current_query_len == 1) {
             if (strstr(basename(path), query) != NULL) {
@@ -155,30 +156,39 @@ clean_line(int line_y)
 }
 
 static void
-update_info_bar(int items_found)
+clean_info_bar()
+{
+    clean_line(MAX_Y - 0);
+    clean_line(MAX_Y - 1);
+    clean_line(MAX_Y - 2);
+    clean_line(MAX_Y - 3);
+}
+
+static void
+update_info_bar(Boolean items_found)
 {
     if (items_found) {
         GList* l = g_list_nth(
             results,
             item_index(current_item(menu_list))
         );
+
         char* path = l->data;
 
-        clean_line(LINES - 1);
-        clean_line(LINES - 2);
+        clean_info_bar();
 
         char status[100];
 
         snprintf(status, 100, "Results: %d", choices_cnt);
 
-        mvprintw(LINES - 2, 0, status);
-        mvprintw(LINES - 1, 0, path);
+        mvprintw(MAX_Y - 1, 0, status);
+        mvprintw(MAX_Y, 0, path);
     } else {
-        clean_line(LINES - 1);
-        clean_line(LINES - 2);
+        clean_info_bar();
     }
 
-    refresh();
+    /* refresh(); */
+    wrefresh(window);
 }
 
 static void
@@ -305,7 +315,7 @@ init_term_gui()
     field[0] = new_field(
         1, // columns
         20, // width
-        1, // pos y
+        0, // pos y
         0, // pos x
         0,
         0
@@ -326,7 +336,7 @@ init_term_gui()
     window = newwin(
         30, // rows
         max_cols, // cols
-        3,
+        2,
         0
     );
 
@@ -346,7 +356,6 @@ init_term_gui()
 
     /* attron(COLOR_PAIR(2)); */
     mvprintw(0, 0, "This is xstarter. Start typing to search");
-    mvprintw(LINES - 1, 0, "Arrow keys to navigate, <enter> to open, <esc> to quit");
     /* attroff(COLOR_PAIR(2)); */
 
     prepare_for_new_results();
@@ -532,6 +541,10 @@ void run_term()
                     }
                 }
         } else if (isprint(c)){
+            if (query_len == 0) {
+                clean_line(0);
+            }
+
             form_driver(form, c);
             form_driver(form, REQ_VALIDATION);
 
