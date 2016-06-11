@@ -348,18 +348,19 @@ init_term_gui()
     set_menu_mark(menu_list, " ");
 
     box(window, 0, 0);
-    wborder(window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 
     /* set_menu_items(menu_list, list_items); */
     /* post_menu(menu_list); */
     /* wrefresh(window); */
 
     /* attron(COLOR_PAIR(2)); */
-    mvprintw(0, 0, "This is xstarter. Start typing to search");
+    mvprintw(0, 1, "... This is xstarter. Start typing to search");
     /* attroff(COLOR_PAIR(2)); */
 
     prepare_for_new_results();
     update_menu();
+
     /* refresh(); */
     /* wrefresh(window); */
 }
@@ -449,6 +450,7 @@ reset_query()
     prepare_for_new_results();
     show_recent_apps();
     update_menu();
+    move(0, query_len);
 }
 
 static int
@@ -478,7 +480,7 @@ void run_term()
 {
     const config_t* conf = config();
 
-    move(1, 0);
+    move(0, 0);
 
     int c;
 
@@ -540,6 +542,8 @@ void run_term()
                         free(new_query);
                     }
                 }
+
+                move(0, query_len);
         } else if (isprint(c)){
             if (query_len == 0) {
                 clean_line(0);
@@ -565,6 +569,8 @@ void run_term()
 
             search(new_query);
             update_menu();
+
+            move(0, query_len);
         }
 
         wrefresh(window);
