@@ -195,7 +195,7 @@ no_results()
     if (query_len > 0) {
         choices_cnt = 2;
 
-        char* choices[] = {"No results, sorry", (char *) NULL};
+        char* choices[] = {"No results, sorry", (char*) NULL};
 
         list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
 
@@ -297,17 +297,16 @@ init_term_gui()
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
-    /* init_color(10, 200, 20, 550); */
-    /* if (can_change_color()) { */
 
-
-    /* } else{ */
-
-    /* } */
-
-    /* init_color(COLOR_RED, 200, 320, 600); */
-    init_pair(1, COLOR_RED, COLOR_RED);
-    init_pair(2, COLOR_GREEN, COLOR_RED);
+    if (can_change_color()) {
+        init_color(XS_COLOR_BLUE, 43, 180, 349);
+        init_color(XS_COLOR_RED, 886, 27, 124);
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, XS_COLOR_RED);
+        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, XS_COLOR_BLUE);
+    } else{
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, COLOR_RED);
+        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, COLOR_BLUE);
+    }
 
     int max_rows;
     int max_cols;
@@ -323,6 +322,7 @@ init_term_gui()
         0
     );
 
+    set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
     field[1] = NULL;
 
     form = new_form(field);
@@ -345,24 +345,17 @@ init_term_gui()
     keypad(window, TRUE);
 
     set_menu_win(menu_list, window);
-    set_menu_mark(menu_list, " ");
+    set_menu_mark(menu_list, "");
 
     box(window, 0, 0);
     wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 
-    /* set_menu_items(menu_list, list_items); */
-    /* post_menu(menu_list); */
-    /* wrefresh(window); */
-
-    /* attron(COLOR_PAIR(2)); */
     mvprintw(0, 1, "... This is xstarter. Start typing to search");
-    /* attroff(COLOR_PAIR(2)); */
+
+    set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
 
     prepare_for_new_results();
     update_menu();
-
-    /* refresh(); */
-    /* wrefresh(window); */
 }
 
 void
@@ -499,51 +492,49 @@ void run_term()
         open_by_shortcut(c);
 
         if (c == KEY_DOWN) {
-                menu_driver(menu_list, REQ_DOWN_ITEM);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_DOWN_ITEM);
+            update_info_bar(True);
         } else if (c == KEY_UP) {
-                menu_driver(menu_list, REQ_UP_ITEM);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_UP_ITEM);
+            update_info_bar(True);
         } else if (c == KEY_RETURN) {
-                set_app_to_run(True);
+            set_app_to_run(True);
         } else if (c == KEY_NPAGE) {
-                menu_driver(menu_list, REQ_SCR_DPAGE);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_SCR_DPAGE);
+            update_info_bar(True);
         } else if (c == KEY_PPAGE) {
-                menu_driver(menu_list, REQ_SCR_UPAGE);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_SCR_UPAGE);
+            update_info_bar(True);
         } else if (c == KEY_BACKSPACE) {
-                if (query_len >= 1) {
-                    query_len--;
+            if (query_len >= 1) {
+                query_len--;
 
-                    if (query_len == 0) {
-                        reset_query();
-                    } else {
-                        form_driver(form, REQ_DEL_PREV);
-                        form_driver(form, REQ_VALIDATION);
+                if (query_len == 0) {
+                    reset_query();
+                } else {
+                    form_driver(form, REQ_DEL_PREV);
+                    form_driver(form, REQ_VALIDATION);
 
-                        snprintf(
-                            query,
-                            MAX_INPUT_LENGTH,
-                            "%s",
-                            field_buffer(field[0], 0)
-                            );
+                    snprintf(
+                        query,
+                        MAX_INPUT_LENGTH,
+                        "%s",
+                        field_buffer(field[0], 0)
+                    );
 
-                        char* new_query = malloc(query_len + 1);
-                        memcpy(new_query, query, query_len);
-                        new_query[query_len] = '\0';
+                    char* new_query = malloc(query_len + 1);
+                    memcpy(new_query, query, query_len);
+                    new_query[query_len] = '\0';
 
-                        prepare_for_new_results();
+                    prepare_for_new_results();
 
-                        search(new_query);
+                    search(new_query);
 
-                        update_menu();
+                    update_menu();
 
-                        free(new_query);
-                    }
+                    free(new_query);
                 }
-
-                move(0, query_len);
+            }
         } else if (isprint(c)){
             if (query_len == 0) {
                 clean_line(0);
@@ -557,7 +548,7 @@ void run_term()
                 MAX_INPUT_LENGTH,
                 "%s",
                 field_buffer(field[0], 0)
-            );
+                );
 
             query_len++;
             char new_query[query_len];
@@ -569,11 +560,9 @@ void run_term()
 
             search(new_query);
             update_menu();
-
-            move(0, query_len);
         }
-
-        wrefresh(window);
+            move(0, query_len);
+            wrefresh(window);
 
         if (run_app == True) {
             break;
