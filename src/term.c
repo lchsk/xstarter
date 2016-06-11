@@ -21,7 +21,7 @@ static ITEM** list_items = NULL;
 static FORM* form = NULL;
 static FIELD* field[2] = {NULL};
 
-static int MAX_Y = 20;
+static int MAX_Y = 14;
 
 static char query[MAX_INPUT_LENGTH];
 static int query_len = 0;
@@ -160,8 +160,6 @@ clean_info_bar()
 {
     clean_line(MAX_Y - 0);
     clean_line(MAX_Y - 1);
-    clean_line(MAX_Y - 2);
-    clean_line(MAX_Y - 3);
 }
 
 static void
@@ -187,7 +185,7 @@ update_info_bar(Boolean items_found)
         clean_info_bar();
     }
 
-    /* refresh(); */
+    refresh();
     wrefresh(window);
 }
 
@@ -247,6 +245,10 @@ update_menu()
 
     list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
     set_menu_items(menu_list, list_items);
+    set_menu_format(menu_list, 10, 1);
+    wrefresh(window);
+    refresh();
+
     post_menu(menu_list);
 
     update_info_bar(True);
@@ -343,8 +345,6 @@ init_term_gui()
     keypad(window, TRUE);
 
     set_menu_win(menu_list, window);
-    set_menu_format(menu_list, 6, 1);
-
     set_menu_mark(menu_list, " ");
 
     box(window, 0, 0);
@@ -361,7 +361,7 @@ init_term_gui()
     prepare_for_new_results();
     update_menu();
     /* refresh(); */
-    wrefresh(window);
+    /* wrefresh(window); */
 }
 
 void
