@@ -350,7 +350,7 @@ init_term_gui()
     box(window, 0, 0);
     wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 
-    mvprintw(0, 1, "... This is xstarter. Start typing to search");
+    mvprintw(0, 1, "This is xstarter. Start typing to search");
 
     set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
 
