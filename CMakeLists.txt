@@ -15,23 +15,28 @@ find_package(Curses REQUIRED)
 find_package(Glib REQUIRED)
 
 include_directories(
-    ${Glib_INCLUDE_DIRS}
-    ${CURSES_INCLUDE_DIR}
+	${Glib_INCLUDE_DIRS}
+	${CURSES_INCLUDE_DIR}
 )
 
 add_executable(xstarter
-    src/main.c
-    src/scan.c
-    src/settings.c
-    src/term.c
-    src/utils.c
-    src/utils_string.c
+	src/main.c
+	src/scan.c
+	src/settings.c
+	src/term.c
+	src/utils.c
+	src/utils_string.c
+)
+
+add_executable(xstarter_run
+	src/run.c
 )
 
 target_link_libraries(xstarter
-    ${Glib_LIBRARIES}
-    ${CURSES_LIBRARIES}
-    -lmenu
+	${Glib_LIBRARIES}
+	${CURSES_LIBRARIES}
+	-lmenu
 )
 
 install (TARGETS xstarter DESTINATION bin)
+install (TARGETS xstarter_run DESTINATION bin)

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+#include <fcntl.h>
 
 #include "utils.h"
 
@@ -100,65 +101,71 @@ read_recently_open_list()
 
 void open_app(const int mode)
 {
-	if (_app_to_open_path) {
+    if (_app_to_open_path) {
         record_open_file(_app_to_open_path);
 
-		char command[256];
+        char command[256];
 
-		if (mode == MODE_SAVE_TO_FILE) {
-			snprintf(
-				command,
-				sizeof(command),
-				"echo %s> /tmp/.xstarter",
-				_app_to_open_path
-			);
-		} else if (mode == MODE_OPEN_IMMEDIATELY) {
-			snprintf(
-				command,
-				sizeof(command),
-				"nohup %s 2> /dev/null &",
-				_app_to_open_path
-			);
-		}
+        if (mode == MODE_SAVE_TO_FILE) {
+            char line[1024];
 
-		system(command);
-	}
+            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+            int pipe = open(
+                "/tmp/xstarter",
+                O_WRONLY | O_CREAT | O_TRUNC, mode
+            );
+
+            strcpy(line, _app_to_open_path);
+
+            write(pipe, line, strlen(line) + 1);
+
+            close(pipe);
+        } else if (mode == MODE_OPEN_IMMEDIATELY) {
+            snprintf(
+                command,
+                sizeof(command),
+                "nohup %s 2> /dev/null &",
+                _app_to_open_path
+            );
+            system(command);
+        }
+    }
 }
 
 void
 app_to_open(char* path)
 {
-	_app_to_open_path = path;
+    _app_to_open_path = path;
 }
 
 /* TODO: remove */
 int
 running_from_term()
 {
-	return isatty(0);
+    return isatty(0);
 }
 
 /* int */
 /* get_config_path(char* home_dir) */
 /* { */
-/* 	char* dir = NULL; */
-/* 	if ((dir = (getenv("HOME"))) == NULL) { */
-/* 		struct passwd* pw = getpwuid(getuid()); */
-/* 		dir = pw->pw_dir; */
-/* 	} */
+/*      char* dir = NULL; */
+/*      if ((dir = (getenv("HOME"))) == NULL) { */
+/*          struct passwd* pw = getpwuid(getuid()); */
+/*          dir = pw->pw_dir; */
+/*      } */
 
-/* 	if (dir != NULL) { */
-/* 		strcpy(home_dir, dir); */
-/* 		return 0; */
-/* 	} */
+/*      if (dir != NULL) { */
+/*          strcpy(home_dir, dir); */
+/*          return 0; */
+/*      } */
 
-/* 	return 1; */
+/*      return 1; */
 /* } */
 
 void
 dump_debug(const char* str)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -167,13 +174,13 @@ dump_debug(const char* str)
         str
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
 dump_debug_char(const char c)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -182,13 +189,13 @@ dump_debug_char(const char c)
         c
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
 dump_debug_int(int d)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -197,7 +204,7 @@ dump_debug_int(int d)
         d
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
@@ -226,18 +233,18 @@ xstarter_directory()
 {
     xstarter_dir_avail = True;
 
-	char* dir = NULL;
+    char* dir = NULL;
 
-	if ((dir = (getenv("HOME"))) == NULL) {
-		struct passwd* pw = getpwuid(getuid());
-		dir = pw->pw_dir;
-	}
+    if ((dir = (getenv("HOME"))) == NULL) {
+        struct passwd* pw = getpwuid(getuid());
+        dir = pw->pw_dir;
+    }
 
     if (! dir) {
         // TODO: Set dir = /tmp
     }
 
-	if (dir) {
+    if (dir) {
         snprintf(
             xstarter_dir,
             sizeof(xstarter_dir),
@@ -256,5 +263,5 @@ xstarter_directory()
         } else {
             xstarter_dir_avail = True;
         }
-	}
+    }
 }
