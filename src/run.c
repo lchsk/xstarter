@@ -75,7 +75,7 @@ main(int argc, char** argv)
     snprintf(
         path,
         MAX_LEN,
-        "%s -e %s -f",
+        "%s -e %s",
         terminal,
         xstarter_run
     );
