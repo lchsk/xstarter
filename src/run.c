@@ -88,7 +88,11 @@ main(int argc, char** argv)
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     int pipe = open("/tmp/xstarter", O_RDONLY, mode);
 
-    read(pipe, path, MAX_LEN);
+    if (! read(pipe, path, MAX_LEN)) {
+        /* Pipe is empty - quit */
+        exit(0);
+    }
+
     close(pipe);
 
     snprintf(
