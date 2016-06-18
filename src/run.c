@@ -42,8 +42,20 @@ check_path(char *out, char *in)
 int
 get_xstarter_path(int argc, char **argv, char *path)
 {
-    ssize_t ret = readlink(
+    ssize_t ret;
+
+    ret = readlink(
         "/proc/self/exe",
+        path,
+        MAX_LEN - 1
+    );
+
+    if (ret != -1) {
+        return 1;
+    }
+
+    ret = readlink(
+        "/proc/curproc/file",
         path,
         MAX_LEN - 1
     );
