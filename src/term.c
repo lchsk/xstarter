@@ -36,8 +36,8 @@ static int choices_cnt = 0;
 static Boolean clear_items = False;
 static Boolean run_app = False;
 
-static const char* digits[9] = {
-    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)"
+static const char* digits[10] = {
+    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
 };
 
 static void
@@ -236,7 +236,7 @@ update_menu()
         char* path = l->data;
 
         if (conf->section_main->numeric_shortcuts) {
-            if (i < 9)
+            if (i < 10)
                 list_items[i] = new_item(digits[i], basename(path));
             else
                 list_items[i] = new_item(" ", basename(path));
@@ -424,10 +424,12 @@ open_by_shortcut(int key)
 {
     const config_t* conf = config();
 
-    if (conf->section_main->numeric_shortcuts && key >= 49 && key <= 57) {
-        /* Digits */
-
-        open_app_later(g_list_nth_data(results, key - 49));
+    if (conf->section_main->numeric_shortcuts) {
+        if (key >= ASCII_1 && key <= ASCII_9)
+            open_app_later(g_list_nth_data(results, key - ASCII_1));
+        else if (key == ASCII_0) {
+            open_app_later(g_list_nth_data(results, 9));
+        }
     }
 }
 

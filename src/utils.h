@@ -16,6 +16,10 @@
 #define RECENT_APPS_REMEMBERED (100)
 #define RECENT_APPS_SHOWN (10)
 
+#define ASCII_0 (48)
+#define ASCII_1 (49)
+#define ASCII_9 (57)
+
 char xstarter_dir[1024];
 int xstarter_dir_avail;
 
