@@ -8,9 +8,8 @@
 
 /* MODES */
 
-#define MODE_OPEN_IMMEDIATELY (1)
-#define MODE_SAVE_TO_FILE (2)
-#define MODE_RETURN_TERMINAL (3)
+#define MODE_RETURN_TERMINAL (1)
+#define MODE_OPEN_APP (2)
 
 // TODO: Move those to the configuration file
 #define RECENT_APPS_REMEMBERED (100)
@@ -28,7 +27,7 @@ int recent_apps_cnt;
 
 int running_from_term();
 void app_to_open(char* path);
-void open_app(const int mode);
+void open_app();
 
 void dump_debug(const char* str);
 void dump_debug_int(int d);

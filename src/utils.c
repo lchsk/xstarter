@@ -101,7 +101,7 @@ read_recently_open_list()
     }
 }
 
-void open_app(const int mode2)
+void open_app()
 {
     if (_app_to_open_path) {
         record_open_file(_app_to_open_path);

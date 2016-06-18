@@ -254,7 +254,6 @@ usage()
     printf("\t-v\tShow xstarter version\n");
     printf("\t-c\tPath to the configuration file\n");
     printf("\t-t\tReturn terminal from the configuration\n");
-    printf("\t\t(Intended for internal use)\n");
 }
 
 int
@@ -265,9 +264,10 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 
     /* Default settings: */
 
-    cmdline->mode = MODE_OPEN_IMMEDIATELY;
+    cmdline->mode = MODE_OPEN_APP;
+    cmdline->config_path = NULL;
 
-    while ((c = getopt(argc, argv, "tfhvc:")) != -1) {
+    while ((c = getopt(argc, argv, "thvc:")) != -1) {
         switch(c) {
         case 'c':
             /* strcpy(cmdline->config_path, "britt"); */
@@ -277,9 +277,6 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
             break;
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;
-            break;
-        case 'f':
-            cmdline->mode = MODE_SAVE_TO_FILE;
             break;
         case 'v':
             printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);

@@ -28,9 +28,7 @@ main(int argc, char** argv)
         char* terminal = config()->section_main->terminal;
         printf("%s", terminal);
         free_config();
-    } else if (cmdline->mode == MODE_OPEN_IMMEDIATELY
-        || cmdline->mode == MODE_SAVE_TO_FILE
-    ) {
+    } else if (cmdline->mode == MODE_OPEN_APP) {
         load_config(cmdline);
 
         init_search();
@@ -45,7 +43,7 @@ main(int argc, char** argv)
         free_search();
         free_config();
 
-        open_app(cmdline->mode);
+        open_app();
     } else {
         printf("Unknown application mode");
         error = 1;
