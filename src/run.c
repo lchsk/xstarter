@@ -81,7 +81,7 @@ main(int argc, char **argv)
         exit(1);
     }
 
-    /* Fix this */
+    /* TODO: Fix this */
 
     while (fgets(terminal, sizeof(terminal), fp) != NULL);
     pclose(fp);
@@ -113,7 +113,7 @@ main(int argc, char **argv)
     snprintf(
         command,
         500,
-        "nohup %s &",
+        "nohup %s 2> /dev/null &",
         path
     );
 
