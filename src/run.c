@@ -10,15 +10,26 @@
 #define MAX_LEN (2048)
 
 int
-main(int argc, char** argv)
+main(int argc, char **argv)
 {
-    FILE* fp;
+    FILE *fp;
     char path[MAX_LEN];
     char command[MAX_LEN + 10];
     char terminal[32];
     char xstarter_path[MAX_LEN];
     char xstarter_run[MAX_LEN];
     int xstarter_dir_found = 0;
+    int pipe;
+    mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+    pipe = open(
+        "/tmp/xstarter",
+        O_WRONLY | O_CREAT | O_TRUNC, mode
+    );
+
+    write(pipe, "-", 2);
+
+    close(pipe);
 
     /* Get xstarter directory */
 
@@ -85,8 +96,7 @@ main(int argc, char** argv)
 
     /* Read from pipe */
 
-    mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-    int pipe = open("/tmp/xstarter", O_RDONLY, mode);
+    pipe = open("/tmp/xstarter", O_RDONLY, mode);
 
     if (! read(pipe, path, MAX_LEN)) {
         /* Pipe is empty - quit */

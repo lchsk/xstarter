@@ -99,17 +99,33 @@ read_recently_open_list()
     }
 }
 
-void open_app(const int mode)
+void open_app(const int mode2)
 {
     if (_app_to_open_path) {
         record_open_file(_app_to_open_path);
 
         char command[256];
 
-        if (mode == MODE_SAVE_TO_FILE) {
+        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+        int pipe = open("/tmp/xstarter", O_RDONLY | O_CREAT);
+        char pipe_data[2];
+
+        int mod = read(pipe, pipe_data, 1);
+
+        if (mod == 0) {
+            // Open
+            snprintf(
+                command,
+                sizeof(command),
+                "nohup %s 2> /dev/null &",
+                _app_to_open_path
+            );
+            system(command);
+
+        } else {
+            // save to pipe
             char line[1024];
 
-            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
             int pipe = open(
                 "/tmp/xstarter",
                 O_WRONLY | O_CREAT | O_TRUNC, mode
@@ -120,14 +136,6 @@ void open_app(const int mode)
             write(pipe, line, strlen(line) + 1);
 
             close(pipe);
-        } else if (mode == MODE_OPEN_IMMEDIATELY) {
-            snprintf(
-                command,
-                sizeof(command),
-                "nohup %s 2> /dev/null &",
-                _app_to_open_path
-            );
-            system(command);
         }
     }
 }
