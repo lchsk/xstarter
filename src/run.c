@@ -11,7 +11,57 @@
 #define PIPE "/tmp/xstarter"
 
 int
-main()
+check_path(char *out, char *in)
+{
+    if (in[0] == '/') {
+        /* Absolute path */
+
+        strcpy(out, in);
+
+        return 1;
+    } else if (in[0] == '.' && in[1] == '/') {
+        /* Path starting with ./ - append it to cwd */
+
+        char cwd[MAX_LEN];
+
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            char *xs = in;
+            xs += 2;
+            strcat(cwd, "/");
+            strcat(cwd, xs);
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+/* Get path to xstarter using different methods */
+/* Returns 1 if the path was found */
+int
+get_xstarter_path(int argc, char **argv, char *path)
+{
+    ssize_t ret = readlink(
+        "/proc/self/exe",
+        path,
+        MAX_LEN - 1
+    );
+
+    if (ret != -1) {
+        return 1;
+    }
+
+    if (argc >= 1) {
+        if (check_path(path, argv[0]))
+            return 1;
+    }
+
+    return 0;
+}
+
+int
+main(int argc, char **argv)
 {
     FILE *fp;
     char path[MAX_LEN];
@@ -31,20 +81,11 @@ main()
     );
 
     write(pipe, "-", 2);
-
     close(pipe);
 
     /* Get xstarter directory */
 
-    ssize_t ret = readlink(
-        "/proc/self/exe",
-        xstarter_path,
-        sizeof(xstarter_path) - 1
-    );
-
-    if (ret != -1) {
-        xstarter_dir_found = 1;
-    }
+    xstarter_dir_found = get_xstarter_path(argc, argv, xstarter_path);
 
     if (xstarter_dir_found) {
         dirname(xstarter_path);
@@ -56,9 +97,7 @@ main()
     strcat(xstarter_run, "/");
     strcat(xstarter_run, "xstarter");
 
-    if (stat(xstarter_run, &sb) == 0 && sb.st_mode & S_IXUSR) {
-
-    } else {
+    if (! (stat(xstarter_run, &sb) == 0 && sb.st_mode & S_IXUSR)) {
         printf("%s doesn't exist or is not executable\n", xstarter_run);
         exit(1);
     }

@@ -428,7 +428,7 @@ open_by_shortcut(int key)
         if (key >= ASCII_1 && key <= ASCII_9)
             open_app_later(g_list_nth_data(results, key - ASCII_1));
         else if (key == ASCII_0) {
-            open_app_later(g_list_nth_data(results, 9));
+            open_app_later(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
         }
     }
 }
