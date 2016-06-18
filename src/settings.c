@@ -270,10 +270,7 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
     while ((c = getopt(argc, argv, "thvc:")) != -1) {
         switch(c) {
         case 'c':
-            /* strcpy(cmdline->config_path, "britt"); */
             cmdline->config_path = optarg;
-            /* cmdline->config_path = malloc(strlen(optarg)); */
-            /* strcpy(cmdline->config_path, optarg); */
             break;
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;

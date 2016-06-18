@@ -75,14 +75,14 @@ get_xstarter_path(int argc, char **argv, char *path)
 int
 main(int argc, char **argv)
 {
-    FILE *fp;
+    FILE *fp = NULL;
     char path[MAX_LEN];
     char command[MAX_LEN + 10];
     char terminal[32];
-    char xstarter_path[MAX_LEN];
-    char xstarter_run[MAX_LEN];
+    char xstarter_path[MAX_LEN] = "";
+    char xstarter_run[MAX_LEN] = "";
     int xstarter_dir_found = 0;
-    int pipe;
+    int pipe = 0;
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
     /* Write to pipe - xstarter should read it and reply to the pipe */
