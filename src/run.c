@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 
 #define MAX_LEN (2048)
+#define PIPE "/tmp/xstarter"
 
 int
 main(int argc, char **argv)
@@ -23,7 +24,7 @@ main(int argc, char **argv)
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
     pipe = open(
-        "/tmp/xstarter",
+        PIPE,
         O_WRONLY | O_CREAT | O_TRUNC, mode
     );
 
@@ -33,7 +34,11 @@ main(int argc, char **argv)
 
     /* Get xstarter directory */
 
-    ssize_t ret = readlink("/proc/self/exe", xstarter_path, sizeof(xstarter_path) - 1);
+    ssize_t ret = readlink(
+        "/proc/self/exe",
+        xstarter_path,
+        sizeof(xstarter_path) - 1
+    );
 
     if (ret != -1) {
         xstarter_dir_found = 1;
@@ -96,7 +101,7 @@ main(int argc, char **argv)
 
     /* Read from pipe */
 
-    pipe = open("/tmp/xstarter", O_RDONLY, mode);
+    pipe = open(PIPE, O_RDONLY, mode);
 
     if (! read(pipe, path, MAX_LEN)) {
         /* Pipe is empty - quit */
@@ -114,7 +119,7 @@ main(int argc, char **argv)
 
     /* Reset pipe */
 
-    pipe = open("/tmp/xstarter", O_WRONLY | O_TRUNC);
+    pipe = open(PIPE, O_WRONLY | O_TRUNC);
     close(pipe);
 
     /* Run the application */

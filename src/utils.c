@@ -11,6 +11,8 @@
 
 #include "utils.h"
 
+#define PIPE "/tmp/xstarter"
+
 static char* _app_to_open_path;
 
 static void
@@ -107,7 +109,7 @@ void open_app(const int mode2)
         char command[256];
 
         mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-        int pipe = open("/tmp/xstarter", O_RDONLY | O_CREAT);
+        int pipe = open(PIPE, O_RDONLY | O_CREAT);
         char pipe_data[2];
 
         int mod = read(pipe, pipe_data, 1);
@@ -127,7 +129,7 @@ void open_app(const int mode2)
             char line[1024];
 
             int pipe = open(
-                "/tmp/xstarter",
+                PIPE,
                 O_WRONLY | O_CREAT | O_TRUNC, mode
             );
 
