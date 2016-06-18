@@ -481,7 +481,7 @@ void run_term()
 
     int c;
 
-    while((c = getch()) != KEY_ESCAPE)
+    while((c = wgetch(window)) != KEY_ESCAPE)
     {
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
