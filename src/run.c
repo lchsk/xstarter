@@ -11,7 +11,7 @@
 #define PIPE "/tmp/xstarter"
 
 int
-main(int argc, char **argv)
+main()
 {
     FILE *fp;
     char path[MAX_LEN];
@@ -22,6 +22,8 @@ main(int argc, char **argv)
     int xstarter_dir_found = 0;
     int pipe;
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+    /* Write to pipe - xstarter should read it and reply to the pipe */
 
     pipe = open(
         PIPE,
@@ -57,13 +59,11 @@ main(int argc, char **argv)
     if (stat(xstarter_run, &sb) == 0 && sb.st_mode & S_IXUSR) {
 
     } else {
-        printf("%s doesn't exist or is not executable", xstarter_run);
+        printf("%s doesn't exist or is not executable\n", xstarter_run);
         exit(1);
     }
 
     /* Get terminal name */
-
-    /* TODO: Add checks for when the file doesnt exist */
 
     char cmd[MAX_LEN];
 
@@ -77,13 +77,14 @@ main(int argc, char **argv)
     fp = popen(cmd, "r");
 
     if (! fp) {
-        printf("Failed to read terminal value");
+        printf("Failed to read terminal value\n");
         exit(1);
     }
 
-    /* TODO: Fix this */
-
-    while (fgets(terminal, sizeof(terminal), fp) != NULL);
+    if (! fgets(terminal, sizeof(terminal), fp)) {
+        printf("No terminal found\n");
+        exit(1);
+    }
     pclose(fp);
 
     /* Run xstarter on terminal */
@@ -112,7 +113,7 @@ main(int argc, char **argv)
 
     snprintf(
         command,
-        500,
+        sizeof(command),
         "nohup %s 2> /dev/null &",
         path
     );
