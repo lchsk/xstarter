@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -123,7 +125,7 @@ search(char* query)
         Boolean found = True;
 
         if (current_query_len == 1) {
-            if (strstr(basename(path), query) != NULL) {
+            if (strcasestr(basename(path), query) != NULL) {
                 results = g_list_prepend(results, path);
             }
         } else if (current_query_len > 1) {
