@@ -358,6 +358,10 @@ init_term_gui()
 
     prepare_for_new_results();
     update_menu();
+        move(0, 0);
+    refresh();
+    wrefresh(window);
+
 }
 
 void
@@ -539,7 +543,7 @@ void run_term()
                     free(new_query);
                 }
             }
-        } else if (isprint(c)){
+        } else if (isprint(c)) {
             if (query_len == 0) {
                 clean_line(0);
             }
@@ -565,8 +569,10 @@ void run_term()
             search(new_query);
             update_menu();
         }
-            move(0, query_len);
-            wrefresh(window);
+
+        move(0, query_len);
+        wrefresh(window);
+        refresh();
 
         if (run_app == True) {
             break;
