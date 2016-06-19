@@ -295,7 +295,17 @@ print_err()
 {
     printf("Error code: %d\n", err);
 
-    if (err == NO_ERR) {
-        PRINT("No error");
+    switch (err) {
+        case NO_ERR:
+            PRINT("No error");
+            break;
+        case ERR_UNKNOWN_APP_MODE:
+            PRINT("Unknown application mode");
+            break;
+        case ERR_NO_XSTARTER_DIR:
+            PRINT("No xstarter directory found");
+            break;
+        default:
+            PRINT("Unknown error");
     }
 }
