@@ -1,22 +1,34 @@
 # xstarter
 
-**xstarter is a terminal-based application launcher for *nix systems.**
+**xstarter is a terminal-based application launcher for Linux.**
 
-## Building
+| Branch | Build |
+| --- | --- |
+|`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
+|`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
+
+## Installation
 
 ```
-$ git clone https://github.com/lchsk/xstarter/
-$ cd xstarter
-$ cmake .
-$ make
+git clone https://github.com/lchsk/xstarter/
+cd xstarter
+cmake .
+make
 ```
 
-Run `./bin/xstarter` to open the application.
+Run `./bin/xstarter` to open the application in the terminal.
+
+To install:
+
+```
+make install
+```
 
 ## Run xstarter using a key binding
 
-**xstarter** needs to be started from a terminal. If you want to run it using a key binding, a helpful shell script is available. Bind your preferred shortcut to the `xstarter_run.sh` file in the main directory.
-Currently supported terminal emulators include: xterm, *rxvt, gnome-terminal, xfce4-terminal, konsole.
+**xstarter** needs to be started from a terminal. If you want to run it using a key binding, bind your preferred shortcut to the `./bin/xstarter_run` file.
+
+It should run on any modern terminal. It is tested on: xterm, rxvt, gnome-terminal, xfce4-terminal, konsole. In case of any problems please [report it](https://github.com/lchsk/xstarter/issues/new).
 
 ## Configuration
 

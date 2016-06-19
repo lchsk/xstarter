@@ -11,10 +11,11 @@
 #define CONFIG_FILE "xstarter.conf"
 
 #define PROGRAM_NAME "xstarter"
-#define XSTARTER_VERSION "0.2.1"
+#define XSTARTER_VERSION "0.3.0"
 
 typedef struct {
     int mode;
+    Boolean verbose;
     char* config_path;
 } cmdline_t;
 

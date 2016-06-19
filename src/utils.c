@@ -7,8 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+#include <fcntl.h>
 
 #include "utils.h"
+
+#define PIPE "/tmp/xstarter"
 
 static char* _app_to_open_path;
 
@@ -98,67 +101,81 @@ read_recently_open_list()
     }
 }
 
-void open_app(const int mode)
+void open_app()
 {
-	if (_app_to_open_path) {
+    if (_app_to_open_path) {
         record_open_file(_app_to_open_path);
 
-		char command[256];
+        char command[256];
 
-		if (mode == MODE_SAVE_TO_FILE) {
-			snprintf(
-				command,
-				sizeof(command),
-				"echo %s> /tmp/.xstarter",
-				_app_to_open_path
-			);
-		} else if (mode == MODE_OPEN_IMMEDIATELY) {
-			snprintf(
-				command,
-				sizeof(command),
-				"nohup %s 2> /dev/null &",
-				_app_to_open_path
-			);
-		}
+        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+        int pipe = open(PIPE, O_RDONLY | O_CREAT);
+        char pipe_data[2];
 
-		system(command);
-	}
+        int mod = read(pipe, pipe_data, 1);
+
+        if (mod == 0) {
+            // Open
+            snprintf(
+                command,
+                sizeof(command),
+                "nohup %s 2> /dev/null &",
+                _app_to_open_path
+            );
+            system(command);
+
+        } else {
+            // save to pipe
+            char line[1024];
+
+            int pipe = open(
+                PIPE,
+                O_WRONLY | O_CREAT | O_TRUNC, mode
+            );
+
+            strcpy(line, _app_to_open_path);
+
+            write(pipe, line, strlen(line) + 1);
+
+            close(pipe);
+        }
+    }
 }
 
 void
 app_to_open(char* path)
 {
-	_app_to_open_path = path;
+    _app_to_open_path = path;
 }
 
 /* TODO: remove */
 int
 running_from_term()
 {
-	return isatty(0);
+    return isatty(0);
 }
 
 /* int */
 /* get_config_path(char* home_dir) */
 /* { */
-/* 	char* dir = NULL; */
-/* 	if ((dir = (getenv("HOME"))) == NULL) { */
-/* 		struct passwd* pw = getpwuid(getuid()); */
-/* 		dir = pw->pw_dir; */
-/* 	} */
+/*      char* dir = NULL; */
+/*      if ((dir = (getenv("HOME"))) == NULL) { */
+/*          struct passwd* pw = getpwuid(getuid()); */
+/*          dir = pw->pw_dir; */
+/*      } */
 
-/* 	if (dir != NULL) { */
-/* 		strcpy(home_dir, dir); */
-/* 		return 0; */
-/* 	} */
+/*      if (dir != NULL) { */
+/*          strcpy(home_dir, dir); */
+/*          return 0; */
+/*      } */
 
-/* 	return 1; */
+/*      return 1; */
 /* } */
 
 void
 dump_debug(const char* str)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -167,13 +184,13 @@ dump_debug(const char* str)
         str
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
 dump_debug_char(const char c)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -182,13 +199,13 @@ dump_debug_char(const char c)
         c
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
 dump_debug_int(int d)
 {
-	char debug[1024];
+    char debug[1024];
 
     snprintf(
         debug,
@@ -197,7 +214,7 @@ dump_debug_int(int d)
         d
     );
 
-	system(debug);
+    system(debug);
 }
 
 void
@@ -226,18 +243,18 @@ xstarter_directory()
 {
     xstarter_dir_avail = True;
 
-	char* dir = NULL;
+    char* dir = NULL;
 
-	if ((dir = (getenv("HOME"))) == NULL) {
-		struct passwd* pw = getpwuid(getuid());
-		dir = pw->pw_dir;
-	}
+    if ((dir = (getenv("HOME"))) == NULL) {
+        struct passwd* pw = getpwuid(getuid());
+        dir = pw->pw_dir;
+    }
 
     if (! dir) {
         // TODO: Set dir = /tmp
     }
 
-	if (dir) {
+    if (dir) {
         snprintf(
             xstarter_dir,
             sizeof(xstarter_dir),
@@ -256,5 +273,39 @@ xstarter_directory()
         } else {
             xstarter_dir_avail = True;
         }
-	}
+    }
+}
+
+void
+set_err(int err_code)
+{
+    /* Only set the first encountered error */
+    if (err == NO_ERR)
+        err = err_code;
+}
+
+int
+get_err()
+{
+    return err;
+}
+
+void
+print_err()
+{
+    printf("Error code: %d\n", err);
+
+    switch (err) {
+        case NO_ERR:
+            PRINT("No error");
+            break;
+        case ERR_UNKNOWN_APP_MODE:
+            PRINT("Unknown application mode");
+            break;
+        case ERR_NO_XSTARTER_DIR:
+            PRINT("No xstarter directory found");
+            break;
+        default:
+            PRINT("Unknown error");
+    }
 }

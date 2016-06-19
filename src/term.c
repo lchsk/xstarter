@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -21,6 +23,8 @@ static ITEM** list_items = NULL;
 static FORM* form = NULL;
 static FIELD* field[2] = {NULL};
 
+static int MAX_Y = 14;
+
 static char query[MAX_INPUT_LENGTH];
 static int query_len = 0;
 
@@ -28,17 +32,16 @@ static char* choices[] = {
     (char*) NULL,
 };
 
-static int choices_cnt;
-static int clear_items = False;
-static int run_app = False;
+static int choices_cnt = 0;
+static Boolean clear_items = False;
+static Boolean run_app = False;
 
-static const char* digits[9] = {
-    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)"
+static const char* digits[10] = {
+    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
 };
 
 static void
 prepare_for_new_results() {
-
     if (menu_list) {
         unpost_menu(menu_list);
 
@@ -119,10 +122,10 @@ search(char* query)
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         char* path = g_queue_peek_nth(cache, i);
-        int found = True;
+        Boolean found = True;
 
         if (current_query_len == 1) {
-            if (strstr(basename(path), query) != NULL) {
+            if (strcasestr(basename(path), query) != NULL) {
                 results = g_list_prepend(results, path);
             }
         } else if (current_query_len > 1) {
@@ -155,30 +158,37 @@ clean_line(int line_y)
 }
 
 static void
-update_info_bar(int items_found)
+clean_info_bar()
+{
+    clean_line(MAX_Y - 0);
+    clean_line(MAX_Y - 1);
+}
+
+static void
+update_info_bar(Boolean items_found)
 {
     if (items_found) {
         GList* l = g_list_nth(
             results,
             item_index(current_item(menu_list))
         );
+
         char* path = l->data;
 
-        clean_line(LINES - 1);
-        clean_line(LINES - 2);
+        clean_info_bar();
 
         char status[100];
 
         snprintf(status, 100, "Results: %d", choices_cnt);
 
-        mvprintw(LINES - 2, 0, status);
-        mvprintw(LINES - 1, 0, path);
+        mvprintw(MAX_Y - 1, 0, status);
+        mvprintw(MAX_Y, 0, path);
     } else {
-        clean_line(LINES - 1);
-        clean_line(LINES - 2);
+        clean_info_bar();
     }
 
     refresh();
+    wrefresh(window);
 }
 
 static void
@@ -187,7 +197,7 @@ no_results()
     if (query_len > 0) {
         choices_cnt = 2;
 
-        char* choices[] = {"No results, sorry", (char *) NULL};
+        char* choices[] = {"No results, sorry", (char*) NULL};
 
         list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
 
@@ -226,7 +236,7 @@ update_menu()
         char* path = l->data;
 
         if (conf->section_main->numeric_shortcuts) {
-            if (i < 9)
+            if (i < 10)
                 list_items[i] = new_item(digits[i], basename(path));
             else
                 list_items[i] = new_item(" ", basename(path));
@@ -237,6 +247,10 @@ update_menu()
 
     list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
     set_menu_items(menu_list, list_items);
+    set_menu_format(menu_list, 10, 1);
+    wrefresh(window);
+    refresh();
+
     post_menu(menu_list);
 
     update_info_bar(True);
@@ -285,17 +299,16 @@ init_term_gui()
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
-    /* init_color(10, 200, 20, 550); */
-    /* if (can_change_color()) { */
 
-
-    /* } else{ */
-
-    /* } */
-
-    /* init_color(COLOR_RED, 200, 320, 600); */
-    init_pair(1, COLOR_RED, COLOR_RED);
-    init_pair(2, COLOR_GREEN, COLOR_RED);
+    if (can_change_color()) {
+        init_color(XS_COLOR_BLUE, 43, 180, 349);
+        init_color(XS_COLOR_RED, 886, 27, 124);
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, XS_COLOR_RED);
+        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, XS_COLOR_BLUE);
+    } else{
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, COLOR_RED);
+        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, COLOR_BLUE);
+    }
 
     int max_rows;
     int max_cols;
@@ -305,12 +318,13 @@ init_term_gui()
     field[0] = new_field(
         1, // columns
         20, // width
-        1, // pos y
+        0, // pos y
         0, // pos x
         0,
         0
     );
 
+    set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
     field[1] = NULL;
 
     form = new_form(field);
@@ -326,33 +340,24 @@ init_term_gui()
     window = newwin(
         30, // rows
         max_cols, // cols
-        3,
+        2,
         0
     );
 
     keypad(window, TRUE);
 
     set_menu_win(menu_list, window);
-    set_menu_format(menu_list, 6, 1);
-
-    set_menu_mark(menu_list, " ");
+    set_menu_mark(menu_list, "");
 
     box(window, 0, 0);
-    wborder(window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 
-    /* set_menu_items(menu_list, list_items); */
-    /* post_menu(menu_list); */
-    /* wrefresh(window); */
+    mvprintw(0, 1, "This is xstarter. Start typing to search");
 
-    /* attron(COLOR_PAIR(2)); */
-    mvprintw(0, 0, "This is xstarter. Start typing to search");
-    mvprintw(LINES - 1, 0, "Arrow keys to navigate, <enter> to open, <esc> to quit");
-    /* attroff(COLOR_PAIR(2)); */
+    set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
 
     prepare_for_new_results();
     update_menu();
-    /* refresh(); */
-    wrefresh(window);
 }
 
 void
@@ -419,10 +424,12 @@ open_by_shortcut(int key)
 {
     const config_t* conf = config();
 
-    if (conf->section_main->numeric_shortcuts && key >= 49 && key <= 57) {
-        /* Digits */
-
-        open_app_later(g_list_nth_data(results, key - 49));
+    if (conf->section_main->numeric_shortcuts) {
+        if (key >= ASCII_1 && key <= ASCII_9)
+            open_app_later(g_list_nth_data(results, key - ASCII_1));
+        else if (key == ASCII_0) {
+            open_app_later(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
+        }
     }
 }
 
@@ -440,6 +447,7 @@ reset_query()
     prepare_for_new_results();
     show_recent_apps();
     update_menu();
+    move(0, query_len);
 }
 
 static int
@@ -469,11 +477,11 @@ void run_term()
 {
     const config_t* conf = config();
 
-    move(1, 0);
+    move(0, 0);
 
     int c;
 
-    while((c = getch()) != KEY_ESCAPE)
+    while((c = wgetch(window)) != KEY_ESCAPE)
     {
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
@@ -488,50 +496,54 @@ void run_term()
         open_by_shortcut(c);
 
         if (c == KEY_DOWN) {
-                menu_driver(menu_list, REQ_DOWN_ITEM);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_DOWN_ITEM);
+            update_info_bar(True);
         } else if (c == KEY_UP) {
-                menu_driver(menu_list, REQ_UP_ITEM);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_UP_ITEM);
+            update_info_bar(True);
         } else if (c == KEY_RETURN) {
-                set_app_to_run(True);
+            set_app_to_run(True);
         } else if (c == KEY_NPAGE) {
-                menu_driver(menu_list, REQ_SCR_DPAGE);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_SCR_DPAGE);
+            update_info_bar(True);
         } else if (c == KEY_PPAGE) {
-                menu_driver(menu_list, REQ_SCR_UPAGE);
-                update_info_bar(True);
+            menu_driver(menu_list, REQ_SCR_UPAGE);
+            update_info_bar(True);
         } else if (c == KEY_BACKSPACE) {
-                if (query_len >= 1) {
-                    query_len--;
+            if (query_len >= 1) {
+                query_len--;
 
-                    if (query_len == 0) {
-                        reset_query();
-                    } else {
-                        form_driver(form, REQ_DEL_PREV);
-                        form_driver(form, REQ_VALIDATION);
+                if (query_len == 0) {
+                    reset_query();
+                } else {
+                    form_driver(form, REQ_DEL_PREV);
+                    form_driver(form, REQ_VALIDATION);
 
-                        snprintf(
-                            query,
-                            MAX_INPUT_LENGTH,
-                            "%s",
-                            field_buffer(field[0], 0)
-                            );
+                    snprintf(
+                        query,
+                        MAX_INPUT_LENGTH,
+                        "%s",
+                        field_buffer(field[0], 0)
+                    );
 
-                        char* new_query = malloc(query_len + 1);
-                        memcpy(new_query, query, query_len);
-                        new_query[query_len] = '\0';
+                    char* new_query = malloc(query_len + 1);
+                    memcpy(new_query, query, query_len);
+                    new_query[query_len] = '\0';
 
-                        prepare_for_new_results();
+                    prepare_for_new_results();
 
-                        search(new_query);
+                    search(new_query);
 
-                        update_menu();
+                    update_menu();
 
-                        free(new_query);
-                    }
+                    free(new_query);
                 }
+            }
         } else if (isprint(c)){
+            if (query_len == 0) {
+                clean_line(0);
+            }
+
             form_driver(form, c);
             form_driver(form, REQ_VALIDATION);
 
@@ -540,7 +552,7 @@ void run_term()
                 MAX_INPUT_LENGTH,
                 "%s",
                 field_buffer(field[0], 0)
-            );
+                );
 
             query_len++;
             char new_query[query_len];
@@ -553,8 +565,8 @@ void run_term()
             search(new_query);
             update_menu();
         }
-
-        wrefresh(window);
+            move(0, query_len);
+            wrefresh(window);
 
         if (run_app == True) {
             break;

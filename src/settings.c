@@ -100,8 +100,7 @@ load_config(cmdline_t* cmdline)
             CONFIG_FILE
         );
     } else {
-        /* TODO */
-        // Critical error - quit...
+        set_err(ERR_NO_XSTARTER_DIR);
     }
 
     if (g_key_file_load_from_file(
@@ -252,9 +251,9 @@ usage()
     printf("Optional arguments:\n");
     printf("\t-h\tShow help screen\n");
     printf("\t-v\tShow xstarter version\n");
+    printf("\t-V\tBe verbose\n");
     printf("\t-c\tPath to the configuration file\n");
     printf("\t-t\tReturn terminal from the configuration\n");
-    printf("\t\t(Intended for internal use)\n");
 }
 
 int
@@ -265,25 +264,24 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 
     /* Default settings: */
 
-    cmdline->mode = MODE_OPEN_IMMEDIATELY;
+    cmdline->mode = MODE_OPEN_APP;
+    cmdline->config_path = NULL;
+    cmdline->verbose = False;
 
-    while ((c = getopt(argc, argv, "tfhvc:")) != -1) {
+    while ((c = getopt(argc, argv, "thvVc:")) != -1) {
         switch(c) {
         case 'c':
-            /* strcpy(cmdline->config_path, "britt"); */
             cmdline->config_path = optarg;
-            /* cmdline->config_path = malloc(strlen(optarg)); */
-            /* strcpy(cmdline->config_path, optarg); */
             break;
         case 't':
             cmdline->mode = MODE_RETURN_TERMINAL;
             break;
-        case 'f':
-            cmdline->mode = MODE_SAVE_TO_FILE;
-            break;
         case 'v':
             printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
             quit = True;
+            break;
+        case 'V':
+            cmdline->verbose = True;
             break;
         case 'h':
         default:
