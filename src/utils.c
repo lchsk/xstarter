@@ -275,3 +275,27 @@ xstarter_directory()
         }
     }
 }
+
+void
+set_err(int err_code)
+{
+    /* Only set the first encountered error */
+    if (err == NO_ERR)
+        err = err_code;
+}
+
+int
+get_err()
+{
+    return err;
+}
+
+void
+print_err()
+{
+    printf("Error code: %d\n", err);
+
+    if (err == NO_ERR) {
+        PRINT("No error");
+    }
+}

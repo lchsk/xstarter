@@ -100,8 +100,7 @@ load_config(cmdline_t* cmdline)
             CONFIG_FILE
         );
     } else {
-        /* TODO */
-        // Critical error - quit...
+        set_err(ERR_NO_XSTARTER_DIR);
     }
 
     if (g_key_file_load_from_file(
@@ -267,7 +266,7 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
     cmdline->mode = MODE_OPEN_APP;
     cmdline->config_path = NULL;
 
-    while ((c = getopt(argc, argv, "thvc:")) != -1) {
+    while ((c = getopt(argc, argv, "thvVc:")) != -1) {
         switch(c) {
         case 'c':
             cmdline->config_path = optarg;
@@ -278,6 +277,9 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
         case 'v':
             printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
             quit = True;
+            break;
+        case 'V':
+            cmdline->mode = MODE_PRINT_ERR;
             break;
         case 'h':
         default:

@@ -14,7 +14,7 @@
 int
 main(int argc, char** argv)
 {
-    int error = 0;
+    set_err(NO_ERR);
 
     xstarter_directory();
 
@@ -44,12 +44,15 @@ main(int argc, char** argv)
         free_config();
 
         open_app();
-    } else {
-        printf("Unknown application mode");
-        error = 1;
+    } else if (cmdline->mode != MODE_PRINT_ERR) {
+        set_err(ERR_UNKNOWN_APP_MODE);
+    }
+
+    if (cmdline->mode == MODE_PRINT_ERR) {
+        print_err();
     }
 
     free_cmdline(cmdline);
 
-    return error;
+    return get_err();
 }
