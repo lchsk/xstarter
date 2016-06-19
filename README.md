@@ -2,6 +2,11 @@
 
 **xstarter is a terminal-based application launcher for Linux.**
 
+| Branch | Build |
+| --- | --- |
+|`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
+|`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
+
 ## Installation
 
 ```
@@ -13,7 +18,7 @@ make
 
 Run `./bin/xstarter` to open the application in the terminal.
 
-To install run:
+To install:
 
 ```
 make install
