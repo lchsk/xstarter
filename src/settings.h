@@ -11,7 +11,7 @@
 #define CONFIG_FILE "xstarter.conf"
 
 #define PROGRAM_NAME "xstarter"
-#define XSTARTER_VERSION "0.2.0"
+#define XSTARTER_VERSION "0.3.0"
 
 typedef struct {
     int mode;
