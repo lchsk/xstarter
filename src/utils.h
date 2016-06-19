@@ -12,7 +12,6 @@
 
 #define MODE_RETURN_TERMINAL (1)
 #define MODE_OPEN_APP (2)
-#define MODE_PRINT_ERR (3)
 
 // TODO: Move those to the configuration file
 #define RECENT_APPS_REMEMBERED (100)

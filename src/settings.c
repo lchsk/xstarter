@@ -251,6 +251,7 @@ usage()
     printf("Optional arguments:\n");
     printf("\t-h\tShow help screen\n");
     printf("\t-v\tShow xstarter version\n");
+    printf("\t-V\tBe verbose\n");
     printf("\t-c\tPath to the configuration file\n");
     printf("\t-t\tReturn terminal from the configuration\n");
 }
@@ -265,6 +266,7 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 
     cmdline->mode = MODE_OPEN_APP;
     cmdline->config_path = NULL;
+    cmdline->verbose = False;
 
     while ((c = getopt(argc, argv, "thvVc:")) != -1) {
         switch(c) {
@@ -279,7 +281,7 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
             quit = True;
             break;
         case 'V':
-            cmdline->mode = MODE_PRINT_ERR;
+            cmdline->verbose = True;
             break;
         case 'h':
         default:

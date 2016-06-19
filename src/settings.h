@@ -15,6 +15,7 @@
 
 typedef struct {
     int mode;
+    Boolean verbose;
     char* config_path;
 } cmdline_t;
 

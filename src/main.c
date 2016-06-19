@@ -44,11 +44,11 @@ main(int argc, char** argv)
         free_config();
 
         open_app();
-    } else if (cmdline->mode != MODE_PRINT_ERR) {
+    } else {
         set_err(ERR_UNKNOWN_APP_MODE);
     }
 
-    if (cmdline->mode == MODE_PRINT_ERR) {
+    if (cmdline->verbose) {
         print_err();
     }
 
