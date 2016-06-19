@@ -38,5 +38,4 @@ target_link_libraries(xstarter
 	-lmenu
 )
 
-install (TARGETS xstarter DESTINATION bin)
-install (TARGETS xstarter_run DESTINATION bin)
+install (TARGETS xstarter xstarter_run DESTINATION bin)
