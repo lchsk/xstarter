@@ -7,6 +7,8 @@
 |`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
 |`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
 
+![xstarter](xstarter.gif)
+
 ## Installation
 
 ```
