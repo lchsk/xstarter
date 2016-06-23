@@ -18,8 +18,8 @@ typedef struct str_array_t {
     int length;
 } str_array_t;
 
-str_array_t* str_array_new(char* input_str, char const* delimiters);
+str_array_t *str_array_new(char *input_str, char const *delimiters);
 
-void str_array_free(str_array_t* str_array);
+void str_array_free(str_array_t *str_array);
 
 #endif

@@ -23,7 +23,7 @@ record_open_file(const char* path)
 
         snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
 
-        FILE* file = fopen(recently_f, "w");
+        FILE *file = fopen(recently_f, "w");
 
         if (file != NULL) {
             // Check if it's already in the list
@@ -77,7 +77,7 @@ read_recently_open_list()
     recent_apps_cnt = 0;
 
     if (xstarter_dir_avail) {
-        FILE* fptr;
+        FILE *fptr;
         char recently_f[1024];
 
         snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
@@ -143,7 +143,7 @@ void open_app()
 }
 
 void
-app_to_open(char* path)
+app_to_open(char *path)
 {
     _app_to_open_path = path;
 }
@@ -173,7 +173,7 @@ running_from_term()
 /* } */
 
 void
-dump_debug(const char* str)
+dump_debug(const char *str)
 {
     char debug[1024];
 
@@ -243,10 +243,10 @@ xstarter_directory()
 {
     xstarter_dir_avail = True;
 
-    char* dir = NULL;
+    char *dir = NULL;
 
     if ((dir = (getenv("HOME"))) == NULL) {
-        struct passwd* pw = getpwuid(getuid());
+        struct passwd *pw = getpwuid(getuid());
         dir = pw->pw_dir;
     }
 
@@ -260,7 +260,7 @@ xstarter_directory()
             sizeof(xstarter_dir),
             "%s/.xstarter.d",
             (dir)
-            );
+        );
 
         struct stat st = {0};
 

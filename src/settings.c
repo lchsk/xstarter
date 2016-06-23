@@ -5,61 +5,61 @@
 #include "utils_string.h"
 
 static GKeyFile *conf_file = NULL;
-static GQueue* paths = NULL;
+static GQueue *paths = NULL;
 
-static config_t* CONF = NULL;
-static config_main_t* section_main = NULL;
+static config_t *CONF = NULL;
+static config_main_t *section_main = NULL;
 
 static void
-set_default_dirs(config_t* conf)
+set_default_dirs(config_t *conf)
 {
     conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
 }
 
 static void
-set_default_terminal(config_t* conf)
+set_default_terminal(config_t *conf)
 {
     conf->section_main->terminal = strdup("xterm");
 }
 
 static void
-set_default_executables_only(config_t* conf)
+set_default_executables_only(config_t *conf)
 {
     conf->section_main->executables_only = True;
 }
 
 static void
-set_default_emacs_bindings(config_t* conf)
+set_default_emacs_bindings(config_t *conf)
 {
     conf->section_main->emacs_bindings = True;
 }
 
 static void
-set_recent_apps_first(config_t* conf)
+set_recent_apps_first(config_t *conf)
 {
     conf->section_main->recent_apps_first = True;
 }
 
 static void
-set_min_query_len(config_t* conf)
+set_min_query_len(config_t *conf)
 {
     conf->section_main->min_query_len = 1;
 }
 
 static void
-set_allow_spaces(config_t* conf)
+set_allow_spaces(config_t *conf)
 {
     conf->section_main->allow_spaces = True;
 }
 
 static void
-set_numeric_shortcuts(config_t* conf)
+set_numeric_shortcuts(config_t *conf)
 {
     conf->section_main->numeric_shortcuts = True;
 }
 
 static void
-set_default_configuration(config_t* conf)
+set_default_configuration(config_t *conf)
 {
     set_default_dirs(conf);
     set_default_terminal(conf);
@@ -72,7 +72,7 @@ set_default_configuration(config_t* conf)
 }
 
 void
-load_config(cmdline_t* cmdline)
+load_config(cmdline_t *cmdline)
 {
     GError* error = NULL;
 
@@ -111,12 +111,12 @@ load_config(cmdline_t* cmdline)
     )) {
         // Read directories from config
 
-        char* raw_dirs = g_key_file_get_string(
+        char *raw_dirs = g_key_file_get_string(
             conf_file,
             "Main",
             "dirs",
             NULL
-            );
+        );
 
         if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
             section_main->dirs = str_array_new(strdup("$PATH"), ",");
@@ -239,7 +239,8 @@ void free_config()
     }
 }
 
-const config_t* config()
+const
+config_t *config()
 {
     return CONF;
 }
@@ -257,7 +258,7 @@ usage()
 }
 
 int
-read_cmdline(cmdline_t* cmdline, int argc, char** argv)
+read_cmdline(cmdline_t *cmdline, int argc, char **argv)
 {
     int c;
     int quit = False;
@@ -294,7 +295,7 @@ read_cmdline(cmdline_t* cmdline, int argc, char** argv)
 }
 
 void
-free_cmdline(cmdline_t* cmdline)
+free_cmdline(cmdline_t *cmdline)
 {
     if (cmdline) {
         if (cmdline->config_path)

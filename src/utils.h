@@ -37,10 +37,10 @@ char recent_apps[100][1024];
 int recent_apps_cnt;
 
 int running_from_term();
-void app_to_open(char* path);
+void app_to_open(char *path);
 void open_app();
 
-void dump_debug(const char* str);
+void dump_debug(const char *str);
 void dump_debug_int(int d);
 void dump_debug_char(const char);
 

@@ -12,7 +12,7 @@
 #include "utils.h"
 
 int
-main(int argc, char** argv)
+main(int argc, char **argv)
 {
     set_err(NO_ERR);
 
@@ -25,7 +25,7 @@ main(int argc, char** argv)
 
     if (cmdline->mode == MODE_RETURN_TERMINAL) {
         load_config(cmdline);
-        char* terminal = config()->section_main->terminal;
+        char *terminal = config()->section_main->terminal;
         printf("%s", terminal);
         free_config();
     } else if (cmdline->mode == MODE_OPEN_APP) {

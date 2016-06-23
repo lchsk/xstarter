@@ -5,11 +5,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-/* #include <omp.h> */
 #include <glib.h>
 #include <limits.h>
 #include <string.h>
-/* #include <errno.h> */
 
 #include "scan.h"
 #include "settings.h"
@@ -19,11 +17,11 @@ static void refresh_cache();
 
 int PATH = 1024;
 
-static GQueue* search_paths = NULL;
-static GQueue* paths = NULL;
+static GQueue *search_paths = NULL;
+static GQueue *paths = NULL;
 
 static void
-listdir(char* name, int level)
+listdir(char *name, int level)
 {
     DIR* dir;
     struct dirent *entry;
@@ -66,9 +64,7 @@ listdir(char* name, int level)
             strcat(buf, entry->d_name);
 
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
-                g_queue_push_tail(search_paths,
-                    strdup
-                    (buf));
+                g_queue_push_tail(search_paths, strdup(buf));
             }
         }
     } while ((entry = readdir(dir)) != NULL);
@@ -81,14 +77,14 @@ refresh_cache()
 {
     paths = g_queue_new();
 
-    str_array_t* dirs = config()->section_main->dirs;
+    str_array_t *dirs = config()->section_main->dirs;
 
     for (int i = 0; i < dirs->length; i++) {
         if (dirs->data[i][0] == '$') {
-            char const* var = g_getenv(++dirs->data[i]);
+            char const *var = g_getenv(++dirs->data[i]);
 
             if (var != NULL) {
-                str_array_t* var_paths = str_array_new(strdup(var), ":");
+                str_array_t *var_paths = str_array_new(strdup(var), ":");
 
                 if (var_paths != NULL) {
                     for (int j = 0; j < var_paths->length; j++) {
@@ -109,10 +105,10 @@ refresh_cache()
 
     search_paths = g_queue_new();
 
-    char* path;
+    char *path;
 
     for (int i = 0; i < g_queue_get_length(paths); i++) {
-        char* t = g_queue_peek_nth(paths, i);
+        char *t = g_queue_peek_nth(paths, i);
 
         listdir(t, 0);
     }
@@ -128,7 +124,7 @@ void free_cache()
 {
     if (search_paths != NULL) {
         for (int i = 0; i < g_queue_get_length(search_paths); i++) {
-            char* t = g_queue_peek_nth(search_paths, i);
+            char *t = g_queue_peek_nth(search_paths, i);
             free(t);
         }
     }
@@ -138,7 +134,7 @@ void free_cache()
 
     if (paths != NULL) {
         for (int i = 0; i < g_queue_get_length(paths); i++) {
-            char* t = g_queue_peek_nth(paths, i);
+            char *t = g_queue_peek_nth(paths, i);
             free(t);
         }
     }
@@ -147,7 +143,7 @@ void free_cache()
         g_queue_free(paths);
 }
 
-GQueue* get_cache()
+GQueue *get_cache()
 {
     return search_paths;
 }

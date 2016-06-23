@@ -6,6 +6,6 @@
 void load_cache();
 void free_cache();
 
-GQueue* get_cache();
+GQueue *get_cache();
 
 #endif

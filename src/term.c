@@ -15,20 +15,20 @@
 #include "scan.h"
 #include "utils.h"
 
-static GList* results = NULL;
+static GList *results = NULL;
 
-static WINDOW* window = NULL;
-static MENU* menu_list = NULL;
-static ITEM** list_items = NULL;
-static FORM* form = NULL;
-static FIELD* field[2] = {NULL};
+static WINDOW *window = NULL;
+static MENU *menu_list = NULL;
+static ITEM **list_items = NULL;
+static FORM *form = NULL;
+static FIELD *field[2] = {NULL};
 
 static int MAX_Y = 14;
 
 static char query[MAX_INPUT_LENGTH];
 static int query_len = 0;
 
-static char* choices[] = {
+static char *choices[] = {
     (char*) NULL,
 };
 
@@ -36,7 +36,7 @@ static int choices_cnt = 0;
 static Boolean clear_items = False;
 static Boolean run_app = False;
 
-static const char* digits[10] = {
+static const char *digits[10] = {
     "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
 };
 
@@ -63,7 +63,7 @@ prepare_for_new_results() {
 static void
 recent_apps_on_top()
 {
-    const config_t* conf = config();
+    const config_t *conf = config();
 
     if (conf->section_main->recent_apps_first) {
         int new_pos = 0;
@@ -71,7 +71,7 @@ recent_apps_on_top()
         for (int i = 0; i < recent_apps_cnt; i++) {
             GList* to_remove = NULL;
 
-            for (GList* l = results; l != NULL; l = l->next) {
+            for (GList *l = results; l != NULL; l = l->next) {
                 if (strcmp(l->data, recent_apps[i]) == 0) {
                     results = g_list_insert(results, l->data, new_pos);
 
@@ -88,9 +88,9 @@ recent_apps_on_top()
 }
 
 static void
-search(char* query)
+search(char *query)
 {
-    const config_t* conf = config();
+    const config_t *conf = config();
 
     if (query_len < conf->section_main->min_query_len) {
         return;
@@ -99,10 +99,10 @@ search(char* query)
     if (query[0] == ' ')
         return;
 
-    GQueue* cache = get_cache();
+    GQueue *cache = get_cache();
 
     int current_query_len = 1;
-    str_array_t* query_parts = NULL;
+    str_array_t *query_parts = NULL;
 
     if (conf->section_main->allow_spaces) {
         query_parts = str_array_new(strdup(query), " ");
@@ -121,7 +121,7 @@ search(char* query)
     results = NULL;
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
-        char* path = g_queue_peek_nth(cache, i);
+        char *path = g_queue_peek_nth(cache, i);
         Boolean found = True;
 
         if (current_query_len == 1) {
@@ -173,7 +173,7 @@ update_info_bar(Boolean items_found)
             item_index(current_item(menu_list))
         );
 
-        char* path = l->data;
+        char *path = l->data;
 
         clean_info_bar();
 
@@ -229,11 +229,11 @@ update_menu()
 
     const config_t* conf = config();
 
-    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM *));
+    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*));
 
     for (int i = 0; i < choices_cnt; i++) {
-        GList* l = g_list_nth(results, i);
-        char* path = l->data;
+        GList *l = g_list_nth(results, i);
+        char *path = l->data;
 
         if (conf->section_main->numeric_shortcuts) {
             if (i < 10)
@@ -358,7 +358,7 @@ init_term_gui()
 
     prepare_for_new_results();
     update_menu();
-        move(0, 0);
+    move(0, 0);
     refresh();
     wrefresh(window);
 
@@ -405,7 +405,7 @@ free_search()
 }
 
 static void
-open_app_later(const char* path)
+open_app_later(const char *path)
 {
     if (path != NULL) {
         run_app = True;
@@ -416,7 +416,7 @@ open_app_later(const char* path)
 static void
 set_app_to_run()
 {
-    ITEM* item = current_item(menu_list);
+    ITEM *item = current_item(menu_list);
 
     if (item) {
         open_app_later(g_list_nth_data(results, item_index(item)));
@@ -426,7 +426,7 @@ set_app_to_run()
 static void
 open_by_shortcut(int key)
 {
-    const config_t* conf = config();
+    const config_t *conf = config();
 
     if (conf->section_main->numeric_shortcuts) {
         if (key >= ASCII_1 && key <= ASCII_9)
@@ -455,7 +455,7 @@ reset_query()
 }
 
 static int
-read_emacs_keys(const char* name)
+read_emacs_keys(const char *name)
 {
     if (strcmp(name, "^N") == 0) {
         return KEY_DOWN;
@@ -479,7 +479,7 @@ read_emacs_keys(const char* name)
 
 void run_term()
 {
-    const config_t* conf = config();
+    const config_t *conf = config();
 
     move(0, 0);
 
@@ -530,7 +530,7 @@ void run_term()
                         field_buffer(field[0], 0)
                     );
 
-                    char* new_query = malloc(query_len + 1);
+                    char *new_query = malloc(query_len + 1);
                     memcpy(new_query, query, query_len);
                     new_query[query_len] = '\0';
 
