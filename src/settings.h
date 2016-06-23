@@ -36,7 +36,6 @@ typedef struct {
 
 void load_config(cmdline_t *cmdline);
 void free_config();
-void usage();
 
 const config_t *config();
 int read_cmdline(cmdline_t *cmdline, int argc, char **argv);

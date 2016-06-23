@@ -245,7 +245,7 @@ config_t *config()
     return CONF;
 }
 
-void
+static void
 usage()
 {
     printf("Usage: xstarter\n\n");
@@ -255,6 +255,12 @@ usage()
     printf("\t-V\tBe verbose\n");
     printf("\t-c\tPath to the configuration file\n");
     printf("\t-t\tReturn terminal from the configuration\n");
+}
+
+static void
+print_version()
+{
+    printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
 }
 
 int
@@ -278,7 +284,7 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
             cmdline->mode = MODE_RETURN_TERMINAL;
             break;
         case 'v':
-            printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
+            print_version();
             quit = True;
             break;
         case 'V':
