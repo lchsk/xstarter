@@ -210,7 +210,7 @@ dump_debug_int(int d)
     snprintf(
         debug,
         1024,
-        "echo %d>> ~/debug_xstarter",
+        "echo %d >> ~/debug_xstarter",
         d
     );
 
