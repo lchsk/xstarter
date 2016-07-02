@@ -77,8 +77,6 @@ clear_menu(Boolean clear)
         if (window) {
             wrefresh(window);
             delwin(window);
-            // REMOVE????
-            /* endwin(); */
         }
     }
 }
@@ -87,19 +85,14 @@ static void
 no_results()
 {
     results_not_found = True;
-
-    g_list_free(results);
-    results = NULL;
-
-    /* results = g_list_prepend(results, "No results, sorry"); */
     choices_cnt = 1;
 }
 
 static void
-update_info_bar(Boolean items_found)
+update_info_bar()
 {
-    if (!results_not_found) {
-        GList* l = g_list_nth(
+    if (! results_not_found) {
+        GList *l = g_list_nth(
             results,
             item_index(current_item(menu_list))
         );
@@ -126,22 +119,14 @@ update_info_bar(Boolean items_found)
 static void
 prepare_for_new_results(Boolean clear)
 {
-    const config_t* conf = config();
+    const config_t *conf = config();
 
     clear_menu(clear);
-
-    // TODO: this causes a warning
-    /* _nc_Disconnect_Items(menu_list); */
-
-    /* list_items = (ITEM**) calloc(1, sizeof(ITEM*)); */
-    /* list_items[0] = new_item((char*) NULL, (char*) NULL); */
 
     choices_cnt = g_list_length(results);
 
     if (choices_cnt == 0) {
         no_results();
-        /* update_info_bar(False); */
-        /* return; */
     }
 
     list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*));
@@ -185,13 +170,11 @@ prepare_for_new_results(Boolean clear)
     wrefresh(window);
     refresh();
 
-    // --------------- update _ menu
-
     set_menu_format(menu_list, 10, 1);
 
     post_menu(menu_list);
 
-    update_info_bar(True);
+    update_info_bar();
     /* move(0,query_len); */
 
     wrefresh(window);
@@ -294,21 +277,6 @@ free_query_parts:
 }
 
 static void
-update_menu()
-{
-}
-
-// REMOVE???
-static void
-remove_items()
-{
-    if (clear_items == False) return;
-
-    for (int i = 0; i < choices_cnt; i++)
-        free_item(list_items[i]);
-}
-
-static void
 show_recent_apps()
 {
     int recent_apps_valid = True;
@@ -383,12 +351,9 @@ init_term_gui()
     /* box(window, 0, 0); */
     /* wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); */
 
-
-
     /* set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1)); */
 
     prepare_for_new_results(False);
-    /* update_menu(); */
 
     wrefresh(window);
     refresh();
@@ -505,7 +470,6 @@ reset_query()
     show_recent_apps();
     prepare_for_new_results(False);
 
-    update_menu();
     move(0, query_len);
 }
 
@@ -596,7 +560,6 @@ void run_term()
 
                     search(new_query);
                     prepare_for_new_results(True);
-                    update_menu();
 
                     free(new_query);
                 }
@@ -624,14 +587,10 @@ void run_term()
 
             search(new_query);
             prepare_for_new_results(True);
-
-            update_menu();
         }
-
             /* move(0, query_len); */
             /* wrefresh(window); */
             /* refresh(); */
-
 
         if (run_app == True) {
             break;
