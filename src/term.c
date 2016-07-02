@@ -35,27 +35,167 @@ static char *choices[] = {
 static int choices_cnt = 0;
 static Boolean clear_items = False;
 static Boolean run_app = False;
+static Boolean results_not_found = False;
 
 static const char *digits[10] = {
     "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
 };
 
 static void
-prepare_for_new_results() {
-    if (menu_list) {
+clean_line(int line_y)
+{
+    move(line_y, 0);
+    clrtoeol();
+}
+
+static void
+clean_info_bar()
+{
+    clean_line(MAX_Y - 0);
+    clean_line(MAX_Y - 1);
+}
+
+static void
+clear_menu(Boolean clear)
+{
+    const config_t* conf = config();
+
+    if (menu_list && clear) {
+        /* NB: Menu removal needs to be in this order! */
         unpost_menu(menu_list);
+        free_menu(menu_list);
 
-        // TODO: this causes a warning
-        _nc_Disconnect_Items(menu_list);
-    }
+        if (list_items) {
+            for (int i = 0; i < choices_cnt; i++) {
+                free_item(list_items[i]);
+            }
 
-    if (list_items) {
-        for (int i = 0; i < choices_cnt; i++) {
-            free_item(list_items[i]);
+            free(list_items);
+            list_items = NULL;
         }
 
-        free(list_items);
+        if (window) {
+            wrefresh(window);
+            delwin(window);
+            // REMOVE????
+            /* endwin(); */
+        }
     }
+}
+
+static void
+no_results()
+{
+    results_not_found = True;
+
+    g_list_free(results);
+    results = NULL;
+
+    /* results = g_list_prepend(results, "No results, sorry"); */
+    choices_cnt = 1;
+}
+
+static void
+update_info_bar(Boolean items_found)
+{
+    if (!results_not_found) {
+        GList* l = g_list_nth(
+            results,
+            item_index(current_item(menu_list))
+        );
+
+        char *path = l->data;
+
+        clean_info_bar();
+
+        char status[100];
+
+        snprintf(status, 100, "Results: %d", choices_cnt);
+
+        mvprintw(MAX_Y - 1, 0, status);
+        mvprintw(MAX_Y, 0, path);
+    } else {
+        clean_info_bar();
+    }
+
+    refresh();
+    wrefresh(window);
+}
+
+
+static void
+prepare_for_new_results(Boolean clear)
+{
+    const config_t* conf = config();
+
+    clear_menu(clear);
+
+    // TODO: this causes a warning
+    /* _nc_Disconnect_Items(menu_list); */
+
+    /* list_items = (ITEM**) calloc(1, sizeof(ITEM*)); */
+    /* list_items[0] = new_item((char*) NULL, (char*) NULL); */
+
+    choices_cnt = g_list_length(results);
+
+    if (choices_cnt == 0) {
+        no_results();
+        /* update_info_bar(False); */
+        /* return; */
+    }
+
+    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*));
+
+    for (int i = 0; i < choices_cnt; i++) {
+        if (results_not_found) {
+            /* No results */
+            list_items[i] = new_item("No results, sorry", "");
+        } else {
+            GList *l = g_list_nth(results, i);
+            char *path = l->data;
+
+            if (conf->section_main->numeric_shortcuts) {
+                if (i < 10)
+                    list_items[i] = new_item(digits[i], basename(path));
+                else
+                    list_items[i] = new_item(" ", basename(path));
+            } else {
+                list_items[i] = new_item(basename(path), (char*) NULL);
+            }
+        }
+    }
+
+    list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
+
+    menu_list = new_menu((ITEM**) list_items);
+
+    window = newwin(
+        30, // rows
+        30, // cols
+        2,
+        0
+    );
+
+    keypad(window, TRUE);
+
+    set_menu_win(menu_list, window);
+    set_menu_mark(menu_list, "");
+    set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
+
+    wrefresh(window);
+    refresh();
+
+    // --------------- update _ menu
+
+    set_menu_format(menu_list, 10, 1);
+
+    post_menu(menu_list);
+
+    update_info_bar(True);
+    /* move(0,query_len); */
+
+    wrefresh(window);
+    refresh();
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -91,6 +231,7 @@ static void
 search(char *query)
 {
     const config_t *conf = config();
+    results_not_found = True;
 
     if (query_len < conf->section_main->min_query_len) {
         return;
@@ -144,6 +285,8 @@ search(char *query)
         }
     }
 
+    results_not_found = (g_list_length(results) > 0 ? False : True);
+
     recent_apps_on_top();
 
 free_query_parts:
@@ -151,111 +294,11 @@ free_query_parts:
 }
 
 static void
-clean_line(int line_y)
-{
-    move(line_y, 0);
-    clrtoeol();
-}
-
-static void
-clean_info_bar()
-{
-    clean_line(MAX_Y - 0);
-    clean_line(MAX_Y - 1);
-}
-
-static void
-update_info_bar(Boolean items_found)
-{
-    if (items_found) {
-        GList* l = g_list_nth(
-            results,
-            item_index(current_item(menu_list))
-        );
-
-        char *path = l->data;
-
-        clean_info_bar();
-
-        char status[100];
-
-        snprintf(status, 100, "Results: %d", choices_cnt);
-
-        mvprintw(MAX_Y - 1, 0, status);
-        mvprintw(MAX_Y, 0, path);
-    } else {
-        clean_info_bar();
-    }
-
-    refresh();
-    wrefresh(window);
-}
-
-static void
-no_results()
-{
-    if (query_len > 0) {
-        choices_cnt = 2;
-
-        char* choices[] = {"No results, sorry", (char*) NULL};
-
-        list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
-
-        list_items[0] = new_item(choices[0], (char*) NULL);
-        list_items[1] = new_item((char*) NULL, (char*) NULL);
-    } else {
-        choices_cnt = 1;
-
-        list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
-        list_items[0] = new_item((char*) NULL, (char*) NULL);
-    }
-
-    set_menu_items(menu_list, list_items);
-    post_menu(menu_list);
-    refresh();
-}
-
-
-static void
 update_menu()
 {
-    choices_cnt = g_list_length(results);
-
-    if (choices_cnt == 0) {
-        no_results();
-        update_info_bar(False);
-        return;
-    }
-
-    const config_t* conf = config();
-
-    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*));
-
-    for (int i = 0; i < choices_cnt; i++) {
-        GList *l = g_list_nth(results, i);
-        char *path = l->data;
-
-        if (conf->section_main->numeric_shortcuts) {
-            if (i < 10)
-                list_items[i] = new_item(digits[i], basename(path));
-            else
-                list_items[i] = new_item(" ", basename(path));
-        } else {
-            list_items[i] = new_item(basename(path), (char*) NULL);
-        }
-    }
-
-    list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
-    set_menu_items(menu_list, list_items);
-    set_menu_format(menu_list, 10, 1);
-    wrefresh(window);
-    refresh();
-
-    post_menu(menu_list);
-
-    update_info_bar(True);
 }
 
+// REMOVE???
 static void
 remove_items()
 {
@@ -269,6 +312,9 @@ static void
 show_recent_apps()
 {
     int recent_apps_valid = True;
+
+    dump_debug("choices_cnt:");
+    dump_debug_int(choices_cnt);
 
     for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
         if (recent_apps[choices_cnt] != NULL
@@ -315,6 +361,38 @@ init_term_gui()
 
     getmaxyx(stdscr, max_rows, max_cols);
 
+
+    show_recent_apps();
+
+    /* list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*)); */
+    /* list_items[0] = new_item((char*) NULL, (char*) NULL); */
+    /* menu_list = new_menu((ITEM**) list_items); */
+
+    /* window = newwin( */
+    /*     30, // rows */
+    /*     max_cols, // cols */
+    /*     2, */
+    /*     0 */
+    /* ); */
+
+    /* keypad(window, TRUE); */
+
+    /* set_menu_win(menu_list, window); */
+    /* set_menu_mark(menu_list, ""); */
+
+    /* box(window, 0, 0); */
+    /* wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); */
+
+
+
+    /* set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1)); */
+
+    prepare_for_new_results(False);
+    /* update_menu(); */
+
+    wrefresh(window);
+    refresh();
+
     field[0] = new_field(
         1, // columns
         20, // width
@@ -324,43 +402,19 @@ init_term_gui()
         0
     );
 
+    /* curs_set(0); */
+
     set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
     field[1] = NULL;
 
     form = new_form(field);
     post_form(form);
-    refresh();
+    /* wrefresh(window); */
+    move(0,0);
 
-    show_recent_apps();
-
-    list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*));
-    list_items[0] = new_item((char*) NULL, (char*) NULL);
-    menu_list = new_menu((ITEM**) list_items);
-
-    window = newwin(
-        30, // rows
-        max_cols, // cols
-        2,
-        0
-    );
-
-    keypad(window, TRUE);
-
-    set_menu_win(menu_list, window);
-    set_menu_mark(menu_list, "");
-
-    box(window, 0, 0);
-    wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-
-    mvprintw(0, 1, "This is xstarter. Start typing to search");
-
-    set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
-
-    prepare_for_new_results();
-    update_menu();
-    move(0, 0);
-    refresh();
-    wrefresh(window);
+    /* mvprintw(0, 1, "This is xstarter. Start typing to search"); */
+    /* wrefresh(window); */
+    /* refresh(); */
 
 }
 
@@ -440,6 +494,7 @@ open_by_shortcut(int key)
 static void
 reset_query()
 {
+    clear_menu(True);
     strcpy(query, "");
     query_len = 0;
     form_driver(form, REQ_CLR_FIELD);
@@ -447,9 +502,9 @@ reset_query()
 
     g_list_free(results);
     results = NULL;
-
-    prepare_for_new_results();
     show_recent_apps();
+    prepare_for_new_results(False);
+
     update_menu();
     move(0, query_len);
 }
@@ -481,7 +536,9 @@ void run_term()
 {
     const config_t *conf = config();
 
-    move(0, 0);
+    /* move(0, 0); */
+    /* wrefresh(window); */
+    /* refresh(); */
 
     int c;
 
@@ -502,6 +559,8 @@ void run_term()
         if (c == KEY_DOWN) {
             menu_driver(menu_list, REQ_DOWN_ITEM);
             update_info_bar(True);
+            /* move(0,0); */
+            /* refresh(); */
         } else if (c == KEY_UP) {
             menu_driver(menu_list, REQ_UP_ITEM);
             update_info_bar(True);
@@ -518,6 +577,7 @@ void run_term()
                 query_len--;
 
                 if (query_len == 0) {
+                    dump_debug("000 QUERY LEN");
                     reset_query();
                 } else {
                     form_driver(form, REQ_DEL_PREV);
@@ -534,10 +594,8 @@ void run_term()
                     memcpy(new_query, query, query_len);
                     new_query[query_len] = '\0';
 
-                    prepare_for_new_results();
-
                     search(new_query);
-
+                    prepare_for_new_results(True);
                     update_menu();
 
                     free(new_query);
@@ -564,15 +622,16 @@ void run_term()
             memcpy(new_query, query, query_len);
             new_query[query_len] = '\0';
 
-            prepare_for_new_results();
-
             search(new_query);
+            prepare_for_new_results(True);
+
             update_menu();
         }
 
-        move(0, query_len);
-        wrefresh(window);
-        refresh();
+            /* move(0, query_len); */
+            /* wrefresh(window); */
+            /* refresh(); */
+
 
         if (run_app == True) {
             break;
