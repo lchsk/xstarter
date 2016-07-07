@@ -44,8 +44,8 @@ static const char *digits[10] = {
 static void
 clean_line(int line_y)
 {
-    /* move(line_y, 0); */
-    /* clrtoeol(); */
+    wmove(window, line_y, 0);
+    wclrtoeol(window);
 }
 
 static void
@@ -91,6 +91,8 @@ no_results()
 static void
 update_info_bar()
 {
+    /* clean_info_bar(); */
+
     if (! results_not_found) {
         GList *l = g_list_nth(
             results,
@@ -160,7 +162,7 @@ prepare_for_new_results(Boolean clear)
         0
     );
 
-    /* keypad(window, TRUE); */
+    keypad(window, TRUE);
     /* nodelay(window, TRUE); */
 
     set_menu_win(menu_list, window);
@@ -303,7 +305,7 @@ show_recent_apps()
 void
 init_term_gui()
 {
-    /* set_escdelay(25); */
+    set_escdelay(25);
 
     initscr();
     start_color();
@@ -539,12 +541,13 @@ void run_term()
                 }
             }
         } else if (isprint(c)) {
-            mvprintw(0, 0, "$");
+
             /* refresh(); */
 
             if (query_len == 0) {
                 clean_line(0);
             }
+            mvprintw(0, 0, "$");
 
             form_driver(form, c);
             form_driver(form, REQ_VALIDATION);
