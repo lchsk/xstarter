@@ -75,7 +75,6 @@ clear_menu(Boolean clear)
         }
 
         if (window) {
-            /* wrefresh(window); */
             delwin(window);
         }
     }
@@ -91,8 +90,6 @@ no_results(void)
 static void
 update_info_bar(void)
 {
-    /* clean_info_bar(); */
-
     if (! results_not_found) {
         GList *l = g_list_nth(
             results,
@@ -112,9 +109,6 @@ update_info_bar(void)
     } else {
         clean_info_bar();
     }
-
-    /* refresh(); */
-    /* wrefresh(window); */
 }
 
 static void
@@ -134,7 +128,6 @@ prepare_for_new_results(Boolean clear)
 
     for (int i = 0; i < choices_cnt; i++) {
         if (results_not_found) {
-            /* No results */
             list_items[i] = new_item("No results, sorry", "");
         } else {
             GList *l = g_list_nth(results, i);
@@ -168,19 +161,13 @@ prepare_for_new_results(Boolean clear)
     set_menu_win(menu_list, window);
     set_menu_mark(menu_list, "");
     set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
-
-    /* wrefresh(window); */
-    /* refresh(); */
-
     set_menu_format(menu_list, 10, 1);
 
     post_menu(menu_list);
 
     update_info_bar();
-    /* move(0, query_len); */
 
     refresh();
-    /* wrefresh(window); */
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -213,7 +200,7 @@ recent_apps_on_top(void)
 }
 
 static void
-search(char *query)
+search(char *const query)
 {
     const config_t *conf = config();
     results_not_found = True;
@@ -305,13 +292,13 @@ show_recent_apps(void)
 void
 init_term_gui(void)
 {
+    /* Fix ESC key */
     set_escdelay(25);
 
     initscr();
     start_color();
     cbreak();
     noecho();
-    /* keypad(stdscr, TRUE); */
 
     if (can_change_color()) {
         init_color(XS_COLOR_BLUE, 43, 180, 349);
@@ -323,10 +310,10 @@ init_term_gui(void)
         init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, COLOR_BLUE);
     }
 
-    int max_rows;
-    int max_cols;
+    /* int max_rows; */
+    /* int max_cols; */
 
-    getmaxyx(stdscr, max_rows, max_cols);
+    /* getmaxyx(stdscr, max_rows, max_cols); */
 
     show_recent_apps();
     prepare_for_new_results(False);
@@ -343,9 +330,8 @@ init_term_gui(void)
         0
     );
 
+    /* Hide cursor */
     curs_set(0);
-    /* wrefresh(window); */
-    /* refresh(); */
 
     set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
     field[1] = NULL;
@@ -354,7 +340,6 @@ init_term_gui(void)
     post_form(form);
 
     wrefresh(window);
-    /* refresh(); */
 }
 
 void
@@ -443,8 +428,6 @@ reset_query(void)
     results = NULL;
     show_recent_apps();
     prepare_for_new_results(False);
-
-    move(0, query_len);
 }
 
 static int
@@ -474,17 +457,9 @@ void run_term(void)
 {
     const config_t *conf = config();
 
-    move(0, 0);
-    /* wrefresh(window); */
-    /* refresh(); */
-
     int c;
 
     while ((c = wgetch(window)) != KEY_ESCAPE) {
-            /* update_info_bar(); */
-            /* wrefresh(window); */
-        /* sleep(1); */
-
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
 
@@ -500,8 +475,6 @@ void run_term(void)
         if (c == KEY_DOWN) {
             menu_driver(menu_list, REQ_DOWN_ITEM);
             update_info_bar();
-            /* move(0,0); */
-            /* refresh(); */
         } else if (c == KEY_UP) {
             menu_driver(menu_list, REQ_UP_ITEM);
             update_info_bar();
@@ -541,9 +514,6 @@ void run_term(void)
                 }
             }
         } else if (isprint(c)) {
-
-            /* refresh(); */
-
             if (query_len == 0) {
                 clean_line(0);
             }
@@ -567,15 +537,7 @@ void run_term(void)
 
             search(new_query);
             prepare_for_new_results(True);
-
-
-            /* refresh(); */
-/* sleep(1); */
         }
-
-        /* move(0, query_len); */
-        /* wrefresh(window); */
-        /* refresh(); */
 
         if (run_app == True) {
             break;
