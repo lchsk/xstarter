@@ -49,7 +49,7 @@ clean_line(int line_y)
 }
 
 static void
-clean_info_bar()
+clean_info_bar(void)
 {
     clean_line(MAX_Y - 0);
     clean_line(MAX_Y - 1);
@@ -82,14 +82,14 @@ clear_menu(Boolean clear)
 }
 
 static void
-no_results()
+no_results(void)
 {
     results_not_found = True;
     choices_cnt = 1;
 }
 
 static void
-update_info_bar()
+update_info_bar(void)
 {
     /* clean_info_bar(); */
 
@@ -186,7 +186,7 @@ prepare_for_new_results(Boolean clear)
 /* Get apps that were recently started to the top of the list */
 
 static void
-recent_apps_on_top()
+recent_apps_on_top(void)
 {
     const config_t *conf = config();
 
@@ -279,7 +279,7 @@ free_query_parts:
 }
 
 static void
-show_recent_apps()
+show_recent_apps(void)
 {
     int recent_apps_valid = True;
 
@@ -303,7 +303,7 @@ show_recent_apps()
 }
 
 void
-init_term_gui()
+init_term_gui(void)
 {
     set_escdelay(25);
 
@@ -358,7 +358,7 @@ init_term_gui()
 }
 
 void
-free_term_gui()
+free_term_gui(void)
 {
     if (menu_list) {
         unpost_menu(menu_list);
@@ -384,14 +384,14 @@ free_term_gui()
 }
 
 void
-init_search()
+init_search(void)
 {
     results = NULL;
     read_recently_open_list();
 }
 
 void
-free_search()
+free_search(void)
 {
     if (results != NULL)
         g_list_free(results);
@@ -407,7 +407,7 @@ open_app_later(const char *path)
 }
 
 static void
-set_app_to_run()
+set_app_to_run(void)
 {
     ITEM *item = current_item(menu_list);
 
@@ -431,7 +431,7 @@ open_by_shortcut(int key)
 }
 
 static void
-reset_query()
+reset_query(void)
 {
     clear_menu(True);
     strcpy(query, "");
@@ -470,7 +470,7 @@ read_emacs_keys(const char *name)
     return -1;
 }
 
-void run_term()
+void run_term(void)
 {
     const config_t *conf = config();
 
@@ -499,20 +499,20 @@ void run_term()
 
         if (c == KEY_DOWN) {
             menu_driver(menu_list, REQ_DOWN_ITEM);
-            update_info_bar(True);
+            update_info_bar();
             /* move(0,0); */
             /* refresh(); */
         } else if (c == KEY_UP) {
             menu_driver(menu_list, REQ_UP_ITEM);
-            update_info_bar(True);
+            update_info_bar();
         } else if (c == KEY_RETURN) {
-            set_app_to_run(True);
+            set_app_to_run();
         } else if (c == KEY_NPAGE) {
             menu_driver(menu_list, REQ_SCR_DPAGE);
-            update_info_bar(True);
+            update_info_bar();
         } else if (c == KEY_PPAGE) {
             menu_driver(menu_list, REQ_SCR_UPAGE);
-            update_info_bar(True);
+            update_info_bar();
         } else if (c == KEY_BACKSPACE) {
             if (query_len >= 1) {
                 query_len--;
