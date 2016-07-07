@@ -105,8 +105,8 @@ update_info_bar()
 
         snprintf(status, 100, "Results: %d", choices_cnt);
 
-        mvprintw(MAX_Y - 1, 0, status);
-        mvprintw(MAX_Y, 0, path);
+        mvwprintw(window, MAX_Y - 1, 0, status);
+        mvwprintw(window, MAX_Y, 0, path);
     } else {
         clean_info_bar();
     }
@@ -479,6 +479,10 @@ void run_term()
     int c;
 
     while ((c = wgetch(window)) != KEY_ESCAPE) {
+            /* update_info_bar(); */
+            /* wrefresh(window); */
+        /* sleep(1); */
+
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
 
@@ -536,7 +540,7 @@ void run_term()
             }
         } else if (isprint(c)) {
             mvprintw(0, 0, "$");
-            refresh();
+            /* refresh(); */
 
             if (query_len == 0) {
                 clean_line(0);
@@ -560,7 +564,10 @@ void run_term()
 
             search(new_query);
             prepare_for_new_results(True);
-            refresh();
+
+
+            /* refresh(); */
+/* sleep(1); */
         }
 
         /* move(0, query_len); */
