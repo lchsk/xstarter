@@ -44,8 +44,8 @@ static const char *digits[10] = {
 static void
 clean_line(int line_y)
 {
-    move(line_y, 0);
-    clrtoeol();
+    /* move(line_y, 0); */
+    /* clrtoeol(); */
 }
 
 static void
@@ -75,7 +75,7 @@ clear_menu(Boolean clear)
         }
 
         if (window) {
-            wrefresh(window);
+            /* wrefresh(window); */
             delwin(window);
         }
     }
@@ -111,10 +111,9 @@ update_info_bar()
         clean_info_bar();
     }
 
-    refresh();
-    wrefresh(window);
+    /* refresh(); */
+    /* wrefresh(window); */
 }
-
 
 static void
 prepare_for_new_results(Boolean clear)
@@ -161,24 +160,25 @@ prepare_for_new_results(Boolean clear)
         0
     );
 
-    keypad(window, TRUE);
+    /* keypad(window, TRUE); */
+    /* nodelay(window, TRUE); */
 
     set_menu_win(menu_list, window);
     set_menu_mark(menu_list, "");
     set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
 
-    wrefresh(window);
-    refresh();
+    /* wrefresh(window); */
+    /* refresh(); */
 
     set_menu_format(menu_list, 10, 1);
 
     post_menu(menu_list);
 
     update_info_bar();
-    /* move(0,query_len); */
+    /* move(0, query_len); */
 
-    wrefresh(window);
     refresh();
+    /* wrefresh(window); */
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -281,9 +281,6 @@ show_recent_apps()
 {
     int recent_apps_valid = True;
 
-    dump_debug("choices_cnt:");
-    dump_debug_int(choices_cnt);
-
     for (choices_cnt = 0; choices_cnt < RECENT_APPS_SHOWN; choices_cnt++) {
         if (recent_apps[choices_cnt] != NULL
             && strcmp(recent_apps[choices_cnt], "") != 0
@@ -306,13 +303,13 @@ show_recent_apps()
 void
 init_term_gui()
 {
-    set_escdelay(25);
+    /* set_escdelay(25); */
 
     initscr();
     start_color();
     cbreak();
     noecho();
-    keypad(stdscr, TRUE);
+    /* keypad(stdscr, TRUE); */
 
     if (can_change_color()) {
         init_color(XS_COLOR_BLUE, 43, 180, 349);
@@ -329,58 +326,33 @@ init_term_gui()
 
     getmaxyx(stdscr, max_rows, max_cols);
 
-
     show_recent_apps();
-
-    /* list_items = (ITEM**) calloc(choices_cnt, sizeof(ITEM*)); */
-    /* list_items[0] = new_item((char*) NULL, (char*) NULL); */
-    /* menu_list = new_menu((ITEM**) list_items); */
-
-    /* window = newwin( */
-    /*     30, // rows */
-    /*     max_cols, // cols */
-    /*     2, */
-    /*     0 */
-    /* ); */
-
-    /* keypad(window, TRUE); */
-
-    /* set_menu_win(menu_list, window); */
-    /* set_menu_mark(menu_list, ""); */
-
-    /* box(window, 0, 0); */
-    /* wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); */
-
-    /* set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1)); */
-
     prepare_for_new_results(False);
 
-    wrefresh(window);
+    mvprintw(0, 0, "$");
     refresh();
 
     field[0] = new_field(
         1, // columns
         20, // width
         0, // pos y
-        0, // pos x
+        2, // pos x
         0,
         0
     );
 
-    /* curs_set(0); */
+    curs_set(0);
+    /* wrefresh(window); */
+    /* refresh(); */
 
     set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
     field[1] = NULL;
 
     form = new_form(field);
     post_form(form);
-    /* wrefresh(window); */
-    move(0,0);
 
-    /* mvprintw(0, 1, "This is xstarter. Start typing to search"); */
-    /* wrefresh(window); */
+    wrefresh(window);
     /* refresh(); */
-
 }
 
 void
@@ -500,14 +472,13 @@ void run_term()
 {
     const config_t *conf = config();
 
-    /* move(0, 0); */
+    move(0, 0);
     /* wrefresh(window); */
     /* refresh(); */
 
     int c;
 
-    while((c = wgetch(window)) != KEY_ESCAPE)
-    {
+    while ((c = wgetch(window)) != KEY_ESCAPE) {
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
 
@@ -541,7 +512,6 @@ void run_term()
                 query_len--;
 
                 if (query_len == 0) {
-                    dump_debug("000 QUERY LEN");
                     reset_query();
                 } else {
                     form_driver(form, REQ_DEL_PREV);
@@ -565,6 +535,9 @@ void run_term()
                 }
             }
         } else if (isprint(c)) {
+            mvprintw(0, 0, "$");
+            refresh();
+
             if (query_len == 0) {
                 clean_line(0);
             }
@@ -577,7 +550,7 @@ void run_term()
                 MAX_INPUT_LENGTH,
                 "%s",
                 field_buffer(field[0], 0)
-                );
+            );
 
             query_len++;
             char new_query[query_len];
@@ -587,10 +560,12 @@ void run_term()
 
             search(new_query);
             prepare_for_new_results(True);
+            refresh();
         }
-            /* move(0, query_len); */
-            /* wrefresh(window); */
-            /* refresh(); */
+
+        /* move(0, query_len); */
+        /* wrefresh(window); */
+        /* refresh(); */
 
         if (run_app == True) {
             break;
