@@ -128,7 +128,11 @@ prepare_for_new_results(Boolean clear)
 
     for (int i = 0; i < choices_cnt; i++) {
         if (results_not_found) {
-            list_items[i] = new_item("No results, sorry", "");
+            if (query_len == 0) {
+                list_items[i] = new_item("Start typing to search", "");
+            } else {
+                list_items[i] = new_item("No results, sorry", "");
+            }
         } else {
             GList *l = g_list_nth(results, i);
             char *path = l->data;
