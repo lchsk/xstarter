@@ -114,6 +114,7 @@ update_info_bar(void)
 static void
 prepare_for_new_results(Boolean clear)
 {
+    results_not_found = False;
     const config_t *conf = config();
 
     clear_menu(clear);
@@ -203,18 +204,24 @@ recent_apps_on_top(void)
     }
 }
 
-static void
+/* Return: */
+    /* True: if search was successful and we need to update GUI */
+    /* False: no need to update GUI */
+
+static Boolean
 search(char *const query)
 {
     const config_t *conf = config();
+
+    Boolean resp = True;
     results_not_found = True;
 
     if (query_len < conf->section_main->min_query_len) {
-        return;
+        return False;
     }
 
     if (query[0] == ' ')
-        return;
+        return False;
 
     GQueue *cache = get_cache();
 
@@ -228,6 +235,7 @@ search(char *const query)
             (query_len > 0 && query[query_len - 1] == ' ')
             || query_parts == NULL
         ) {
+            resp = False;
             goto free_query_parts;
         }
 
@@ -267,6 +275,8 @@ search(char *const query)
 
 free_query_parts:
     str_array_free(query_parts);
+
+    return resp;
 }
 
 static void
@@ -518,10 +528,15 @@ void run_term(void)
                 }
             }
         } else if (isprint(c)) {
-            if (query_len == 0) {
+            mvprintw(0, 0, "$");
+
+            if (query_len == 0 && c == ' ') {
+                reset_query();
+
+                continue;
+            } else if (query_len == 0) {
                 clean_line(0);
             }
-            mvprintw(0, 0, "$");
 
             form_driver(form, c);
             form_driver(form, REQ_VALIDATION);
@@ -539,8 +554,8 @@ void run_term(void)
             memcpy(new_query, query, query_len);
             new_query[query_len] = '\0';
 
-            search(new_query);
-            prepare_for_new_results(True);
+            if (search(new_query))
+                prepare_for_new_results(True);
         }
 
         if (run_app == True) {
