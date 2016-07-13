@@ -49,4 +49,4 @@ matrix:
 script:
   - uname -a
   - $COMPILER --version
-  - CXX=$COMPILER cmake . && make
+  - CC=$COMPILER cmake . && make
