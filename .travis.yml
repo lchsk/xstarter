@@ -1,5 +1,52 @@
 language: c
-compiler:
-  - gcc
-  - clang
-script: cmake . && make
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['gcc-4.8']
+      env: COMPILER=gcc-4.8
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['gcc-4.9']
+      env: COMPILER=gcc-4.9
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['gcc-5']
+      env: COMPILER=gcc-5
+
+    - os: linux
+      compiler: clang
+      env: COMPILER=clang
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          packages: ['clang-3.5']
+      env: COMPILER=clang-3.5
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
+          packages: ['clang-3.6']
+      env: COMPILER=clang-3.6
+
+script:
+  - uname -a
+  - $COMPILER --version
+  - CXX=$COMPILER cmake . && make
