@@ -14,11 +14,13 @@
 #include "scan.h"
 #include "settings.h"
 #include "utils_string.h"
+#include "term.h"
 
 int PATH = 1024;
 
 static GQueue *search_paths = NULL;
 static GQueue *paths = NULL;
+static Boolean cache_ready = False;
 
 static void
 listdir(char *name, int level)
@@ -112,6 +114,9 @@ refresh_cache()
 
         listdir(t, 0);
     }
+
+    cache_ready = True;
+    cache_loaded();
 }
 
 void
@@ -152,7 +157,14 @@ void free_cache()
         g_queue_free(paths);
 }
 
-GQueue *get_cache()
+GQueue
+*get_cache()
 {
     return search_paths;
+}
+
+Boolean
+is_cache_ready()
+{
+	return cache_ready;
 }

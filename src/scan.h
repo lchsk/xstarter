@@ -3,9 +3,12 @@
 
 #include <glib.h>
 
+#include "utils.h"
+
 void load_cache();
 void free_cache();
 
 GQueue *get_cache();
+Boolean is_cache_ready();
 
 #endif

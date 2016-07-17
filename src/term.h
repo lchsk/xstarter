@@ -22,6 +22,8 @@ void printf_results();
 
 void run_term();
 
+void cache_loaded();
+
 
 
 #endif

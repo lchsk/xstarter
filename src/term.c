@@ -333,6 +333,8 @@ init_term_gui(void)
     prepare_for_new_results(False);
 
     mvprintw(0, 0, "$");
+    mvwprintw(window, MAX_Y - 2, 0, "Loading paths...");
+
     refresh();
 
     field[0] = new_field(
@@ -467,6 +469,13 @@ read_emacs_keys(const char *name)
     return -1;
 }
 
+void cache_loaded(void)
+{
+    clean_line(MAX_Y - 2);
+    mvwprintw(window, MAX_Y - 2, 0, "Paths loaded");
+    wrefresh(window);
+}
+
 void run_term(void)
 {
     const config_t *conf = config();
@@ -529,6 +538,10 @@ void run_term(void)
             }
         } else if (isprint(c)) {
             mvprintw(0, 0, "$");
+
+            if (! is_cache_ready()) {
+                continue;
+            }
 
             if (query_len == 0 && c == ' ') {
                 reset_query();
