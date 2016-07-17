@@ -37,6 +37,7 @@ target_link_libraries(xstarter
 	${Glib_LIBRARIES}
 	${CURSES_LIBRARIES}
 	-lmenu
+    -pthread
 )
 
 install (TARGETS xstarter xstarter_run DESTINATION bin)

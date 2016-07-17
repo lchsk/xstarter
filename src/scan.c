@@ -8,12 +8,12 @@
 #include <glib.h>
 #include <limits.h>
 #include <string.h>
+#include <pthread.h>
+#include <assert.h>
 
 #include "scan.h"
 #include "settings.h"
 #include "utils_string.h"
-
-static void refresh_cache();
 
 int PATH = 1024;
 
@@ -72,7 +72,7 @@ listdir(char *name, int level)
     closedir(dir);
 }
 
-static void
+static void*
 refresh_cache()
 {
     paths = g_queue_new();
@@ -117,7 +117,16 @@ refresh_cache()
 void
 load_cache()
 {
-    refresh_cache();
+    pthread_t thread;
+
+    int code = pthread_create(
+        &thread,
+        NULL,
+        refresh_cache,
+        NULL
+    );
+
+    assert(0 == code);
 }
 
 void free_cache()
