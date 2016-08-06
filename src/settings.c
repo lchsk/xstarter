@@ -130,97 +130,96 @@ load_config(cmdline_t *cmdline)
         /* Strip trailing spaces */
         str_array_strip(section_main->dirs);
 
-       section_main->terminal = g_key_file_get_string(
-           conf_file,
-           "Main",
-           "terminal",
-           &error
-       );
+        section_main->terminal = g_key_file_get_string(
+            conf_file,
+            "Main",
+            "terminal",
+            &error
+            );
 
-       if (error != NULL || strcmp(section_main->terminal, "") == 0) {
-           set_default_terminal(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL || strcmp(section_main->terminal, "") == 0) {
+            set_default_terminal(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->executables_only = g_key_file_get_boolean(
-           conf_file,
-           "Main",
-           "executables_only",
-           &error
-       );
+        section_main->executables_only = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "executables_only",
+            &error
+        );
 
-       if (error != NULL) {
-           set_default_executables_only(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL) {
+            set_default_executables_only(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->emacs_bindings = g_key_file_get_boolean(
-           conf_file,
-           "Main",
-           "emacs_bindings",
-           &error
-       );
+        section_main->emacs_bindings = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "emacs_bindings",
+            &error
+        );
 
-       if (error != NULL) {
-           set_default_emacs_bindings(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL) {
+            set_default_emacs_bindings(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->recent_apps_first = g_key_file_get_boolean(
-           conf_file,
-           "Main",
-           "recent_apps_first",
-           &error
-       );
+        section_main->recent_apps_first = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "recent_apps_first",
+            &error
+        );
 
-       if (error != NULL) {
-           set_recent_apps_first(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL) {
+            set_recent_apps_first(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->min_query_len = g_key_file_get_integer(
-           conf_file,
-           "Main",
-           "min_query_len",
-           &error
-       );
+        section_main->min_query_len = g_key_file_get_integer(
+            conf_file,
+            "Main",
+            "min_query_len",
+            &error
+        );
 
-       if (error != NULL) {
-           set_min_query_len(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL) {
+            set_min_query_len(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->allow_spaces = g_key_file_get_boolean(
-           conf_file,
-           "Main",
-           "allow_spaces",
-           &error
-       );
+        section_main->allow_spaces = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "allow_spaces",
+            &error
+        );
 
-       if (error != NULL) {
-           set_allow_spaces(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
+        if (error != NULL) {
+            set_allow_spaces(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
 
-       section_main->numeric_shortcuts = g_key_file_get_boolean(
-           conf_file,
-           "Main",
-           "numeric_shortcuts",
-           &error
-       );
+        section_main->numeric_shortcuts = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "numeric_shortcuts",
+            &error
+        );
 
-       if (error != NULL) {
-           set_numeric_shortcuts(CONF);
-           g_error_free(error);
-           error = NULL;
-       }
-
+        if (error != NULL) {
+            set_numeric_shortcuts(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
     } else {
         set_default_configuration(CONF);
     }
