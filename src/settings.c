@@ -125,8 +125,10 @@ load_config(cmdline_t *cmdline)
 
             if (section_main->dirs == NULL)
                 section_main->dirs = str_array_new(strdup("$PATH"), ",");
-
         }
+
+        /* Strip trailing spaces */
+        str_array_strip(section_main->dirs);
 
        section_main->terminal = g_key_file_get_string(
            conf_file,

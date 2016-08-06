@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,4 +39,32 @@ str_array_free(str_array_t *str_array)
     free(str_array->base_str);
     free(str_array->data);
     free(str_array);
+}
+
+char *strip(char *str)
+{
+    char *end;
+
+    // Trim leading space
+    while (isspace(*str)) str++;
+
+    if (*str == 0)  // All spaces?
+        return str;
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while (end > str && isspace(*end)) end--;
+
+    // Write new null terminator
+    *(end + 1) = 0;
+
+    return str;
+}
+
+void
+str_array_strip(str_array_t *str_array)
+{
+    for (int i = 0; i < str_array->length; i++) {
+        str_array->data[i] = strip(str_array->data[i]);
+    }
 }
