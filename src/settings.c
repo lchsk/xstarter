@@ -119,12 +119,12 @@ load_config(cmdline_t *cmdline)
         );
 
         if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
-            section_main->dirs = str_array_new(strdup("$PATH"), ",");
+            set_default_dirs(CONF);
         } else {
             section_main->dirs = str_array_new(raw_dirs, ",");
 
             if (section_main->dirs == NULL)
-                section_main->dirs = str_array_new(strdup("$PATH"), ",");
+                set_default_dirs(CONF);
         }
 
         /* Strip trailing spaces */
