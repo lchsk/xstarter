@@ -22,7 +22,6 @@ typedef struct {
 typedef struct {
     str_array_t *dirs;
     char *terminal;
-    Boolean executables_only;
     Boolean emacs_bindings;
     Boolean recent_apps_first;
     int min_query_len;

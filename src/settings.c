@@ -23,12 +23,6 @@ set_default_terminal(config_t *conf)
 }
 
 static void
-set_default_executables_only(config_t *conf)
-{
-    conf->section_main->executables_only = True;
-}
-
-static void
 set_default_emacs_bindings(config_t *conf)
 {
     conf->section_main->emacs_bindings = True;
@@ -63,7 +57,6 @@ set_default_configuration(config_t *conf)
 {
     set_default_dirs(conf);
     set_default_terminal(conf);
-    set_default_executables_only(conf);
     set_default_emacs_bindings(conf);
     set_recent_apps_first(conf);
     set_min_query_len(conf);
@@ -139,19 +132,6 @@ load_config(cmdline_t *cmdline)
 
         if (error != NULL || strcmp(section_main->terminal, "") == 0) {
             set_default_terminal(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->executables_only = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "executables_only",
-            &error
-        );
-
-        if (error != NULL) {
-            set_default_executables_only(CONF);
             g_error_free(error);
             error = NULL;
         }
