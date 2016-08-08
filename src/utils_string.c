@@ -6,6 +6,9 @@
 #include <string.h>
 
 #include "utils_string.h"
+#include "utils.h"
+
+#define MAX_LEN (4096)
 
 str_array_t
 *str_array_new(char *input_str, char const *delimiters)
@@ -77,21 +80,23 @@ expand_tilde(char *str, const char *home)
 
     int len = strlen(home);
 
-    static char dest[4096];
-    char *p = str;
+    static char dest[MAX_LEN];
+
     char *from = str;
     int i = 0;
 
-    while(*p != '\0') {
-        if (*p == '~') {
-            strncat(dest, from, p - from);
+    for (int i = 0; str[i]; i++) {
+        if (i >= (MAX_LEN - 1)) {
+            set_err(ERR_DIRS_TOO_LONG);
+            return str;
+        }
+
+        if (str[i] == '~') {
+            strncat(dest, from, &str[i] - from);
             strcat(dest, home);
 
             from = str + i + 1;
         }
-
-        p++;
-        i++;
     }
 
     strcat(dest, from);

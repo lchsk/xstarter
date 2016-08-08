@@ -26,6 +26,7 @@
 #define NO_ERR (0)
 #define ERR_UNKNOWN_APP_MODE (1)
 #define ERR_NO_XSTARTER_DIR (2)
+#define ERR_DIRS_TOO_LONG (3)
 
 /* Error code */
 static int err;
