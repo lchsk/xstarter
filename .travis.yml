@@ -5,7 +5,7 @@ before_install:
   - git clone https://github.com/Snaipe/Criterion.git
   - cd Criterion && mkdir build && cd build
   - CC=gcc cmake ..
-  - cmake --build .
+  - CC=gcc cmake --build .
   - sudo make install
   - cd ../../
 
