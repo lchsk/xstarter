@@ -68,3 +68,33 @@ str_array_strip(str_array_t *str_array)
         str_array->data[i] = strip(str_array->data[i]);
     }
 }
+
+char*
+expand_tilde(char *str, const char *home)
+{
+    if (str == NULL || home == NULL)
+        return str;
+
+    int len = strlen(home);
+
+    static char dest[4096];
+    char *p = str;
+    char *from = str;
+    int i = 0;
+
+    while(*p != '\0') {
+        if (*p == '~') {
+            strncat(dest, from, p - from);
+            strcat(dest, home);
+
+            from = str + i + 1;
+        }
+
+        p++;
+        i++;
+    }
+
+    strcat(dest, from);
+
+    return dest;
+}
