@@ -74,6 +74,9 @@ script:
   - uname -a
   - $COMPILER --version
   - CC=$COMPILER cmake . && make
-  - cd tests && cmake . && make
+  - cd tests
+  - cmake .
+  - make
+  - export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
   - cd ..
   - make check
