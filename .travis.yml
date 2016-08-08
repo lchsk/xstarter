@@ -66,3 +66,6 @@ script:
   - uname -a
   - $COMPILER --version
   - CC=$COMPILER cmake . && make
+  - cd tests
+  - cmake . && make
+  - xstarter_tests
