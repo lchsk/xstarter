@@ -76,7 +76,5 @@ script:
   - $COMPILER --version
   - CC=$COMPILER cmake . && make
   - cd tests
-  - CC=gcc cmake . && make
-  - export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-  - pwd
-  - ./xstarter_tests
+  - cmake . && make
+  - make check
