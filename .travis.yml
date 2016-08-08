@@ -77,4 +77,5 @@ script:
   - CC=$COMPILER cmake . && make
   - cd tests
   - cmake . && make
+  - cd ..
   - make check
