@@ -1,3 +1,6 @@
+# This file described build process for xstarter
+# Requires Curses and Glib
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 project(xstarter)
@@ -16,37 +19,39 @@ find_package(Curses REQUIRED)
 find_package(Glib REQUIRED)
 
 include_directories(
-	${Glib_INCLUDE_DIRS}
-	${CURSES_INCLUDE_DIR}
+  ${Glib_INCLUDE_DIRS}
+  ${CURSES_INCLUDE_DIR}
 )
 
 add_executable(xstarter
-	src/main.c
-	src/scan.c
-	src/settings.c
-	src/term.c
-	src/utils.c
-	src/utils_string.c
+  src/main.c
+  src/scan.c
+  src/settings.c
+  src/term.c
+  src/utils.c
+  src/utils_string.c
 )
 
 add_executable(xstarter_run
-	src/run.c
+  src/run.c
 )
 
 target_link_libraries(xstarter
-	${Glib_LIBRARIES}
-	${CURSES_LIBRARIES}
-	-lmenu
-    -pthread
+  ${Glib_LIBRARIES}
+  ${CURSES_LIBRARIES}
+  -lmenu
+  -pthread
 )
 
 install (TARGETS xstarter xstarter_run DESTINATION bin)
 
 # uninstall target
 configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-	IMMEDIATE @ONLY)
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY
+)
 
 add_custom_target(uninstall
-	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+)
