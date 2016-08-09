@@ -88,7 +88,8 @@ expand_tilde(char *str, const char *home)
     for (int i = 0; str[i]; i++) {
         if (i >= (MAX_LEN - 1)) {
             set_err(ERR_DIRS_TOO_LONG);
-            return str;
+            strncpy(dest, str, MAX_LEN -1);
+            return dest;
         }
 
         if (str[i] == '~') {

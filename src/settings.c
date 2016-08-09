@@ -104,17 +104,20 @@ load_config(cmdline_t *cmdline)
     )) {
         // Read directories from config
 
-        char *raw_dirs = g_key_file_get_string(
+        char *raw = g_key_file_get_string(
             conf_file,
             "Main",
             "dirs",
             NULL
         );
 
+        char *raw_dirs = expand_tilde(raw, getenv("HOME"));
+        free(raw);
+
         if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
             set_default_dirs(CONF);
         } else {
-            section_main->dirs = str_array_new(raw_dirs, ",");
+            section_main->dirs = str_array_new(strdup(raw_dirs), ",");
 
             if (section_main->dirs == NULL)
                 set_default_dirs(CONF);
