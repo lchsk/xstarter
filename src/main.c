@@ -38,7 +38,6 @@ main(int argc, char **argv)
 
         run_term();
 
-        kill_scan();
         free_term_gui();
         free_cache();
         free_search();
