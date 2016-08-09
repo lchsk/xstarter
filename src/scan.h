@@ -7,6 +7,7 @@
 
 void load_cache();
 void free_cache();
+void kill_scan();
 
 GQueue *get_cache();
 Boolean is_cache_ready();

@@ -22,6 +22,10 @@ static GQueue *search_paths = NULL;
 static GQueue *paths = NULL;
 static Boolean cache_ready = False;
 
+static pthread_t th_refresh_cache;
+/* Set to true if cache refresh thread should be stopped */
+static Boolean stop_traversing;
+
 static void
 listdir(char *name, int level)
 {
@@ -39,6 +43,9 @@ listdir(char *name, int level)
     char buf[PATH];
 
     do {
+        if (stop_traversing)
+            break;
+
         if (entry->d_type == DT_DIR) {
             char path[PATH];
             int len = snprintf(
@@ -122,19 +129,31 @@ refresh_cache()
 void
 load_cache()
 {
-    pthread_t thread;
+    stop_traversing = False;
 
     int code = pthread_create(
-        &thread,
+        &th_refresh_cache,
         NULL,
         refresh_cache,
         NULL
     );
 
-    assert(0 == code);
+    assert(code == 0);
 }
 
-void free_cache()
+void
+kill_scan()
+{
+    if (! cache_ready) {
+        stop_traversing = True;
+        pthread_join(th_refresh_cache, NULL);
+    } else {
+        pthread_detach(th_refresh_cache);
+    }
+}
+
+void
+free_cache()
 {
     if (search_paths != NULL) {
         for (int i = 0; i < g_queue_get_length(search_paths); i++) {
