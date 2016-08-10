@@ -128,6 +128,14 @@ read_cache_file()
 static Boolean
 cache_needs_refresh()
 {
+    const config_t *conf = config();
+
+    if (! conf->section_main->use_cache)
+        return True;
+
+    if (! conf->section_main->auto_cache_refresh)
+        return False;
+
     /* If cache file does not exist then yes */
 
     struct stat cache_stat;
@@ -210,7 +218,10 @@ refresh_cache()
             listdir(t, 0);
         }
 
-        cache_to_file();
+        const config_t *conf = config();
+
+        if (conf->section_main->use_cache)
+            cache_to_file();
     } else
         read_cache_file();
 

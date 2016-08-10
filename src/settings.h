@@ -27,6 +27,8 @@ typedef struct {
     int min_query_len;
     Boolean allow_spaces;
     Boolean numeric_shortcuts;
+    Boolean use_cache;
+    Boolean auto_cache_refresh;
 } config_main_t;
 
 typedef struct {

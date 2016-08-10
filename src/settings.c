@@ -53,6 +53,18 @@ set_numeric_shortcuts(config_t *conf)
 }
 
 static void
+set_use_cache(config_t *conf)
+{
+    conf->section_main->use_cache = True;
+}
+
+static void
+set_auto_cache_refresh(config_t *conf)
+{
+    conf->section_main->auto_cache_refresh = True;
+}
+
+static void
 set_default_configuration(config_t *conf)
 {
     set_default_dirs(conf);
@@ -62,6 +74,8 @@ set_default_configuration(config_t *conf)
     set_min_query_len(conf);
     set_allow_spaces(conf);
     set_numeric_shortcuts(conf);
+    set_use_cache(conf);
+    set_auto_cache_refresh(conf);
 }
 
 void
@@ -203,6 +217,33 @@ load_config(cmdline_t *cmdline)
             g_error_free(error);
             error = NULL;
         }
+
+        section_main->use_cache = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "use_cache",
+            &error
+        );
+
+        if (error != NULL) {
+            set_use_cache(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
+
+        section_main->auto_cache_refresh = g_key_file_get_boolean(
+            conf_file,
+            "Main",
+            "auto_cache_refresh",
+            &error
+        );
+
+        if (error != NULL) {
+            set_auto_cache_refresh(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
+
     } else {
         set_default_configuration(CONF);
     }
