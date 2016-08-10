@@ -305,6 +305,7 @@ print_err()
         case ERR_NO_XSTARTER_DIR:
             PRINT("No xstarter directory found");
             break;
+            // TODO: Show code and make sure all errors are handled
         default:
             PRINT("Unknown error");
     }
