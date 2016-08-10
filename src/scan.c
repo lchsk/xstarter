@@ -13,7 +13,6 @@
 #include <time.h>
 
 #include "scan.h"
-#include "settings.h"
 #include "utils_string.h"
 #include "term.h"
 
@@ -29,6 +28,8 @@ static Boolean cache_ready = False;
 static pthread_t th_refresh_cache;
 /* Set to true if cache refresh thread should be stopped */
 static Boolean stop_traversing;
+
+static cmdline_t *cmdline;
 
 static void
 listdir(char *name, int level)
@@ -128,6 +129,10 @@ read_cache_file()
 static Boolean
 cache_needs_refresh()
 {
+    /* If a user requested cache refresh from the cmdline */
+    if (cmdline->force_cache_refresh)
+        return True;
+
     const config_t *conf = config();
 
     if (! conf->section_main->use_cache)
@@ -230,8 +235,10 @@ refresh_cache()
 }
 
 void
-load_cache()
+load_cache(cmdline_t *cmdline_)
 {
+    cmdline = cmdline_;
+
     stop_traversing = False;
 
     int code = pthread_create(

@@ -4,8 +4,9 @@
 #include <glib.h>
 
 #include "utils.h"
+#include "settings.h"
 
-void load_cache();
+void load_cache(cmdline_t *cmdline);
 void free_cache();
 void kill_scan();
 

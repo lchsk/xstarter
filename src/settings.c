@@ -299,8 +299,9 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     cmdline->mode = MODE_OPEN_APP;
     cmdline->config_path = NULL;
     cmdline->verbose = False;
+    cmdline->force_cache_refresh = False;
 
-    while ((c = getopt(argc, argv, "thvVc:")) != -1) {
+    while ((c = getopt(argc, argv, "thvrVc:")) != -1) {
         switch(c) {
         case 'c':
             cmdline->config_path = optarg;
@@ -314,6 +315,9 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
             break;
         case 'V':
             cmdline->verbose = True;
+            break;
+        case 'r':
+            cmdline->force_cache_refresh = True;
             break;
         case 'h':
         default:

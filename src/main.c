@@ -18,7 +18,7 @@ main(int argc, char **argv)
 
     xstarter_directory();
 
-    cmdline_t* cmdline = malloc(sizeof(cmdline_t));
+    cmdline_t *cmdline = malloc(sizeof(cmdline_t));
 
     if (read_cmdline(cmdline, argc, argv))
         exit(EXIT_SUCCESS);
@@ -34,7 +34,7 @@ main(int argc, char **argv)
         init_search();
         init_term_gui();
 
-        load_cache();
+        load_cache(cmdline);
 
         run_term();
 

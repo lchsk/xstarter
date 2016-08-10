@@ -17,6 +17,7 @@ typedef struct {
     int mode;
     Boolean verbose;
     char* config_path;
+    Boolean force_cache_refresh;
 } cmdline_t;
 
 typedef struct {
