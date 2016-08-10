@@ -155,23 +155,6 @@ running_from_term()
     return isatty(0);
 }
 
-/* int */
-/* get_config_path(char* home_dir) */
-/* { */
-/*      char* dir = NULL; */
-/*      if ((dir = (getenv("HOME"))) == NULL) { */
-/*          struct passwd* pw = getpwuid(getuid()); */
-/*          dir = pw->pw_dir; */
-/*      } */
-
-/*      if (dir != NULL) { */
-/*          strcpy(home_dir, dir); */
-/*          return 0; */
-/*      } */
-
-/*      return 1; */
-/* } */
-
 void
 dump_debug(const char *str)
 {
@@ -215,27 +198,6 @@ dump_debug_int(int d)
     );
 
     system(debug);
-}
-
-void
-get_working_dir()
-{
-    // TODO:
-    // readlink("/proc/curproc/file", buf, bufsize) (FreeBSD)
-    // readlink("/proc/self/path/a.out", buf, bufsize) (Solaris)
-    // argv[0]
-
-    /* char app[1000]; */
-
-    /* if (readlink("/proc/self/exe", app, sizeof(app)) == -1) { */
-    /*     // TODO */
-    /* } */
-
-    /* strcpy(working_dir, dirname(app)); */
-
-    /* char recent_f[1200]; */
-
-    /* snprintf(recent_f, sizeof(recent_f), "%s/recent.bin", working_dir); */
 }
 
 void
