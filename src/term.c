@@ -15,6 +15,9 @@
 #include "scan.h"
 #include "utils.h"
 
+#undef basename
+#define basename g_path_get_basename
+
 static GList *results = NULL;
 
 static WINDOW *window = NULL;
