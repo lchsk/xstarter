@@ -12,11 +12,13 @@
 ## Features
 
 * a clean, simple interface that works on various terminals
-* can search for applications using environment variables (e.g. `$PATH`) and user-provided list of directories
+* able to search for applications using environment variables (e.g. `$PATH`) and user-provided list of directories
 * can be configured to launch via a key-binding
 * allows fuzzy search (parts of the query can be separated with a space)
+* applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
 * fast, uses cache by default
 * easy to configure via a single text file
+* tested on Ubuntu, Debian, FreeBSD
 
 ## Installation
 
