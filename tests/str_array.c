@@ -86,3 +86,19 @@ Test(str_array, several)
 
     str_array_free(result);
 }
+
+Test(str_array, strip)
+{
+    char *test = strdup("a: b: c: ");
+    str_array_t *result = str_array_new(test, ":");
+
+    str_array_strip(result);
+
+    cr_assert_eq(result->length, 4);
+    cr_assert_str_eq(result->data[0], "a");
+    cr_assert_str_eq(result->data[1], "b");
+    cr_assert_str_eq(result->data[2], "c");
+    cr_assert_str_eq(result->data[3], "");
+
+    str_array_free(result);
+}
