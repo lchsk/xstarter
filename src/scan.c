@@ -42,6 +42,7 @@ listdir(char *name, int level)
     }
 
     if (! (entry = readdir(dir))) {
+        closedir(dir);
         return;
     }
 

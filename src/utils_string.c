@@ -22,6 +22,7 @@ str_array_t
     char *txt = strtok(input_str, delimiters);
 
     if (! txt) {
+        free(out);
         return NULL;
     }
 
