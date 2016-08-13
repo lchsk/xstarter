@@ -13,7 +13,7 @@
 str_array_t
 *str_array_new(char *input_str, char const *delimiters)
 {
-    str_array_t *out = malloc(sizeof(str_array_t));
+    str_array_t *out = smalloc(sizeof(str_array_t));
 
     *out = (str_array_t) {
         .length = 0,
@@ -118,7 +118,7 @@ xs_dirname(char *str)
         || strcmp(str, "..") == 0
         || strcmp(str, "") == 0
     ) {
-        result = malloc(2);
+        result = smalloc(2);
         strcpy(result, ".");
 
         goto return_result;
@@ -128,7 +128,7 @@ xs_dirname(char *str)
     int i = len;
 
     if (str[i - 1] == '/') {
-        result = malloc(2);
+        result = smalloc(2);
         strcpy(result, "/");
 
         goto return_result;
@@ -144,11 +144,11 @@ xs_dirname(char *str)
     }
 
     if (found) {
-        result = malloc(i + 1);
+        result = smalloc(i + 1);
         strncpy(result, str, i);
         result[i] = '\0';
     } else {
-        result = malloc(2);
+        result = smalloc(2);
         strcpy(result, ".");
     }
 

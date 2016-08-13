@@ -547,7 +547,7 @@ void run_term(void)
                         field_buffer(field[0], 0)
                     );
 
-                    char *new_query = malloc(query_len + 1);
+                    char *new_query = smalloc(query_len + 1);
                     memcpy(new_query, query, query_len);
                     new_query[query_len] = '\0';
 

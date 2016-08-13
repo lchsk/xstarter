@@ -88,9 +88,9 @@ load_config(cmdline_t *cmdline)
     char home_dir[64];
     char path[256];
 
-    section_main = malloc(sizeof(config_main_t));
+    section_main = smalloc(sizeof(config_main_t));
 
-    CONF = malloc(sizeof(config_t));
+    CONF = smalloc(sizeof(config_t));
 
     *CONF = (config_t) {
         .section_main = section_main

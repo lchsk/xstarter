@@ -53,4 +53,7 @@ void set_err(int err_code);
 int get_err();
 void print_err();
 
+void *safe_malloc(size_t n, unsigned long line);
+#define smalloc(n) safe_malloc(n, __LINE__);
+
 #endif
