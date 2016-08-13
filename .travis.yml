@@ -2,7 +2,7 @@ language: c
 sudo: true
 
 before_install:
-  - sudo apt-get install valgrind
+  - sudo apt-get install valgrind cppcheck
   - git clone https://github.com/Snaipe/Criterion.git
   - cd Criterion && mkdir build && cd build
   - CC=gcc cmake ..
@@ -76,6 +76,7 @@ script:
   - uname -a
   - $COMPILER --version
   - CC=$COMPILER cmake . && make
+  - cppcheck --verbose ./src
   - cd tests
   - cmake . && make
   - ./xstarter_tests --verbose=1
