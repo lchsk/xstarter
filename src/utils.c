@@ -194,6 +194,7 @@ void
 xstarter_directory()
 {
     xstarter_dir_avail = True;
+    Boolean using_tmp_dir = False;
 
     char *dir = NULL;
 
@@ -203,6 +204,7 @@ xstarter_directory()
     }
 
     if (! dir) {
+        using_tmp_dir = True;
         dir = smalloc(1024);
         strcpy(dir, "/tmp");
     }
@@ -215,7 +217,8 @@ xstarter_directory()
             dir
         );
 
-        free(dir);
+        if (using_tmp_dir)
+            free(dir);
 
         struct stat st = {0};
 
