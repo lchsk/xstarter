@@ -15,10 +15,10 @@
 #include "scan.h"
 #include "utils.h"
 
-#undef basename
-#define basename g_path_get_basename
-
 static GList *results = NULL;
+
+/* Names of applications (after basename) */
+static GList *names = NULL;
 
 static WINDOW *window = NULL;
 static MENU *menu_list = NULL;
@@ -141,13 +141,17 @@ prepare_for_new_results(Boolean clear)
             GList *l = g_list_nth(results, i);
             char *path = l->data;
 
+            char *name = g_path_get_basename(path);
+            names = g_list_prepend(names, name);
+
             if (conf->section_main->numeric_shortcuts) {
-                if (i < 10)
-                    list_items[i] = new_item(digits[i], basename(path));
+                if (i < 10) {
+                    list_items[i] = new_item(digits[i], name);
+                }
                 else
-                    list_items[i] = new_item(" ", basename(path));
+                    list_items[i] = new_item(" ", name);
             } else {
-                list_items[i] = new_item(basename(path), (char*) NULL);
+                list_items[i] = new_item(name, (char*) NULL);
             }
         }
     }
@@ -253,18 +257,32 @@ search(char *const query)
         Boolean found = True;
 
         if (current_query_len == 1) {
-            if (strcasestr(basename(path), query) != NULL) {
+            char *name = g_path_get_basename(path);
+
+            if (strcasestr(name, query) != NULL) {
                 results = g_list_prepend(results, path);
             }
+
+            free(name);
         } else if (current_query_len > 1) {
             for (int i = 0; i < current_query_len; i++) {
                 if (strcmp(query_parts->data[i], " ") == 0)
                     continue;
 
-                if (strstr(basename(path), query_parts->data[i]) == NULL) {
+                char *name = g_path_get_basename(
+                    path
+                );
+
+                if (strstr(name, query_parts->data[i]) == NULL) {
                     found = False;
-                    break;
+                    goto finish;
                 }
+
+            finish:
+                free(name);
+
+                if (! found)
+                    break;
             }
 
             if (found)
