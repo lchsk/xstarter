@@ -2,6 +2,7 @@ language: c
 sudo: true
 
 before_install:
+  - sudo apt-get install valgrind
   - git clone https://github.com/Snaipe/Criterion.git
   - cd Criterion && mkdir build && cd build
   - CC=gcc cmake ..
