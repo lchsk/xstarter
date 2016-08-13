@@ -1,6 +1,12 @@
 #ifndef TERM_H
 #define TERM_H
 
+/* Fix definition of KEY_BACKSPACE on FreeBSD */
+#ifdef __FreeBSD__
+#undef KEY_BACKSPACE
+#define KEY_BACKSPACE (127)
+#endif
+
 #define KEY_ESCAPE (27)
 #define KEY_RETURN (10)
 
@@ -23,7 +29,5 @@ void printf_results();
 void run_term();
 
 void cache_loaded();
-
-
 
 #endif
