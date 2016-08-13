@@ -16,14 +16,14 @@ str_array_t
     str_array_t *out = malloc(sizeof(str_array_t));
 
     *out = (str_array_t) {
+        .length = 0,
         .base_str = input_str
     };
 
     char *txt = strtok(input_str, delimiters);
 
     if (! txt) {
-        free(out);
-        return NULL;
+        return out;
     }
 
     while (txt) {

@@ -20,6 +20,7 @@ add_executable(xstarter_tests
   ../src/utils_string.c
   ../tests/expand_tilde.c
   ../tests/xs_dirname.c
+  ../tests/str_array.c
 )
 
 target_link_libraries(xstarter_tests
