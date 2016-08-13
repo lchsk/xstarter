@@ -218,7 +218,7 @@ xstarter_directory()
 
         if (stat(xstarter_dir, &st) == -1) {
             if (mkdir(xstarter_dir, 0700)) {
-                // TODO: set error code
+                set_err(ERR_XSTARTER_MKDIR_FAILED);
             } else {
                 xstarter_dir_avail = True;
             }
@@ -257,7 +257,11 @@ print_err()
         case ERR_NO_XSTARTER_DIR:
             PRINT("No xstarter directory found");
             break;
-            // TODO: Show code and make sure all errors are handled
+        case ERR_DIRS_TOO_LONG:
+            PRINT("List of directories is too long");
+            break;
+        case ERR_XSTARTER_MKDIR_FAILED:
+            PRINT("Failed to create the ~/.xstarter.d directory");
         default:
             PRINT("Unknown error");
     }

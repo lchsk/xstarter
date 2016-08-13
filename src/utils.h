@@ -13,7 +13,6 @@
 #define MODE_RETURN_TERMINAL (1)
 #define MODE_OPEN_APP (2)
 
-// TODO: Move those to the configuration file
 #define RECENT_APPS_REMEMBERED (100)
 #define RECENT_APPS_SHOWN (10)
 
@@ -27,6 +26,7 @@
 #define ERR_UNKNOWN_APP_MODE (1)
 #define ERR_NO_XSTARTER_DIR (2)
 #define ERR_DIRS_TOO_LONG (3)
+#define ERR_XSTARTER_MKDIR_FAILED (4)
 
 /* Error code */
 static int err;
