@@ -1,12 +1,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <pwd.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
 #include <fcntl.h>
 
 #include "utils.h"
@@ -146,13 +143,6 @@ void
 app_to_open(char *path)
 {
     _app_to_open_path = path;
-}
-
-/* TODO: remove */
-int
-running_from_term()
-{
-    return isatty(0);
 }
 
 void
