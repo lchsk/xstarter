@@ -203,7 +203,8 @@ xstarter_directory()
     }
 
     if (! dir) {
-        // TODO: Set dir = /tmp
+        dir = smalloc(1024);
+        strcpy(dir, "/tmp");
     }
 
     if (dir) {
@@ -211,8 +212,10 @@ xstarter_directory()
             xstarter_dir,
             sizeof(xstarter_dir),
             "%s/.xstarter.d",
-            (dir)
+            dir
         );
+
+        free(dir);
 
         struct stat st = {0};
 
