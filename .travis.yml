@@ -4,7 +4,7 @@ sudo: true
 before_install:
   - sudo apt-get install valgrind cppcheck
   - git clone https://github.com/Snaipe/Criterion.git
-  - cd Criterion && mkdir build && cd build
+  - cd Criterion && git checkout master && mkdir build && cd build
   - CC=gcc cmake ..
   - CC=gcc cmake --build .
   - sudo make install

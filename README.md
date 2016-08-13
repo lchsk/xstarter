@@ -1,6 +1,6 @@
 # xstarter
 
-**xstarter is a terminal-based application launcher for Linux.**
+**xstarter is a terminal-based application launcher for Unix-like systems.**
 
 | Branch | Build |
 | --- | --- |
@@ -39,9 +39,9 @@ make install
 
 ## Run xstarter using a key binding
 
-**xstarter** needs to be started from a terminal. If you want to run it using a key binding, bind your preferred shortcut to the `./bin/xstarter_run` file.
+**xstarter** needs to be launched from a terminal. If you want to run it using a key binding, bind your preferred shortcut to the `./bin/xstarter_run` file.
 
-It should run on any modern terminal. It is tested on: xterm, rxvt, gnome-terminal, xfce4-terminal, konsole. In case of any problems please [report it](https://github.com/lchsk/xstarter/issues/new).
+It should run on any modern terminal. It is tested on: `xterm`, `rxvt`, `gnome-terminal`, `xfce4-terminal`, `konsole`. In case of any problems please [report it](https://github.com/lchsk/xstarter/issues/new).
 
 ## Configuration
 
