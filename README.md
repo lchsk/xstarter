@@ -14,6 +14,7 @@
 * a clean, simple interface that works on various terminals
 * able to search for applications using environment variables (e.g. `$PATH`) and user-provided list of directories
 * can be configured to launch via a key-binding
+* remembers previously launched applications allowing to find them more quickly
 * allows fuzzy search (parts of the query can be separated with a space)
 * applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
 * fast, uses cache by default
