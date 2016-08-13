@@ -7,6 +7,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "utils_string.h"
+
 #define MAX_LEN (2048)
 #define PIPE "/tmp/xstarter"
 
@@ -99,15 +101,22 @@ main(int argc, char **argv)
 
     xstarter_dir_found = get_xstarter_path(argc, argv, xstarter_path);
 
+    char *xstarter_dir = NULL;
+
     if (xstarter_dir_found) {
-        dirname(xstarter_path);
+        xstarter_dir = xs_dirname(xstarter_path);
+    } else {
+        return EXIT_FAILURE;
     }
 
     struct stat sb;
 
-    strcpy(xstarter_run, xstarter_path);
+    strcpy(xstarter_run, xstarter_dir);
     strcat(xstarter_run, "/");
     strcat(xstarter_run, "xstarter");
+
+    if (xstarter_dir)
+        free(xstarter_dir);
 
     if (! (stat(xstarter_run, &sb) == 0 && sb.st_mode & S_IXUSR)) {
         printf("%s doesn't exist or is not executable\n", xstarter_run);
