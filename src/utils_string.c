@@ -104,3 +104,53 @@ expand_tilde(char *str, const char *home)
 
     return dest;
 }
+
+char *
+xs_dirname(char *str)
+{
+    char *result;
+
+    /* Special cases */
+
+    if (str == NULL
+        || strcmp(str, ".") == 0
+        || strcmp(str, "..") == 0
+        || strcmp(str, "") == 0
+    ) {
+        result = malloc(2);
+        strcpy(result, ".");
+
+        goto return_result;
+    }
+
+    int len = strlen(str);
+    int i = len;
+
+    if (str[i - 1] == '/') {
+        result = malloc(2);
+        strcpy(result, "/");
+
+        goto return_result;
+    }
+
+    Boolean found = False;
+
+    while(--i) {
+        if (str[i] == '/') {
+            found = True;
+            break;
+        }
+    }
+
+    if (found) {
+        result = malloc(i + 1);
+        strncpy(result, str, i);
+        result[i] = '\0';
+    } else {
+        result = malloc(2);
+        strcpy(result, ".");
+    }
+
+return_result:
+    return result;
+}

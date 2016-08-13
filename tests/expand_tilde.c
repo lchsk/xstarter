@@ -60,5 +60,6 @@ Test(tilde_expansion, multiple_expansions)
 
     cr_assert_str_eq(
         result,
-        "/xstarter/xs1, $PATH, /xstarter/xs2, /xstarter/xs3, xs");
+        "/xstarter/xs1, $PATH, /xstarter/xs2, /xstarter/xs3, xs"
+    );
 }

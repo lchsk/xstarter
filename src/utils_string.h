@@ -25,4 +25,7 @@ void str_array_free(str_array_t *str_array);
 /* Replace tilde with a home directory */
 char *expand_tilde(char *str, const char *home);
 
+/* Return a newly allocated dirname */
+char *xs_dirname(char *str);
+
 #endif
