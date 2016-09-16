@@ -18,6 +18,8 @@ add_definitions(-std=gnu99)
 find_package(Curses REQUIRED)
 find_package(Glib REQUIRED)
 
+message (${CURSES_INCLUDE_DIR})
+
 include_directories(
   ${Glib_INCLUDE_DIRS}
   ${CURSES_INCLUDE_DIR}
@@ -36,12 +38,20 @@ add_executable(xstarter_run
   src/run.c
   src/utils.c
   src/utils_string.c
-)
+  )
+
+message (${CURSES_LIBRARIES})
 
 target_link_libraries(xstarter
   ${Glib_LIBRARIES}
-  ${CURSES_LIBRARIES}
-  -lmenu
+  /lib/libncursesw.so.6
+  /usr/lib/libformw.so.6
+  /usr/lib/libmenuw.so.6
+  #/lib/libformw.so
+  #${CURSES_LIBRARIES}
+  #-lncurses
+  #-lform
+  #-lmenu
   -pthread
 )
 
