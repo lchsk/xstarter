@@ -21,6 +21,12 @@
 * easy to configure via a single text file
 * tested on Ubuntu, Debian, FreeBSD
 
+## Requirements
+
+* ncurses 5.9
+* glib > 2.0
+* cmake (for running the build script)
+
 ## Installation
 
 ```
