@@ -167,7 +167,7 @@ prepare_for_new_results(Boolean clear)
         0
     );
 
-    keypad(window, TRUE);
+    /* keypad(window, TRUE); */
     /* nodelay(window, TRUE); */
 
     set_menu_win(menu_list, window);
@@ -334,6 +334,7 @@ init_term_gui(void)
     start_color();
     cbreak();
     noecho();
+    keypad(stdscr, TRUE);
 
     if (can_change_color()) {
         init_color(XS_COLOR_BLUE, 43, 180, 349);
@@ -368,15 +369,17 @@ init_term_gui(void)
     );
 
     /* Hide cursor */
-    curs_set(0);
+    /* curs_set(0); */
 
     set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
+    /* set_field_back(field[0], A_UNDERLINE); */
     field[1] = NULL;
 
     form = new_form(field);
     post_form(form);
+    refresh();
 
-    wrefresh(window);
+    /* wrefresh(window); */
 }
 
 void
@@ -459,7 +462,7 @@ reset_query(void)
     strcpy(query, "");
     query_len = 0;
     form_driver(form, REQ_CLR_FIELD);
-    form_driver(form, REQ_VALIDATION);
+    /* form_driver(form, REQ_VALIDATION); */
 
     g_list_free(results);
     results = NULL;
@@ -503,7 +506,14 @@ void run_term(void)
 
     int c;
 
-    while ((c = wgetch(window)) != KEY_ESCAPE) {
+    /* while ((c = wgetch(window)) != KEY_ESCAPE) { */
+    while ((c = getch()) != KEY_ESCAPE) {
+        /* switch(c) { */
+        /* default: */
+        /*     form_driver(form, c); */
+
+        /*     break; */
+        /* } */
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
 
@@ -538,7 +548,7 @@ void run_term(void)
                     reset_query();
                 } else {
                     form_driver(form, REQ_DEL_PREV);
-                    form_driver(form, REQ_VALIDATION);
+                    /* form_driver(form, REQ_VALIDATION); */
 
                     snprintf(
                         query,
@@ -573,7 +583,7 @@ void run_term(void)
             }
 
             form_driver(form, c);
-            form_driver(form, REQ_VALIDATION);
+            /* form_driver(form, REQ_VALIDATION); */
 
             snprintf(
                 query,
