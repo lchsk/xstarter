@@ -44,6 +44,18 @@ static const char *digits[10] = {
     "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
 };
 
+typedef struct {
+    char *items[1000];
+    unsigned choices_cnt;
+    unsigned offset;
+    unsigned selected;
+    char *error;
+} items_list_t;
+
+static items_list_t items_list;
+
+static char *items[1000];
+
 static void
 clean_line(int line_y)
 {
@@ -114,6 +126,41 @@ update_info_bar(void)
     }
 }
 
+void show_menu()
+{
+    for (int i = 0; i < 10; i++) {
+        wmove(stdscr, i + 2, 0);
+
+        wclrtoeol(stdscr);
+
+        if (i == items_list.selected)
+            attron(COLOR_PAIR(1));
+
+        int item_id = items_list.offset + i;
+
+        mvprintw(i + 2, 0, items_list.items[item_id]);
+
+        if (i == items_list.selected)
+            attroff(COLOR_PAIR(1));
+    }
+}
+
+void move_down()
+{
+    if (items_list.selected >= 9) {
+        items_list.offset++;
+    } else
+        items_list.selected++;
+}
+
+void move_up()
+{
+    if (items_list.selected == 0 && items_list.offset > 0) {
+        items_list.offset--;
+    } else
+        items_list.selected--;
+}
+
 static void
 prepare_for_new_results(Boolean clear)
 {
@@ -128,14 +175,18 @@ prepare_for_new_results(Boolean clear)
         no_results();
     }
 
-    list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*));
+    /* list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*)); */
 
-    for (int i = 0; i < choices_cnt; i++) {
+    int cnt = choices_cnt > 1000 ? 1000 : choices_cnt;
+
+    for (int i = 0; i < cnt; i++) {
         if (results_not_found) {
             if (query_len == 0) {
-                list_items[i] = new_item("Start typing to search", "");
+                items[i] = strdup("Start typing");
+                /* list_items[i] = new_item("Start typing to search", ""); */
             } else {
-                list_items[i] = new_item("No results, sorry", "");
+                items[i] = strdup("No results");
+                /* list_items[i] = new_item("No results, sorry", ""); */
             }
         } else {
             GList *l = g_list_nth(results, i);
@@ -146,40 +197,48 @@ prepare_for_new_results(Boolean clear)
 
             if (conf->section_main->numeric_shortcuts) {
                 if (i < 10) {
-                    list_items[i] = new_item(digits[i], name);
+                    items_list.items[i] = name;
+                    /* items[i] = name; */
+                    /* list_items[i] = new_item(digits[i], name); */
                 }
                 else
-                    list_items[i] = new_item(" ", name);
+                    items_list.items[i] = name;
+                    /* items[i] = name; */
+                    /* list_items[i] = new_item(" ", name); */
             } else {
-                list_items[i] = new_item(name, (char*) NULL);
+                items_list.items[i] = name;
+                /* items[i] = name; */
+                /* list_items[i] = new_item(name, (char*) NULL); */
             }
         }
     }
 
-    list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL);
+    show_menu();
 
-    menu_list = new_menu((ITEM**) list_items);
+    /* list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL); */
 
-    window = newwin(
-        30, // rows
-        30, // cols
-        2,
-        0
-    );
+    /* menu_list = new_menu((ITEM**) list_items); */
+
+    /* window = newwin( */
+    /*     30, // rows */
+    /*     30, // cols */
+    /*     2, */
+    /*     0 */
+    /* ); */
 
     /* keypad(window, TRUE); */
     /* nodelay(window, TRUE); */
 
-    set_menu_win(menu_list, window);
-    set_menu_mark(menu_list, "");
-    set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
-    set_menu_format(menu_list, 10, 1);
+    /* set_menu_win(menu_list, window); */
+    /* set_menu_mark(menu_list, ""); */
+    /* set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1)); */
+    /* set_menu_format(menu_list, 10, 1); */
 
     /* post_menu(menu_list); */
 
     /* update_info_bar(); */
 
-    /* refresh(); */
+    refresh();
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -495,9 +554,9 @@ read_emacs_keys(const char *name)
 
 void cache_loaded(void)
 {
-    /* clean_line(MAX_Y - 2); */
-    /* mvwprintw(window, MAX_Y - 2, 0, "Paths loaded"); */
-    /* wrefresh(window); */
+    clean_line(MAX_Y - 2);
+    mvwprintw(window, MAX_Y - 2, 0, "Paths loaded");
+    wrefresh(window);
 }
 
 void run_term(void)
@@ -521,11 +580,14 @@ void run_term(void)
         open_by_shortcut(c);
 
         if (c == KEY_DOWN) {
-            menu_driver(menu_list, REQ_DOWN_ITEM);
-            update_info_bar();
+            move_down();
+
+            /* menu_driver(menu_list, REQ_DOWN_ITEM); */
+            /* update_info_bar(); */
         } else if (c == KEY_UP) {
-            menu_driver(menu_list, REQ_UP_ITEM);
-            update_info_bar();
+            move_up();
+            /* menu_driver(menu_list, REQ_UP_ITEM); */
+            /* update_info_bar(); */
         } else if (c == KEY_RETURN) {
             set_app_to_run();
         } else if (c == KEY_NPAGE) {
@@ -615,6 +677,9 @@ void run_term(void)
             if (search(new_query))
                 prepare_for_new_results(True);
         }
+
+        show_menu();
+        refresh();
 
         if (run_app == True) {
             break;
