@@ -499,11 +499,9 @@ open_app_later(const char *path)
 static void
 set_app_to_run(void)
 {
-    ITEM *item = current_item(menu_list);
+    unsigned item = items_list.selected + items_list.offset;
 
-    if (item) {
-        open_app_later(g_list_nth_data(results, item_index(item)));
-    }
+    open_app_later(g_list_nth_data(results, item));
 }
 
 static void
