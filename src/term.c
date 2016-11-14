@@ -75,24 +75,27 @@ clear_menu(Boolean clear)
 {
     const config_t* conf = config();
 
-    if (menu_list && clear) {
+    /* if (menu_list && clear) { */
+        for (int i = 0; i < 1000; i++) {
+            items_list.items[i] = NULL;
+        }
         /* NB: Menu removal needs to be in this order! */
-        unpost_menu(menu_list);
-        free_menu(menu_list);
+        /* unpost_menu(menu_list); */
+        /* free_menu(menu_list); */
 
-        if (list_items) {
-            for (int i = 0; i < choices_cnt; i++) {
-                free_item(list_items[i]);
-            }
+        /* if (list_items) { */
+        /*     for (int i = 0; i < choices_cnt; i++) { */
+        /*         free_item(list_items[i]); */
+        /*     } */
 
-            free(list_items);
-            list_items = NULL;
-        }
+        /*     free(list_items); */
+        /*     list_items = NULL; */
+        /* } */
 
-        if (window) {
-            delwin(window);
-        }
-    }
+        /* if (window) { */
+        /*     delwin(window); */
+        /* } */
+    /* } */
 }
 
 static void
@@ -132,13 +135,16 @@ void show_menu()
         wmove(stdscr, i + 2, 0);
 
         wclrtoeol(stdscr);
+    }
 
+    for (int i = 0; i < 10; i++) {
         if (i == items_list.selected)
             attron(COLOR_PAIR(1));
 
         int item_id = items_list.offset + i;
 
-        mvprintw(i + 2, 0, items_list.items[item_id]);
+        if (items_list.items[item_id])
+            mvprintw(i + 2, 0, items_list.items[item_id]);
 
         if (i == items_list.selected)
             attroff(COLOR_PAIR(1));
@@ -149,7 +155,7 @@ void move_down()
 {
     if (items_list.selected >= 9) {
         items_list.offset++;
-    } else
+    } else if (items_list.selected < choices_cnt - 1)
         items_list.selected++;
 }
 
@@ -157,7 +163,7 @@ void move_up()
 {
     if (items_list.selected == 0 && items_list.offset > 0) {
         items_list.offset--;
-    } else
+    } else if (items_list.selected > 0)
         items_list.selected--;
 }
 
@@ -171,9 +177,9 @@ prepare_for_new_results(Boolean clear)
 
     choices_cnt = g_list_length(results);
 
-    if (choices_cnt == 0) {
-        no_results();
-    }
+    /* if (choices_cnt == 0) { */
+    /*     no_results(); */
+    /* } */
 
     /* list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*)); */
 
