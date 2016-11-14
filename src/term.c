@@ -175,11 +175,11 @@ prepare_for_new_results(Boolean clear)
     set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1));
     set_menu_format(menu_list, 10, 1);
 
-    post_menu(menu_list);
+    /* post_menu(menu_list); */
 
-    update_info_bar();
+    /* update_info_bar(); */
 
-    refresh();
+    /* refresh(); */
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -354,8 +354,8 @@ init_term_gui(void)
     show_recent_apps();
     prepare_for_new_results(False);
 
-    mvprintw(0, 0, "$");
-    mvwprintw(window, MAX_Y - 2, 0, "Loading paths...");
+    /* mvprintw(0, 0, "$"); */
+    /* mvwprintw(window, MAX_Y - 2, 0, "Loading paths..."); */
 
     refresh();
 
@@ -376,7 +376,7 @@ init_term_gui(void)
     field[1] = NULL;
 
     form = new_form(field);
-    post_form(form);
+    /* post_form(form); */
     refresh();
 
     /* wrefresh(window); */
@@ -461,7 +461,7 @@ reset_query(void)
     clear_menu(True);
     strcpy(query, "");
     query_len = 0;
-    form_driver(form, REQ_CLR_FIELD);
+    /* form_driver(form, REQ_CLR_FIELD); */
     /* form_driver(form, REQ_VALIDATION); */
 
     g_list_free(results);
@@ -495,9 +495,9 @@ read_emacs_keys(const char *name)
 
 void cache_loaded(void)
 {
-    clean_line(MAX_Y - 2);
-    mvwprintw(window, MAX_Y - 2, 0, "Paths loaded");
-    wrefresh(window);
+    /* clean_line(MAX_Y - 2); */
+    /* mvwprintw(window, MAX_Y - 2, 0, "Paths loaded"); */
+    /* wrefresh(window); */
 }
 
 void run_term(void)
@@ -508,12 +508,6 @@ void run_term(void)
 
     /* while ((c = wgetch(window)) != KEY_ESCAPE) { */
     while ((c = getch()) != KEY_ESCAPE) {
-        /* switch(c) { */
-        /* default: */
-        /*     form_driver(form, c); */
-
-        /*     break; */
-        /* } */
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
 
@@ -547,19 +541,30 @@ void run_term(void)
                 if (query_len == 0) {
                     reset_query();
                 } else {
-                    form_driver(form, REQ_DEL_PREV);
+                    /* form_driver(form, REQ_DEL_PREV); */
                     /* form_driver(form, REQ_VALIDATION); */
 
-                    snprintf(
-                        query,
-                        MAX_INPUT_LENGTH,
-                        "%s",
-                        field_buffer(field[0], 0)
-                    );
+                    /* snprintf( */
+                    /*     query, */
+                    /*     MAX_INPUT_LENGTH, */
+                    /*     "%s", */
+                    /*     field_buffer(field[0], 0) */
+                    /* ); */
 
                     char *new_query = smalloc(query_len + 1);
                     memcpy(new_query, query, query_len);
                     new_query[query_len] = '\0';
+
+                    query[query_len] = 0;
+
+                    /* clean_line(0); */
+                    /* refresh(); */
+
+                    wmove(stdscr, 0, 0);
+                    wclrtoeol(stdscr);
+
+                    mvprintw(0, 0, query);
+                    refresh();
 
                     search(new_query);
                     prepare_for_new_results(True);
@@ -568,29 +573,38 @@ void run_term(void)
                 }
             }
         } else if (isprint(c)) {
-            mvprintw(0, 0, "$");
 
-            if (! is_cache_ready()) {
-                continue;
-            }
 
-            if (query_len == 0 && c == ' ') {
-                reset_query();
+            /* if (! is_cache_ready()) { */
+            /*     continue; */
+            /* } */
 
-                continue;
-            } else if (query_len == 0) {
-                clean_line(0);
-            }
+            /* if (query_len == 0 && c == ' ') { */
+            /*     reset_query(); */
 
-            form_driver(form, c);
+            /*     continue; */
+            /* } else if (query_len == 0) { */
+            /*     clean_line(0); */
+            /* } */
+
+            query[query_len] = c;
+
+            mvaddch(0, query_len, c);
+
+            /* wmove(stdscr, 0, 2); */
+            /* wclrtoeol(stdscr); */
+
+            /* mvprintw(0, 0, query); */
+            refresh();
+            /* form_driver(form, c); */
             /* form_driver(form, REQ_VALIDATION); */
 
-            snprintf(
-                query,
-                MAX_INPUT_LENGTH,
-                "%s",
-                field_buffer(field[0], 0)
-            );
+            /* snprintf( */
+            /*     query, */
+            /*     MAX_INPUT_LENGTH, */
+            /*     "%s", */
+            /*     field_buffer(field[0], 0) */
+            /* ); */
 
             query_len++;
             char new_query[query_len];
