@@ -564,7 +564,6 @@ void run_term(void)
 
     int c;
 
-    /* while ((c = wgetch(window)) != KEY_ESCAPE) { */
     while ((c = getch()) != KEY_ESCAPE) {
         if (conf->section_main->emacs_bindings) {
             int key = read_emacs_keys(keyname(c));
@@ -578,49 +577,32 @@ void run_term(void)
 
         open_by_shortcut(c);
 
-        if (c == KEY_DOWN) {
+		switch (c) {
+		case KEY_DOWN:
             move_down();
+            break;
 
-            /* menu_driver(menu_list, REQ_DOWN_ITEM); */
-            /* update_info_bar(); */
-        } else if (c == KEY_UP) {
+        case KEY_UP:
             move_up();
-            /* menu_driver(menu_list, REQ_UP_ITEM); */
-            /* update_info_bar(); */
-        } else if (c == KEY_RETURN) {
+            break;
+
+        case KEY_RETURN:
             set_app_to_run();
-        } else if (c == KEY_NPAGE) {
-            menu_driver(menu_list, REQ_SCR_DPAGE);
-            update_info_bar();
-        } else if (c == KEY_PPAGE) {
-            menu_driver(menu_list, REQ_SCR_UPAGE);
-            update_info_bar();
-        } else if (c == KEY_BACKSPACE || c == KEY_DELETE) {
+            break;
+
+        case KEY_DELETE:
+        case KEY_BACKSPACE:
             if (query_len >= 1) {
                 query_len--;
 
                 if (query_len == 0) {
                     reset_query();
                 } else {
-                    /* form_driver(form, REQ_DEL_PREV); */
-                    /* form_driver(form, REQ_VALIDATION); */
-
-                    /* snprintf( */
-                    /*     query, */
-                    /*     MAX_INPUT_LENGTH, */
-                    /*     "%s", */
-                    /*     field_buffer(field[0], 0) */
-                    /* ); */
-
                     char *new_query = smalloc(query_len + 1);
                     memcpy(new_query, query, query_len);
                     new_query[query_len] = '\0';
 
                     query[query_len] = 0;
-
-                    /* clean_line(0); */
-                    /* refresh(); */
-
                     clear_search_bar();
 
                     mvprintw(0, 0, query);
@@ -631,48 +613,42 @@ void run_term(void)
                     free(new_query);
                 }
             }
-        } else if (isprint(c)) {
 
+            break;
 
-            /* if (! is_cache_ready()) { */
-            /*     continue; */
-            /* } */
+        default:
+            if (isprint(c)) {
+                if (! is_cache_ready())
+                    continue;
 
-            /* if (query_len == 0 && c == ' ') { */
-            /*     reset_query(); */
+                if (query_len == 0 && c == ' ') {
+                    reset_query();
 
-            /*     continue; */
-            /* } else if (query_len == 0) { */
-            /*     clean_line(0); */
-            /* } */
+                    continue;
+                } else if (query_len == 0) {
+                    clean_line(0);
+                }
 
-            query[query_len] = c;
+                query[query_len] = c;
 
-            mvaddch(0, query_len, c);
+                mvaddch(0, query_len, c);
 
-            /* wmove(stdscr, 0, 2); */
-            /* wclrtoeol(stdscr); */
+                query_len++;
+                char new_query[query_len];
 
-            /* mvprintw(0, 0, query); */
-            refresh();
-            /* form_driver(form, c); */
-            /* form_driver(form, REQ_VALIDATION); */
+                memcpy(new_query, query, query_len);
+                new_query[query_len] = '\0';
 
-            /* snprintf( */
-            /*     query, */
-            /*     MAX_INPUT_LENGTH, */
-            /*     "%s", */
-            /*     field_buffer(field[0], 0) */
-            /* ); */
-
-            query_len++;
-            char new_query[query_len];
-
-            memcpy(new_query, query, query_len);
-            new_query[query_len] = '\0';
-
-            if (search(new_query))
-                prepare_for_new_results(True);
+                if (search(new_query))
+                    prepare_for_new_results(True);
+            }
+        // TODO:
+    /*     } else if (c == KEY_NPAGE) { */
+    /*         menu_driver(menu_list, REQ_SCR_DPAGE); */
+    /*         update_info_bar(); */
+    /*     } else if (c == KEY_PPAGE) { */
+    /*         menu_driver(menu_list, REQ_SCR_UPAGE); */
+    /*         update_info_bar(); */
         }
 
         show_menu();
