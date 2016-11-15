@@ -595,7 +595,7 @@ void run_term(void)
         } else if (c == KEY_PPAGE) {
             menu_driver(menu_list, REQ_SCR_UPAGE);
             update_info_bar();
-        } else if (c == KEY_BACKSPACE) {
+        } else if (c == KEY_BACKSPACE || c == KEY_DELETE) {
             if (query_len >= 1) {
                 query_len--;
 
