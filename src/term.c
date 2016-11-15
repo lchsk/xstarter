@@ -73,29 +73,9 @@ clean_info_bar(void)
 static void
 clear_menu(Boolean clear)
 {
-    const config_t* conf = config();
-
-    /* if (menu_list && clear) { */
-        for (int i = 0; i < 1000; i++) {
-            items_list.items[i] = NULL;
-        }
-        /* NB: Menu removal needs to be in this order! */
-        /* unpost_menu(menu_list); */
-        /* free_menu(menu_list); */
-
-        /* if (list_items) { */
-        /*     for (int i = 0; i < choices_cnt; i++) { */
-        /*         free_item(list_items[i]); */
-        /*     } */
-
-        /*     free(list_items); */
-        /*     list_items = NULL; */
-        /* } */
-
-        /* if (window) { */
-        /*     delwin(window); */
-        /* } */
-    /* } */
+    for (int i = 0; i < 1000; i++) {
+        items_list.items[i] = NULL;
+    }
 }
 
 static void
@@ -127,6 +107,12 @@ update_info_bar(void)
     } else {
         clean_info_bar();
     }
+}
+
+void clear_search_bar()
+{
+    wmove(stdscr, 0, 0);
+    wclrtoeol(stdscr);
 }
 
 void show_menu()
@@ -524,8 +510,7 @@ reset_query(void)
     clear_menu(True);
     strcpy(query, "");
     query_len = 0;
-    /* form_driver(form, REQ_CLR_FIELD); */
-    /* form_driver(form, REQ_VALIDATION); */
+    clear_search_bar();
 
     g_list_free(results);
     results = NULL;
@@ -626,11 +611,9 @@ void run_term(void)
                     /* clean_line(0); */
                     /* refresh(); */
 
-                    wmove(stdscr, 0, 0);
-                    wclrtoeol(stdscr);
+                    clear_search_bar();
 
                     mvprintw(0, 0, query);
-                    refresh();
 
                     search(new_query);
                     prepare_for_new_results(True);
