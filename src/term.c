@@ -592,56 +592,58 @@ void run_term(void)
 
         case KEY_DELETE:
         case KEY_BACKSPACE:
-            if (query_len >= 1) {
-                query_len--;
+            if (! query_len)
+                continue;
 
-                if (query_len == 0) {
-                    reset_query();
-                } else {
-                    char *new_query = smalloc(query_len + 1);
-                    memcpy(new_query, query, query_len);
-                    new_query[query_len] = '\0';
+            query_len--;
 
-                    query[query_len] = 0;
-                    clear_search_bar();
+            if (query_len) {
+                char *new_query = smalloc(query_len + 1);
+                memcpy(new_query, query, query_len);
+                new_query[query_len] = '\0';
 
-                    mvprintw(0, 0, query);
+                query[query_len] = 0;
+                clear_search_bar();
 
-                    search(new_query);
-                    prepare_for_new_results(True);
+                mvprintw(0, 0, query);
 
-                    free(new_query);
-                }
-            }
+                search(new_query);
+                prepare_for_new_results(True);
+
+                free(new_query);
+            } else
+                reset_query();
 
             break;
 
         default:
-            if (isprint(c)) {
-                if (! is_cache_ready())
-                    continue;
+            if (! isprint(c))
+                continue;
 
-                if (query_len == 0 && c == ' ') {
-                    reset_query();
+            if (! is_cache_ready())
+                continue;
 
-                    continue;
-                } else if (query_len == 0) {
-                    clean_line(0);
-                }
+            if (query_len == 0 && c == ' ') {
+                reset_query();
 
-                query[query_len] = c;
-
-                mvaddch(0, query_len, c);
-
-                query_len++;
-                char new_query[query_len];
-
-                memcpy(new_query, query, query_len);
-                new_query[query_len] = '\0';
-
-                if (search(new_query))
-                    prepare_for_new_results(True);
+                continue;
+            } else if (query_len == 0) {
+                clean_line(0);
             }
+
+            query[query_len] = c;
+
+            mvaddch(0, query_len, c);
+
+            query_len++;
+            char new_query[query_len];
+
+            memcpy(new_query, query, query_len);
+            new_query[query_len] = '\0';
+
+            if (search(new_query))
+                prepare_for_new_results(True);
+
         // TODO:
     /*     } else if (c == KEY_NPAGE) { */
     /*         menu_driver(menu_list, REQ_SCR_DPAGE); */
@@ -654,8 +656,7 @@ void run_term(void)
         show_menu();
         refresh();
 
-        if (run_app == True) {
+        if (run_app)
             break;
-        }
     }
 }
