@@ -8,6 +8,7 @@
 
 #include "utils.h"
 
+#define PID "/tmp/xstarter.pid"
 #define PIPE "/tmp/xstarter"
 
 static char* _app_to_open_path;
@@ -106,12 +107,19 @@ void open_app()
         char command[256];
 
         mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-        int pipe = open(PIPE, O_RDONLY | O_CREAT);
-        char pipe_data[2];
 
-        int mod = read(pipe, pipe_data, 1);
+        char pipe_data[10];
 
-        if (mod == 0) {
+        struct stat sb;
+
+        if (! (stat(PID, &sb) == 0 && sb.st_mode)) {
+            // doesnt exist
+            pipe_data[0] = 'B';
+        } else {
+            pipe_data[0] = 'E';
+        }
+
+        if (pipe_data[0] != 'E') {
             // Open
             snprintf(
                 command,
@@ -124,6 +132,8 @@ void open_app()
         } else {
             // save to pipe
             char line[1024];
+
+            mkfifo(PIPE, mode);
 
             int pipe = open(
                 PIPE,
