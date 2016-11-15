@@ -129,8 +129,14 @@ void show_menu()
 
         int item_id = items_list.offset + i;
 
-        if (items_list.items[item_id])
-            mvprintw(i + 2, 0, items_list.items[item_id]);
+        if (items_list.items[item_id]) {
+            char item[1024];
+
+            snprintf(item, 1024, "%2d %s", i + 1, items_list.items[item_id]);
+
+            /* mvprintw(i + 2, 0, items_list.items[item_id]); */
+            mvprintw(i + 2, 0, item);
+        }
 
         if (i == items_list.selected)
             attroff(COLOR_PAIR(1));
