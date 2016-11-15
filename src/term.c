@@ -132,7 +132,9 @@ void show_menu()
         if (items_list.items[item_id]) {
             char item[1024];
 
-            snprintf(item, 1024, "%2d %s", i + 1, items_list.items[item_id]);
+            unsigned shortcut = (i == 9) ? 0 : i + 1;
+
+            snprintf(item, 1024, "%2d %s", shortcut, items_list.items[item_id]);
 
             /* mvprintw(i + 2, 0, items_list.items[item_id]); */
             mvprintw(i + 2, 0, item);
@@ -502,9 +504,11 @@ open_by_shortcut(int key)
     const config_t *conf = config();
 
     if (conf->section_main->numeric_shortcuts) {
-        if (key >= ASCII_1 && key <= ASCII_9)
-            open_app_later(g_list_nth_data(results, key - ASCII_1));
-        else if (key == ASCII_0) {
+        if (key >= ASCII_1 && key <= ASCII_9) {
+            unsigned item = items_list.offset + (key - ASCII_1);
+
+            open_app_later(g_list_nth_data(results, item));
+        } else if (key == ASCII_0) {
             open_app_later(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
         }
     }
