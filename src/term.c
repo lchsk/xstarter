@@ -79,13 +79,6 @@ clear_menu(Boolean clear)
 }
 
 static void
-no_results(void)
-{
-    results_not_found = True;
-    choices_cnt = 1;
-}
-
-static void
 update_info_bar(void)
 {
     if (! results_not_found) {
@@ -123,25 +116,29 @@ void show_menu()
         wclrtoeol(stdscr);
     }
 
-    for (int i = 0; i < 10; i++) {
-        if (i == items_list.selected)
-            attron(COLOR_PAIR(1));
+    if (choices_cnt) {
+        for (int i = 0; i < 10; i++) {
+            if (i == items_list.selected)
+                attron(COLOR_PAIR(1));
 
-        int item_id = items_list.offset + i;
+            int item_id = items_list.offset + i;
 
-        if (items_list.items[item_id]) {
-            char item[1024];
+            if (items_list.items[item_id]) {
+                char item[1024];
 
-            unsigned shortcut = (i == 9) ? 0 : i + 1;
+                unsigned shortcut = (i == 9) ? 0 : i + 1;
 
-            snprintf(item, 1024, "%2d %s", shortcut, items_list.items[item_id]);
+                snprintf(item, 1024, "%2d %s", shortcut, items_list.items[item_id]);
 
-            /* mvprintw(i + 2, 0, items_list.items[item_id]); */
-            mvprintw(i + 2, 0, item);
+                /* mvprintw(i + 2, 0, items_list.items[item_id]); */
+                mvprintw(i + 2, 0, item);
+            }
+
+            if (i == items_list.selected)
+                attroff(COLOR_PAIR(1));
         }
-
-        if (i == items_list.selected)
-            attroff(COLOR_PAIR(1));
+    } else {
+        mvprintw(2, 0, "No results found, sorry");
     }
 }
 
@@ -170,10 +167,6 @@ prepare_for_new_results(Boolean clear)
     clear_menu(clear);
 
     choices_cnt = g_list_length(results);
-
-    /* if (choices_cnt == 0) { */
-    /*     no_results(); */
-    /* } */
 
     /* list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*)); */
 
@@ -213,32 +206,8 @@ prepare_for_new_results(Boolean clear)
         }
     }
 
-    show_menu();
-
-    /* list_items[choices_cnt] = new_item((char*) NULL, (char*) NULL); */
-
-    /* menu_list = new_menu((ITEM**) list_items); */
-
-    /* window = newwin( */
-    /*     30, // rows */
-    /*     30, // cols */
-    /*     2, */
-    /*     0 */
-    /* ); */
-
-    /* keypad(window, TRUE); */
-    /* nodelay(window, TRUE); */
-
-    /* set_menu_win(menu_list, window); */
-    /* set_menu_mark(menu_list, ""); */
-    /* set_menu_fore(menu_list, COLOR_PAIR(XS_COLOR_PAIR_1)); */
-    /* set_menu_format(menu_list, 10, 1); */
-
-    /* post_menu(menu_list); */
-
-    /* update_info_bar(); */
-
-    refresh();
+    /* show_menu(); */
+    /* refresh(); */
 }
 
 /* Get apps that were recently started to the top of the list */
@@ -413,30 +382,33 @@ init_term_gui(void)
     show_recent_apps();
     prepare_for_new_results(False);
 
+    /* Show recent apps */
+    show_menu();
+
     /* mvprintw(0, 0, "$"); */
     /* mvwprintw(window, MAX_Y - 2, 0, "Loading paths..."); */
 
-    refresh();
+    /* refresh(); */
 
-    field[0] = new_field(
-        1, // columns
-        20, // width
-        0, // pos y
-        2, // pos x
-        0,
-        0
-    );
+    /* field[0] = new_field( */
+    /*     1, // columns */
+    /*     20, // width */
+    /*     0, // pos y */
+    /*     2, // pos x */
+    /*     0, */
+    /*     0 */
+    /* ); */
 
     /* Hide cursor */
     /* curs_set(0); */
 
-    set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2));
+    /* set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2)); */
     /* set_field_back(field[0], A_UNDERLINE); */
-    field[1] = NULL;
+    /* field[1] = NULL; */
 
-    form = new_form(field);
+    /* form = new_form(field); */
     /* post_form(form); */
-    refresh();
+    /* refresh(); */
 
     /* wrefresh(window); */
 }
