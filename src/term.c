@@ -412,27 +412,27 @@ init_term_gui(void)
 void
 free_term_gui(void)
 {
-    if (menu_list) {
-        unpost_menu(menu_list);
-        free_menu(menu_list);
-    }
+    /* if (menu_list) { */
+    /*     unpost_menu(menu_list); */
+    /*     free_menu(menu_list); */
+    /* } */
 
-    if (list_items) {
-        for (int i = 0; i < choices_cnt; i++) {
-            free_item(list_items[i]);
-        }
+    /* if (list_items) { */
+    /*     for (int i = 0; i < choices_cnt; i++) { */
+    /*         free_item(list_items[i]); */
+    /*     } */
 
-        free(list_items);
-    }
+    /*     free(list_items); */
+    /* } */
 
-    unpost_form(form);
+    /* unpost_form(form); */
 
-    if (form)
-        free_form(form);
+    /* if (form) */
+        /* free_form(form); */
 
-    free_field(field[0]);
+    /* free_field(field[0]); */
 
-    endwin();
+    /* endwin(); */
 }
 
 void
@@ -622,6 +622,7 @@ void run_term(void)
         }
 
         show_menu();
+        move(0, query_len);
         refresh();
 
         if (run_app)
