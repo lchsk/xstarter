@@ -589,6 +589,10 @@ void run_term(void)
             break;
 
         default:
+
+            if (query_len >= MAX_INPUT_LENGTH)
+                continue;
+
             if (! isprint(c))
                 continue;
 
