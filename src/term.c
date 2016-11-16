@@ -41,6 +41,26 @@ static Boolean run_app = False;
 static Boolean results_not_found = False;
 
 typedef struct {
+    unsigned row_start;
+    unsigned row_end;
+} view_t;
+
+static view_t view_search_bar = {
+    .row_start = 0,
+    .row_end = 0
+};
+
+static view_t view_menu = {
+    .row_start = 3,
+    .row_end = 12
+};
+
+static view_t view_info_bar = {
+    .row_start = 14,
+    .row_end = 16
+};
+
+typedef struct {
     char *items[1000];
     unsigned choices_cnt;
     unsigned offset;
@@ -52,18 +72,16 @@ static items_list_t items_list;
 
 static char *items[1000];
 
-static void
-clean_line(int line_y)
+static void clean_line(int line_y)
 {
     move(line_y, 0);
     clrtoeol();
 }
 
-static void
-clean_info_bar(void)
+static void erase_view(const view_t *view)
 {
-    clean_line(MAX_Y - 2);
-    clean_line(MAX_Y - 1);
+    for (int i = view->row_start; i <= view->row_end; i++)
+        clean_line(i);
 }
 
 static void
@@ -88,7 +106,7 @@ update_info_bar(void)
 
         char *path = l->data;
 
-        clean_info_bar();
+        erase_view(&view_info_bar);
 
         char status[100];
 
@@ -97,14 +115,8 @@ update_info_bar(void)
         mvprintw(MAX_Y - 2, 0, status);
         mvprintw(MAX_Y - 1, 0, path);
     } else {
-        clean_info_bar();
+        erase_view(&view_info_bar);
     }
-}
-
-void clear_search_bar()
-{
-    /* wmove(stdscr, 0, 0); */
-    /* wclrtoeol(stdscr); */
 }
 
 void show_menu()
@@ -386,59 +398,19 @@ init_term_gui(void)
     /* Show recent apps */
     show_menu();
 
-    /* mvprintw(0, 0, "$"); */
-    clean_line(0);
+    erase_view(&view_search_bar);
+
     mvprintw(0, 0, "Loading paths...");
 
     refresh();
 
-    /* field[0] = new_field( */
-    /*     1, // columns */
-    /*     20, // width */
-    /*     0, // pos y */
-    /*     2, // pos x */
-    /*     0, */
-    /*     0 */
-    /* ); */
-
     /* Hide cursor */
     /* curs_set(0); */
-
-    /* set_field_fore(field[0], COLOR_PAIR(XS_COLOR_PAIR_2)); */
-    /* set_field_back(field[0], A_UNDERLINE); */
-    /* field[1] = NULL; */
-
-    /* form = new_form(field); */
-    /* post_form(form); */
-    /* refresh(); */
-
-    /* wrefresh(window); */
 }
 
 void
 free_term_gui(void)
 {
-    /* if (menu_list) { */
-    /*     unpost_menu(menu_list); */
-    /*     free_menu(menu_list); */
-    /* } */
-
-    /* if (list_items) { */
-    /*     for (int i = 0; i < choices_cnt; i++) { */
-    /*         free_item(list_items[i]); */
-    /*     } */
-
-    /*     free(list_items); */
-    /* } */
-
-    /* unpost_form(form); */
-
-    /* if (form) */
-        /* free_form(form); */
-
-    /* free_field(field[0]); */
-
-    /* endwin(); */
 }
 
 void
@@ -491,11 +463,10 @@ open_by_shortcut(int key)
 static void
 reset_query(void)
 {
-    clean_line(0);
+    erase_view(&view_search_bar);
     clear_menu(True);
     strcpy(query, "");
     query_len = 0;
-    clear_search_bar();
 
     g_list_free(results);
     results = NULL;
@@ -524,9 +495,8 @@ read_emacs_keys(const char *name)
 
 void cache_loaded(void)
 {
-    clean_line(0);
+    erase_view(&view_search_bar);
     mvprintw(0, 0, "Start typing to search...");
-    /* refresh(); */
 }
 
 void run_term(void)
@@ -574,9 +544,8 @@ void run_term(void)
                 new_query[query_len] = '\0';
 
                 query[query_len] = 0;
-                clear_search_bar();
 
-                clean_line(0);
+                erase_view(&view_search_bar);
                 mvprintw(0, 0, query);
 
                 search(new_query);
