@@ -40,10 +40,6 @@ static Boolean clear_items = False;
 static Boolean run_app = False;
 static Boolean results_not_found = False;
 
-static const char *digits[10] = {
-    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(0)"
-};
-
 typedef struct {
     char *items[1000];
     unsigned choices_cnt;
@@ -128,7 +124,7 @@ void show_menu()
 
                 unsigned shortcut = (i == 9) ? 0 : i + 1;
 
-                snprintf(item, 1024, "%2d %s", shortcut, items_list.items[item_id]);
+                snprintf(item, 1024, "%d %s", shortcut, items_list.items[item_id]);
 
                 /* mvprintw(i + 2, 0, items_list.items[item_id]); */
                 mvprintw(i + 2, 0, item);
