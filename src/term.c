@@ -491,6 +491,7 @@ open_by_shortcut(int key)
 static void
 reset_query(void)
 {
+    clean_line(0);
     clear_menu(True);
     strcpy(query, "");
     query_len = 0;
@@ -575,6 +576,7 @@ void run_term(void)
                 query[query_len] = 0;
                 clear_search_bar();
 
+                clean_line(0);
                 mvprintw(0, 0, query);
 
                 search(new_query);
