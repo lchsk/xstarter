@@ -7,8 +7,6 @@
 #include <ctype.h>
 
 #include <ncurses.h>
-#include <menu.h>
-#include <form.h>
 
 #include "settings.h"
 #include "term.h"
@@ -19,12 +17,6 @@ static GList *results = NULL;
 
 /* Names of applications (after basename) */
 static GList *names = NULL;
-
-static WINDOW *window = NULL;
-static MENU *menu_list = NULL;
-static ITEM **list_items = NULL;
-static FORM *form = NULL;
-static FIELD *field[2] = {NULL};
 
 static int MAX_Y = 15;
 
@@ -179,18 +171,14 @@ prepare_for_new_results(Boolean clear)
 
     choices_cnt = g_list_length(results);
 
-    /* list_items = (ITEM**) calloc(choices_cnt + 1, sizeof(ITEM*)); */
-
     int cnt = choices_cnt > 1000 ? 1000 : choices_cnt;
 
     for (int i = 0; i < cnt; i++) {
         if (results_not_found) {
             if (query_len == 0) {
                 items[i] = strdup("Start typing");
-                /* list_items[i] = new_item("Start typing to search", ""); */
             } else {
                 items[i] = strdup("No results");
-                /* list_items[i] = new_item("No results, sorry", ""); */
             }
         } else {
             GList *l = g_list_nth(results, i);
@@ -202,17 +190,11 @@ prepare_for_new_results(Boolean clear)
             if (conf->section_main->numeric_shortcuts) {
                 if (i < 10) {
                     items_list.items[i] = name;
-                    /* items[i] = name; */
-                    /* list_items[i] = new_item(digits[i], name); */
                 }
                 else
                     items_list.items[i] = name;
-                    /* items[i] = name; */
-                    /* list_items[i] = new_item(" ", name); */
             } else {
                 items_list.items[i] = name;
-                /* items[i] = name; */
-                /* list_items[i] = new_item(name, (char*) NULL); */
             }
         }
     }
