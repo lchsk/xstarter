@@ -26,7 +26,7 @@ static ITEM **list_items = NULL;
 static FORM *form = NULL;
 static FIELD *field[2] = {NULL};
 
-static int MAX_Y = 14;
+static int MAX_Y = 15;
 
 static char query[MAX_INPUT_LENGTH];
 static int query_len = 0;
@@ -55,14 +55,14 @@ static char *items[1000];
 static void
 clean_line(int line_y)
 {
-    wmove(window, line_y, 0);
-    wclrtoeol(window);
+    move(line_y, 0);
+    clrtoeol();
 }
 
 static void
 clean_info_bar(void)
 {
-    clean_line(MAX_Y - 0);
+    clean_line(MAX_Y - 2);
     clean_line(MAX_Y - 1);
 }
 
@@ -77,10 +77,13 @@ clear_menu(Boolean clear)
 static void
 update_info_bar(void)
 {
-    if (! results_not_found) {
+    if (choices_cnt > 0) {
+
+        unsigned item = items_list.selected + items_list.offset;
+
         GList *l = g_list_nth(
             results,
-            item_index(current_item(menu_list))
+            item
         );
 
         char *path = l->data;
@@ -91,8 +94,8 @@ update_info_bar(void)
 
         snprintf(status, 100, "Results: %d", choices_cnt);
 
-        mvwprintw(window, MAX_Y - 1, 0, status);
-        mvwprintw(window, MAX_Y, 0, path);
+        mvprintw(MAX_Y - 2, 0, status);
+        mvprintw(MAX_Y - 1, 0, path);
     } else {
         clean_info_bar();
     }
@@ -100,8 +103,8 @@ update_info_bar(void)
 
 void clear_search_bar()
 {
-    wmove(stdscr, 0, 0);
-    wclrtoeol(stdscr);
+    /* wmove(stdscr, 0, 0); */
+    /* wclrtoeol(stdscr); */
 }
 
 void show_menu()
@@ -201,6 +204,8 @@ prepare_for_new_results(Boolean clear)
             }
         }
     }
+
+    update_info_bar();
 
     /* show_menu(); */
     /* refresh(); */
@@ -382,9 +387,10 @@ init_term_gui(void)
     show_menu();
 
     /* mvprintw(0, 0, "$"); */
-    /* mvwprintw(window, MAX_Y - 2, 0, "Loading paths..."); */
+    clean_line(0);
+    mvprintw(0, 0, "Loading paths...");
 
-    /* refresh(); */
+    refresh();
 
     /* field[0] = new_field( */
     /*     1, // columns */
@@ -517,9 +523,9 @@ read_emacs_keys(const char *name)
 
 void cache_loaded(void)
 {
-    clean_line(MAX_Y - 2);
-    mvwprintw(window, MAX_Y - 2, 0, "Paths loaded");
-    wrefresh(window);
+    clean_line(0);
+    mvprintw(0, 0, "Start typing to search...");
+    /* refresh(); */
 }
 
 void run_term(void)
