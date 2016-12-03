@@ -479,6 +479,7 @@ void cache_loaded(void)
 {
     erase_view(&view_search_bar);
     mvprintw(0, 0, "Start typing to search...");
+    refresh();
 }
 
 void run_term(void)
