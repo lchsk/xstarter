@@ -478,7 +478,7 @@ read_emacs_keys(const char *name)
 void cache_loaded(void)
 {
     erase_view(&view_search_bar);
-    mvprintw(0, 0, "Start typing to search...");
+    mvprintw(0, 0, "");
     refresh();
 }
 
