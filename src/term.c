@@ -48,8 +48,8 @@ static view_t view_menu = {
 };
 
 static view_t view_info_bar = {
-    .row_start = 14,
-    .row_end = 16
+    .row_start = 13,
+    .row_end = 14
 };
 
 typedef struct {
