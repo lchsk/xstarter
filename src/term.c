@@ -88,13 +88,12 @@ static void
 update_info_bar(void)
 {
     if (choices_cnt > 0) {
+        if (items_list.selected >= choices_cnt)
+            items_list.selected = 0;
 
         unsigned item = items_list.selected + items_list.offset;
 
-        GList *l = g_list_nth(
-            results,
-            item
-        );
+        GList *l = g_list_nth(results, item);
 
         char *path = l->data;
 
