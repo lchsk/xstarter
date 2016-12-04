@@ -111,6 +111,39 @@ update_info_bar(void)
     }
 }
 
+static void draw_menu_item(unsigned i)
+{
+    int item_id = items_list.offset + i;
+
+    if (items_list.items[item_id]) {
+        char item[MAX_LIST_ITEM_LENGTH];
+
+        unsigned shortcut = (i == 9) ? 0 : i + 1;
+
+        char spaces[MAX_LIST_ITEM_LENGTH];
+
+        unsigned item_len = strlen(items_list.items[item_id]);
+
+        unsigned k = 0;
+
+        for (unsigned j = item_len; j < MAX_LIST_ITEM_LENGTH; j++, k++)
+            spaces[k] = ' ';
+
+        spaces[k] = '\0';
+
+        snprintf(
+            item,
+            MAX_LIST_ITEM_LENGTH,
+            "%d %s%s",
+            shortcut,
+            items_list.items[item_id],
+            spaces
+        );
+
+        mvprintw(i + 2, 0, item);
+    }
+}
+
 void show_menu()
 {
     for (int i = 0; i < 10; i++) {
@@ -120,22 +153,11 @@ void show_menu()
     }
 
     if (choices_cnt) {
-        for (int i = 0; i < 10; i++) {
+        for (unsigned i = 0; i < 10; i++) {
             if (i == items_list.selected)
                 attron(COLOR_PAIR(1));
 
-            int item_id = items_list.offset + i;
-
-            if (items_list.items[item_id]) {
-                char item[1024];
-
-                unsigned shortcut = (i == 9) ? 0 : i + 1;
-
-                snprintf(item, 1024, "%d %s", shortcut, items_list.items[item_id]);
-
-                /* mvprintw(i + 2, 0, items_list.items[item_id]); */
-                mvprintw(i + 2, 0, item);
-            }
+            draw_menu_item(i);
 
             if (i == items_list.selected)
                 attroff(COLOR_PAIR(1));
