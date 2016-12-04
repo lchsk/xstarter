@@ -173,6 +173,8 @@ void move_down()
         items_list.offset++;
     } else if (items_list.selected < choices_cnt - 1)
         items_list.selected++;
+
+    update_info_bar();
 }
 
 void move_up()
@@ -181,6 +183,8 @@ void move_up()
         items_list.offset--;
     } else if (items_list.selected > 0)
         items_list.selected--;
+
+    update_info_bar();
 }
 
 static void
