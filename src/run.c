@@ -151,12 +151,12 @@ main(int argc, char **argv)
         xstarter_run
     );
 
+    pipe = open(PIPE, O_RDONLY | O_CREAT | O_TRUNC, mode);
+
     fp = popen(path, "r");
     pclose(fp);
 
     /* Read from pipe */
-
-    pipe = open(PIPE, O_RDONLY);
 
     int bytes_read = read(pipe, path, MAX_LEN);
 
