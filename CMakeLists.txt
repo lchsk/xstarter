@@ -44,14 +44,12 @@ message (${CURSES_LIBRARIES})
 
 target_link_libraries(xstarter
   ${Glib_LIBRARIES}
-  /lib/libncursesw.so.6
-  /usr/lib/libformw.so.6
-  /usr/lib/libmenuw.so.6
+  # /lib/libncursesw.so.6
+  # /usr/lib/libformw.so.6
+  # /usr/lib/libmenuw.so.6
   #/lib/libformw.so
   #${CURSES_LIBRARIES}
-  #-lncurses
-  #-lform
-  #-lmenu
+  -lncurses
   -pthread
 )
 
