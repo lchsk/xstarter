@@ -1,14 +1,9 @@
 #ifndef TERM_H
 #define TERM_H
 
-/* Fix definition of KEY_BACKSPACE on FreeBSD */
-/* #ifdef __FreeBSD__ */
-/* #undef KEY_BACKSPACE */
-/* ncurses-6 seems to only understand DELETE - always check for both */
-#undef KEY_BACKSPACE
-#define KEY_BACKSPACE (8)
+// Seemed to help for ncurses 5.9
+#define KEY_BACKSPACE_ALTERNATIVE (8)
 #define KEY_DELETE (127)
-/* #endif */
 
 #define KEY_ESCAPE (27)
 #define KEY_RETURN (10)

@@ -526,8 +526,8 @@ void run_term(void)
 
         open_by_shortcut(c);
 
-		switch (c) {
-		case KEY_DOWN:
+        switch (c) {
+        case KEY_DOWN:
             move_down();
             break;
 
@@ -541,6 +541,7 @@ void run_term(void)
 
         case KEY_DELETE:
         case KEY_BACKSPACE:
+        case KEY_BACKSPACE_ALTERNATIVE:
             if (! query_len)
                 continue;
 
