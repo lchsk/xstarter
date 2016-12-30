@@ -532,6 +532,10 @@ void run_term(void)
         open_by_shortcut(c);
 
         switch (c) {
+        case 0:
+            // No-op, needed for shortcuts
+            break;
+
         case KEY_DOWN:
             move_down();
             break;
