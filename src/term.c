@@ -87,26 +87,24 @@ clear_menu(Boolean clear)
 static void
 update_info_bar(void)
 {
+    erase_view(&view_info_bar);
+
     if (choices_cnt > 0) {
-        if (items_list.selected >= choices_cnt)
+        if (items_list.selected >= choices_cnt) {
             items_list.selected = 0;
+            items_list.offset = 0;
+        }
 
         unsigned item = items_list.selected + items_list.offset;
 
         GList *l = g_list_nth(results, item);
-
-        char *path = l->data;
-
-        erase_view(&view_info_bar);
 
         char status[100];
 
         snprintf(status, 100, "Results: %d", choices_cnt);
 
         mvprintw(MAX_Y - 2, 0, status);
-        mvprintw(MAX_Y - 1, 0, path);
-    } else {
-        erase_view(&view_info_bar);
+        mvprintw(MAX_Y - 1, 0, l->data);
     }
 }
 
@@ -225,9 +223,6 @@ prepare_for_new_results(Boolean clear)
     }
 
     update_info_bar();
-
-    /* show_menu(); */
-    /* refresh(); */
 }
 
 /* Get apps that were recently started to the top of the list */
