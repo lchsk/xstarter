@@ -99,12 +99,14 @@ update_info_bar(void)
 
         GList *l = g_list_nth(results, item);
 
-        char status[100];
+        if (l) {
+            char status[100];
 
-        snprintf(status, 100, "Results: %d", choices_cnt);
+            snprintf(status, 100, "Results: %d", choices_cnt);
 
-        mvprintw(MAX_Y - 2, 0, status);
-        mvprintw(MAX_Y - 1, 0, l->data);
+            mvprintw(MAX_Y - 2, 0, status);
+            mvprintw(MAX_Y - 1, 0, l->data);
+        }
     }
 }
 
@@ -478,6 +480,8 @@ reset_query(void)
 
     g_list_free(results);
     results = NULL;
+    items_list.selected = 0;
+    items_list.offset = 0;
     show_recent_apps();
     prepare_for_new_results(False);
 }
