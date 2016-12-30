@@ -493,7 +493,7 @@ read_emacs_keys(const char *name)
         return KEY_DOWN;
     } else if (strcmp(name, "^P") == 0) {
         return KEY_UP;
-    } else if (strcmp(name, "^C") == 0) {
+    } else if (strcmp(name, "^G") == 0) {
         return KEY_ESCAPE;
     } else if (strcmp(name, "^W") == 0) {
         reset_query();
