@@ -166,6 +166,9 @@ void show_menu()
 
 void move_down()
 {
+    if (items_list.selected + items_list.offset >= choices_cnt - 1)
+        return;
+
     if (items_list.selected >= 9 && choices_cnt > 10) {
         items_list.offset++;
     } else if (items_list.selected < choices_cnt - 1)
@@ -176,6 +179,9 @@ void move_down()
 
 void move_up()
 {
+    if (items_list.selected + items_list.offset == 0)
+        return;
+
     if (items_list.selected == 0 && items_list.offset > 0) {
         items_list.offset--;
     } else if (items_list.selected > 0)
