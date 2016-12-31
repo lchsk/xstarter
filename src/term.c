@@ -419,11 +419,6 @@ init_term_gui(void)
 }
 
 void
-free_term_gui(void)
-{
-}
-
-void
 init_search(void)
 {
     results = NULL;
