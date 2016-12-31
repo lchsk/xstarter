@@ -16,15 +16,12 @@
 #include "scan.h"
 #include "utils.h"
 
-static GList *results = NULL;
-
 /* Names of applications (after basename) */
 static GList *names = NULL;
 
 static int MAX_Y = 15;
 
 static char query[MAX_INPUT_LENGTH];
-static int query_len = 0;
 
 static char *choices[] = {
     (char*) NULL,
@@ -33,7 +30,6 @@ static char *choices[] = {
 static int choices_cnt = 0;
 static Boolean clear_items = False;
 static Boolean run_app = False;
-static Boolean results_not_found = False;
 
 typedef struct {
     unsigned row_start;
@@ -79,16 +75,14 @@ static void erase_view(const view_t *view)
         clean_line(i);
 }
 
-static void
-clear_menu(Boolean clear)
+static void clear_menu(Boolean clear)
 {
     for (int i = 0; i < 1000; i++) {
         items_list.items[i] = NULL;
     }
 }
 
-static void
-update_info_bar(void)
+static void update_info_bar(void)
 {
     erase_view(&view_info_bar);
 
@@ -195,8 +189,7 @@ void move_up()
     update_info_bar();
 }
 
-static void
-prepare_for_new_results(Boolean clear)
+static void prepare_for_new_results(Boolean clear)
 {
     results_not_found = False;
     const config_t *conf = config();
@@ -236,126 +229,7 @@ prepare_for_new_results(Boolean clear)
     update_info_bar();
 }
 
-/* Get apps that were recently started to the top of the list */
-
-static void
-recent_apps_on_top(void)
-{
-    const config_t *conf = config();
-
-    if (conf->section_main->recent_apps_first) {
-        int new_pos = 0;
-
-        for (int i = 0; i < recent_apps_cnt; i++) {
-            GList* to_remove = NULL;
-
-            for (GList *l = results; l != NULL; l = l->next) {
-                if (strcmp(l->data, recent_apps[i]) == 0) {
-                    results = g_list_insert(results, l->data, new_pos);
-
-                    to_remove = l;
-                    new_pos++;
-                    break;
-                }
-            }
-
-            if (to_remove != NULL)
-                results = g_list_delete_link(results, to_remove);
-        }
-    }
-}
-
-/* Return: */
-    /* True: if search was successful and we need to update GUI */
-    /* False: no need to update GUI */
-
-static Boolean
-search(char *const query)
-{
-    const config_t *conf = config();
-
-    Boolean resp = True;
-    results_not_found = True;
-
-    if (query_len < conf->section_main->min_query_len) {
-        return False;
-    }
-
-    if (query[0] == ' ')
-        return False;
-
-    GQueue *cache = get_cache();
-
-    int current_query_len = 1;
-    str_array_t *query_parts = NULL;
-
-    if (conf->section_main->allow_spaces) {
-        query_parts = str_array_new(strdup(query), " ");
-
-        if (
-            (query_len > 0 && query[query_len - 1] == ' ')
-            || query_parts == NULL
-        ) {
-            resp = False;
-            goto free_query_parts;
-        }
-
-        current_query_len = query_parts->length;
-    }
-
-    g_list_free(results);
-    results = NULL;
-
-    for (int i = 0; i < g_queue_get_length(cache); i++) {
-        char *path = g_queue_peek_nth(cache, i);
-        Boolean found = True;
-
-        if (current_query_len == 1) {
-            char *name = g_path_get_basename(path);
-
-            if (strcasestr(name, query) != NULL) {
-                results = g_list_prepend(results, path);
-            }
-
-            free(name);
-        } else if (current_query_len > 1) {
-            for (int i = 0; i < current_query_len; i++) {
-                if (strcmp(query_parts->data[i], " ") == 0)
-                    continue;
-
-                char *name = g_path_get_basename(
-                    path
-                );
-
-                if (strstr(name, query_parts->data[i]) == NULL) {
-                    found = False;
-                    goto finish;
-                }
-
-            finish:
-                free(name);
-
-                if (! found)
-                    break;
-            }
-
-            if (found)
-                results = g_list_prepend(results, path);
-        }
-    }
-
-    results_not_found = (g_list_length(results) > 0 ? False : True);
-
-    recent_apps_on_top();
-
-free_query_parts:
-    str_array_free(query_parts);
-
-    return resp;
-}
-
-static void
-show_recent_apps(void)
+static void show_recent_apps(void)
 {
     int recent_apps_valid = True;
 
@@ -378,8 +252,7 @@ show_recent_apps(void)
     }
 }
 
-void
-init_term_gui(void)
+void init_term_gui(void)
 {
     /* Fix ESC key */
     set_escdelay(25);
@@ -419,24 +292,9 @@ init_term_gui(void)
 
     /* Hide cursor */
     /* curs_set(0); */
-}
 
-void
-init_search(void)
-{
-    results = NULL;
-    read_recently_open_list();
 }
-
-void
-free_search(void)
-{
-    if (results != NULL)
-        g_list_free(results);
-}
-
-static void
-open_app_later(char *path)
+static void open_app_later(char *path)
 {
     if (path != NULL) {
         run_app = True;

@@ -16,7 +16,7 @@
 #include "utils_string.h"
 #include "term.h"
 
-int PATH = 1024;
+static const int PATH = 1024;
 
 /* Paths of applications we will search to find what we want */
 static GQueue *search_paths = NULL;
@@ -31,10 +31,194 @@ static Boolean stop_traversing;
 
 static cmdline_t *cmdline;
 
-static void
-listdir(char *name, int level)
+void init_search(void)
 {
-    DIR* dir;
+    results = NULL;
+    read_recently_open_list();
+}
+
+void free_search(void)
+{
+    if (results != NULL)
+        g_list_free(results);
+}
+
+Boolean is_cache_ready(void)
+{
+    return cache_ready;
+}
+
+void free_cache(void)
+{
+    if (search_paths != NULL) {
+        for (int i = 0; i < g_queue_get_length(search_paths); i++) {
+            char *t = g_queue_peek_nth(search_paths, i);
+            free(t);
+        }
+    }
+
+    if (search_paths != NULL)
+        g_queue_free(search_paths);
+
+    if (paths != NULL) {
+        for (int i = 0; i < g_queue_get_length(paths); i++) {
+            char *t = g_queue_peek_nth(paths, i);
+            free(t);
+        }
+    }
+
+    if (paths != NULL)
+        g_queue_free(paths);
+}
+
+void load_cache(cmdline_t *cmdline_)
+{
+    cmdline = cmdline_;
+
+    stop_traversing = False;
+
+    int code = pthread_create(
+        &th_refresh_cache,
+        NULL,
+        refresh_cache,
+        NULL
+    );
+
+    assert(code == 0);
+}
+
+void kill_scan(void)
+{
+    if (! cache_ready) {
+        stop_traversing = True;
+        pthread_join(th_refresh_cache, NULL);
+    } else {
+        pthread_detach(th_refresh_cache);
+    }
+}
+
+/*
+Searches paths for a specific query
+
+Returns:
+    true: if search was successful and we need to update GUI
+    false: no need to update GUI
+*/
+Boolean search(const char *query)
+{
+    const config_t *conf = config();
+
+    Boolean resp = True;
+    results_not_found = True;
+
+    if (query_len < conf->section_main->min_query_len) {
+        return False;
+    }
+
+    if (query[0] == ' ')
+        return False;
+
+    GQueue *cache = get_cache();
+
+    int current_query_len = 1;
+    str_array_t *query_parts = NULL;
+
+    if (conf->section_main->allow_spaces) {
+        query_parts = str_array_new(strdup(query), " ");
+
+        if ((query_len > 0 && query[query_len - 1] == ' ')
+            || query_parts == NULL) {
+            resp = False;
+            goto free_query_parts;
+        }
+
+        current_query_len = query_parts->length;
+    }
+
+    g_list_free(results);
+    results = NULL;
+
+    for (int i = 0; i < g_queue_get_length(cache); i++) {
+        char *path = g_queue_peek_nth(cache, i);
+        Boolean found = True;
+
+        if (current_query_len == 1) {
+            char *name = g_path_get_basename(path);
+
+            if (strcasestr(name, query) != NULL) {
+                results = g_list_prepend(results, path);
+            }
+
+            free(name);
+        } else if (current_query_len > 1) {
+            for (int i = 0; i < current_query_len; i++) {
+                if (strcmp(query_parts->data[i], " ") == 0)
+                    continue;
+
+                char *name = g_path_get_basename(path);
+
+                if (strstr(name, query_parts->data[i]) == NULL) {
+                    found = False;
+                    goto finish;
+                }
+
+            finish:
+                free(name);
+
+                if (! found)
+                    break;
+            }
+
+            if (found)
+                results = g_list_prepend(results, path);
+        }
+    }
+
+    results_not_found = g_list_length(results) > 0 ? False : True;
+
+    recent_apps_on_top();
+
+free_query_parts:
+    str_array_free(query_parts);
+
+    return resp;
+}
+
+/*
+Get apps that were recently started to the top of the list
+*/
+static void recent_apps_on_top(void)
+{
+    const config_t *conf = config();
+
+    if (conf->section_main->recent_apps_first) {
+        int new_pos = 0;
+
+        for (int i = 0; i < recent_apps_cnt; i++) {
+            GList* to_remove = NULL;
+
+            for (GList *l = results; l != NULL; l = l->next) {
+                if (strcmp(l->data, recent_apps[i]) == 0) {
+                    results = g_list_insert(results, l->data, new_pos);
+
+                    to_remove = l;
+                    new_pos++;
+                    break;
+                }
+            }
+
+            if (to_remove != NULL)
+                results = g_list_delete_link(results, to_remove);
+        }
+    }
+}
+
+/* Boolean results_not_found = False; */
+/* int query_len = 0; */
+
+static void listdir(char *name, int level)
+{
+    DIR *dir;
     struct dirent *entry;
 
     if (! (dir = opendir(name))) {
@@ -87,8 +271,7 @@ listdir(char *name, int level)
     closedir(dir);
 }
 
-static void
-cache_to_file()
+static void cache_to_file()
 {
     char path[1024];
     snprintf(path, sizeof(path), "%s/cache", xstarter_dir);
@@ -104,8 +287,7 @@ cache_to_file()
     fclose(file);
 }
 
-static void
-read_cache_file()
+static void read_cache_file()
 {
     FILE *fptr;
 
@@ -127,8 +309,7 @@ read_cache_file()
     }
 }
 
-static Boolean
-cache_needs_refresh()
+static Boolean cache_needs_refresh()
 {
     /* If a user requested cache refresh from the cmdline */
     if (cmdline->force_cache_refresh)
@@ -182,8 +363,7 @@ cache_needs_refresh()
     return False;
 }
 
-static void*
-refresh_cache()
+static void *refresh_cache()
 {
     paths = g_queue_new();
 
@@ -235,66 +415,7 @@ refresh_cache()
     cache_loaded();
 }
 
-void
-load_cache(cmdline_t *cmdline_)
-{
-    cmdline = cmdline_;
-
-    stop_traversing = False;
-
-    int code = pthread_create(
-        &th_refresh_cache,
-        NULL,
-        refresh_cache,
-        NULL
-    );
-
-    assert(code == 0);
-}
-
-void
-kill_scan()
-{
-    if (! cache_ready) {
-        stop_traversing = True;
-        pthread_join(th_refresh_cache, NULL);
-    } else {
-        pthread_detach(th_refresh_cache);
-    }
-}
-
-void
-free_cache()
-{
-    if (search_paths != NULL) {
-        for (int i = 0; i < g_queue_get_length(search_paths); i++) {
-            char *t = g_queue_peek_nth(search_paths, i);
-            free(t);
-        }
-    }
-
-    if (search_paths != NULL)
-        g_queue_free(search_paths);
-
-    if (paths != NULL) {
-        for (int i = 0; i < g_queue_get_length(paths); i++) {
-            char *t = g_queue_peek_nth(paths, i);
-            free(t);
-        }
-    }
-
-    if (paths != NULL)
-        g_queue_free(paths);
-}
-
-GQueue
-*get_cache()
+static GQueue *get_cache(void)
 {
     return search_paths;
-}
-
-Boolean
-is_cache_ready()
-{
-	return cache_ready;
 }

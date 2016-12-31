@@ -20,12 +20,6 @@
 const static unsigned MAX_LIST_ITEM_LENGTH = 24;
 
 void init_term_gui();
-
-void init_search();
-void free_search();
-void free_search_contents();
-void printf_results();
-
 void run_term();
 
 void cache_loaded();
