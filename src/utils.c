@@ -8,8 +8,6 @@
 
 #include "utils.h"
 
-#define PIPE "/tmp/xstarter"
-
 static char* _app_to_open_path;
 
 static void
@@ -102,40 +100,6 @@ void open_app()
 {
     if (_app_to_open_path) {
         record_open_file(_app_to_open_path);
-
-        char command[256];
-
-        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-        int pipe = open(PIPE, O_RDONLY | O_CREAT);
-        char pipe_data[2];
-
-        int mod = read(pipe, pipe_data, 1);
-
-        if (mod == 0) {
-            // Open
-            snprintf(
-                command,
-                sizeof(command),
-                "nohup %s 2> /dev/null &",
-                _app_to_open_path
-            );
-            system(command);
-
-        } else {
-            // save to pipe
-            char line[1024];
-
-            int pipe = open(
-                PIPE,
-                O_WRONLY | O_CREAT | O_TRUNC, mode
-            );
-
-            strcpy(line, _app_to_open_path);
-
-            write(pipe, line, strlen(line) + 1);
-
-            close(pipe);
-        }
     }
 }
 
