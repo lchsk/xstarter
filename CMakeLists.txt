@@ -32,12 +32,6 @@ add_executable(xstarter
   src/utils_string.c
 )
 
-add_executable(xstarter_run
-  src/run.c
-  src/utils.c
-  src/utils_string.c
-)
-
 target_link_libraries(xstarter
   ${Glib_LIBRARIES}
   ${CURSES_LIBRARIES}
@@ -45,7 +39,7 @@ target_link_libraries(xstarter
   -pthread
 )
 
-install (TARGETS xstarter xstarter_run DESTINATION bin)
+install (TARGETS xstarter DESTINATION bin)
 
 # uninstall target
 configure_file(
