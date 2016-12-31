@@ -11,6 +11,7 @@
 
 #define MAX_LEN (2048)
 #define PIPE "/tmp/xstarter"
+#define PID "/tmp/xstarter.pid"
 
 int
 check_path(char *out, char *in)
@@ -87,15 +88,8 @@ main(int argc, char **argv)
     int pipe = 0;
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-    /* Write to pipe - xstarter should read it and reply to the pipe */
-
-    pipe = open(
-        PIPE,
-        O_WRONLY | O_CREAT | O_TRUNC, mode
-    );
-
-    write(pipe, "-", 2);
-    close(pipe);
+    FILE *f = fopen(PID, "ab+");
+    fclose(f);
 
     /* Get xstarter directory */
 
@@ -157,17 +151,14 @@ main(int argc, char **argv)
         xstarter_run
     );
 
+    pipe = open(PIPE, O_RDONLY | O_CREAT | O_TRUNC, mode);
+
     fp = popen(path, "r");
     pclose(fp);
 
     /* Read from pipe */
 
-    pipe = open(PIPE, O_RDONLY, mode);
-
-    if (! read(pipe, path, MAX_LEN)) {
-        /* Pipe is empty - quit */
-        exit(0);
-    }
+    int bytes_read = read(pipe, path, MAX_LEN);
 
     close(pipe);
 
@@ -178,14 +169,12 @@ main(int argc, char **argv)
         path
     );
 
-    /* Reset pipe */
-
-    pipe = open(PIPE, O_WRONLY | O_TRUNC);
-    close(pipe);
-
     /* Run the application */
 
-    system(command);
+    unlink(PID);
+
+    if (bytes_read > 0)
+        system(command);
 
     return EXIT_SUCCESS;
 }

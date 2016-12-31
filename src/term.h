@@ -1,11 +1,9 @@
 #ifndef TERM_H
 #define TERM_H
 
-/* Fix definition of KEY_BACKSPACE on FreeBSD */
-#ifdef __FreeBSD__
-#undef KEY_BACKSPACE
-#define KEY_BACKSPACE (127)
-#endif
+// Seemed to help for ncurses 5.9
+#define KEY_BACKSPACE_ALTERNATIVE (8)
+#define KEY_DELETE (127)
 
 #define KEY_ESCAPE (27)
 #define KEY_RETURN (10)
@@ -18,8 +16,10 @@
 
 #define MAX_INPUT_LENGTH (20)
 
+/* In the list of applications */
+const static unsigned MAX_LIST_ITEM_LENGTH = 24;
+
 void init_term_gui();
-void free_term_gui();
 
 void init_search();
 void free_search();
