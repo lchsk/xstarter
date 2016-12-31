@@ -27,6 +27,9 @@
 #define ERR_NO_XSTARTER_DIR (2)
 #define ERR_DIRS_TOO_LONG (3)
 #define ERR_XSTARTER_MKDIR_FAILED (4)
+#define ERR_FORK_FAILED (5)
+#define ERR_SETSID_FAILED (6)
+#define ERR_CHDIR_FAILED (7)
 
 /* Error code */
 static int err;

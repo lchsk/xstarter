@@ -5,6 +5,9 @@
 #include <string.h>
 #include <libgen.h>
 #include <ctype.h>
+#include <unistd.h> // execve
+#include <sys/stat.h> // umask
+#include <errno.h>
 
 #include <ncurses.h>
 #include <menu.h>
@@ -420,11 +423,48 @@ free_search(void)
 }
 
 static void
-open_app_later(const char *path)
+open_app_later(char *path)
 {
     if (path != NULL) {
         run_app = True;
         app_to_open(strdup(path));
+
+        pid_t pid;
+
+        switch (pid = fork()) {
+        case -1:
+            dump_debug("fork() failed");
+            dump_debug_int(errno);
+
+            set_err(ERR_FORK_FAILED);
+        case 0: // Child
+            /* Change the file mode mask */
+            umask(0);
+
+            if (setsid() < 0) {
+                dump_debug("setsid() failed");
+                dump_debug_int(errno);
+
+                set_err(ERR_SETSID_FAILED);
+            }
+
+            if (chdir("/") < 0) {
+                dump_debug("chdir() failed");
+                dump_debug_int(errno);
+
+                set_err(ERR_CHDIR_FAILED);
+            }
+
+            /* Redirect standard files to /dev/null */
+            freopen("/dev/null", "r", stdin);
+            freopen("/dev/null", "w", stdout);
+            freopen("/dev/null", "w", stderr);
+
+            extern char** environ;
+            char *argv[] = {path, NULL};
+
+            execve(argv[0], &argv[0], environ);
+        }
     }
 }
 
