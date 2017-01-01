@@ -8,18 +8,12 @@
 
 void init_search(void);
 void free_search(void);
-Boolean search(const char *query);
+Boolean search(const char *query, unsigned query_len);
 GList *results;
-Boolean results_not_found;
-int query_len;
 
 void load_cache(cmdline_t *cmdline);
 void free_cache(void);
 void kill_scan(void);
 Boolean is_cache_ready(void);
-
-static void recent_apps_on_top(void);
-static GQueue *get_cache(void);
-static void *refresh_cache();
 
 #endif

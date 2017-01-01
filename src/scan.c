@@ -17,6 +17,9 @@
 #include "term.h"
 
 static const int PATH = 1024;
+static void recent_apps_on_top(void);
+static GQueue *get_cache(void);
+static void *refresh_cache();
 
 /* Paths of applications we will search to find what we want */
 static GQueue *search_paths = NULL;
@@ -39,7 +42,7 @@ void init_search(void)
 
 void free_search(void)
 {
-    if (results != NULL)
+    if (results)
         g_list_free(results);
 }
 
@@ -50,24 +53,24 @@ Boolean is_cache_ready(void)
 
 void free_cache(void)
 {
-    if (search_paths != NULL) {
+    if (search_paths) {
         for (int i = 0; i < g_queue_get_length(search_paths); i++) {
             char *t = g_queue_peek_nth(search_paths, i);
             free(t);
         }
     }
 
-    if (search_paths != NULL)
+    if (search_paths)
         g_queue_free(search_paths);
 
-    if (paths != NULL) {
+    if (paths) {
         for (int i = 0; i < g_queue_get_length(paths); i++) {
             char *t = g_queue_peek_nth(paths, i);
             free(t);
         }
     }
 
-    if (paths != NULL)
+    if (paths)
         g_queue_free(paths);
 }
 
@@ -104,12 +107,11 @@ Returns:
     true: if search was successful and we need to update GUI
     false: no need to update GUI
 */
-Boolean search(const char *query)
+Boolean search(const char *query, unsigned query_len)
 {
     const config_t *conf = config();
 
     Boolean resp = True;
-    results_not_found = True;
 
     if (query_len < conf->section_main->min_query_len) {
         return False;
@@ -174,8 +176,6 @@ Boolean search(const char *query)
         }
     }
 
-    results_not_found = g_list_length(results) > 0 ? False : True;
-
     recent_apps_on_top();
 
 free_query_parts:
@@ -212,9 +212,6 @@ static void recent_apps_on_top(void)
         }
     }
 }
-
-/* Boolean results_not_found = False; */
-/* int query_len = 0; */
 
 static void listdir(char *name, int level)
 {
@@ -373,12 +370,12 @@ static void *refresh_cache()
         if (dirs->data[i][0] == '$') {
             char const *var = g_getenv(++dirs->data[i]);
 
-            if (var != NULL) {
+            if (var) {
                 str_array_t *var_paths = str_array_new(strdup(var), ":");
 
-                if (var_paths != NULL) {
+                if (var_paths) {
                     for (int j = 0; j < var_paths->length; j++) {
-                        if (var_paths->data[j] != NULL) {
+                        if (var_paths->data[j]) {
                             g_queue_push_tail(
                                 paths,
                                 strdup(var_paths->data[j])

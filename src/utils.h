@@ -14,7 +14,6 @@
 #define MODE_OPEN_APP (2)
 
 #define RECENT_APPS_REMEMBERED (100)
-#define RECENT_APPS_SHOWN (10)
 
 #define ASCII_0 (48)
 #define ASCII_1 (49)
