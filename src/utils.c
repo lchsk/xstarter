@@ -15,7 +15,8 @@ void open_app(char *path)
 {
     if (! path) return;
 
-    char *path_cpy = strdup(path);
+    char path_cpy[1024];
+    strcpy(path_cpy, path);
 
     record_open_file(path_cpy);
 
