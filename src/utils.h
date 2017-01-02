@@ -30,6 +30,8 @@
 #define ERR_SETSID_FAILED (6)
 #define ERR_CHDIR_FAILED (7)
 
+void open_app(char *path);
+
 /* Error code */
 static int err;
 
@@ -40,9 +42,9 @@ char recent_apps[100][1024];
 int recent_apps_cnt;
 
 void app_to_open(char *path);
-void open_app();
 
 void dump_debug(const char *str);
+void dump_debug_ptr(const char *str);
 void dump_debug_int(int d);
 void dump_debug_char(const char);
 

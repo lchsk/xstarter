@@ -85,7 +85,6 @@ static void move_up(void);
 static void move_down(void);
 static void reset_query(void);
 static void open_by_shortcut(int key);
-static void set_app_to_run(void);
 static void clean_line(int line_y);
 static void prepare_for_new_results(void);
 static void show_menu(void);
@@ -164,7 +163,13 @@ void run_term(void)
             break;
 
         case KEY_RETURN:
-            set_app_to_run();
+            status.run_app = True;
+
+            open_app(g_list_nth_data(
+                results,
+                items_list.selected + items_list.offset
+            ));
+
             break;
 
         case KEY_DELETE:
@@ -416,69 +421,19 @@ static void show_recent_apps(void)
     }
 }
 
-static void open_app_later(char *path)
-{
-    if (path != NULL) {
-        status.run_app = True;
-        app_to_open(strdup(path));
-
-        pid_t pid;
-
-        switch (pid = fork()) {
-        case -1:
-            dump_debug("fork() failed");
-            dump_debug_int(errno);
-
-            set_err(ERR_FORK_FAILED);
-        case 0: // Child
-            /* Change the file mode mask */
-            umask(0);
-
-            if (setsid() < 0) {
-                dump_debug("setsid() failed");
-                dump_debug_int(errno);
-
-                set_err(ERR_SETSID_FAILED);
-            }
-
-            if (chdir("/") < 0) {
-                dump_debug("chdir() failed");
-                dump_debug_int(errno);
-
-                set_err(ERR_CHDIR_FAILED);
-            }
-
-            /* Redirect standard files to /dev/null */
-            freopen("/dev/null", "r", stdin);
-            freopen("/dev/null", "w", stdout);
-            freopen("/dev/null", "w", stderr);
-
-            extern char** environ;
-            char *argv[] = {path, NULL};
-
-            execve(argv[0], &argv[0], environ);
-        }
-    }
-}
-
-static void set_app_to_run(void)
-{
-    unsigned item = items_list.selected + items_list.offset;
-
-    open_app_later(g_list_nth_data(results, item));
-}
-
 static void open_by_shortcut(int key)
 {
     const config_t *conf = config();
 
     if (conf->section_main->numeric_shortcuts) {
         if (key >= ASCII_1 && key <= ASCII_9) {
-            unsigned item = items_list.offset + (key - ASCII_1);
+            status.run_app = True;
 
-            open_app_later(g_list_nth_data(results, item));
+            open_app(g_list_nth_data(results, items_list.offset + (key - ASCII_1)));
         } else if (key == ASCII_0) {
-            open_app_later(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
+            status.run_app = True;
+
+            open_app(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
         }
     }
 }

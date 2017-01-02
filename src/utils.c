@@ -1,17 +1,66 @@
-#include <unistd.h>
-#include <sys/stat.h>
+#include <unistd.h> // execve
+#include <sys/stat.h> // umask
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "utils.h"
 
-static char* _app_to_open_path;
+static void record_open_file(const char *path);
 
-static void
-record_open_file(const char* path)
+void open_app(char *path)
+{
+    if (! path) return;
+
+    char *path_cpy = strdup(path);
+
+    record_open_file(path_cpy);
+
+    pid_t pid;
+
+    switch (pid = fork()) {
+    case -1:
+        dump_debug("fork() failed");
+        dump_debug_int(errno);
+
+        set_err(ERR_FORK_FAILED);
+
+        break;
+
+    case 0: // Child
+        /* Change the file mode mask */
+        umask(0);
+
+        if (setsid() < 0) {
+            dump_debug("setsid() failed");
+            dump_debug_int(errno);
+
+            set_err(ERR_SETSID_FAILED);
+        }
+
+        if (chdir("/") < 0) {
+            dump_debug("chdir() failed");
+            dump_debug_int(errno);
+
+            set_err(ERR_CHDIR_FAILED);
+        }
+
+        /* Redirect standard files to /dev/null */
+        freopen("/dev/null", "r", stdin);
+        freopen("/dev/null", "w", stdout);
+        freopen("/dev/null", "w", stderr);
+
+        extern char** environ;
+        char *argv[] = {path_cpy, NULL};
+
+        execve(argv[0], &argv[0], environ);
+    }
+}
+
+static void record_open_file(const char *path)
 {
     if (xstarter_dir_avail) {
         char recently_f[1024];
@@ -20,7 +69,7 @@ record_open_file(const char* path)
 
         FILE *file = fopen(recently_f, "w");
 
-        if (file != NULL) {
+        if (file) {
             // Check if it's already in the list
 
             int path_index = -1;
@@ -42,7 +91,6 @@ record_open_file(const char* path)
             }
 
             // Remove item already existing in the list
-
             if (path_index != -1) {
                 for (int i = path_index; i < last_index; i++) {
                     strcpy(recent_apps[i], recent_apps[i + 1]);
@@ -96,19 +144,6 @@ read_recently_open_list()
     }
 }
 
-void open_app()
-{
-    if (_app_to_open_path) {
-        record_open_file(_app_to_open_path);
-    }
-}
-
-void
-app_to_open(char *path)
-{
-    _app_to_open_path = path;
-}
-
 void
 dump_debug(const char *str)
 {
@@ -119,6 +154,21 @@ dump_debug(const char *str)
         1024,
         "echo %s>> ~/debug_xstarter",
         str
+    );
+
+    system(debug);
+}
+
+void
+dump_debug_ptr(const char *str)
+{
+    char debug[1024];
+
+    snprintf(
+        debug,
+        1024,
+        "echo %p>> ~/debug_xstarter",
+        &str
     );
 
     system(debug);

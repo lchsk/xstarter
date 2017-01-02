@@ -42,8 +42,6 @@ main(int argc, char **argv)
         free_cache();
         free_search();
         free_config();
-
-        open_app();
     } else {
         set_err(ERR_UNKNOWN_APP_MODE);
     }
