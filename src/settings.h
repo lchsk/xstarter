@@ -14,7 +14,6 @@
 #define XSTARTER_VERSION "0.4.0"
 
 typedef struct {
-    int mode;
     bool verbose;
     char* config_path;
     bool force_cache_refresh;

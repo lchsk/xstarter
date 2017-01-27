@@ -272,9 +272,6 @@ print_err()
         case NO_ERR:
             PRINT("No error");
             break;
-        case ERR_UNKNOWN_APP_MODE:
-            PRINT("Unknown application mode");
-            break;
         case ERR_NO_XSTARTER_DIR:
             PRINT("No xstarter directory found");
             break;

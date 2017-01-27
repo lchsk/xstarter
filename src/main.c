@@ -10,8 +10,7 @@
 #include "term.h"
 #include "utils.h"
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     set_err(NO_ERR);
 
@@ -20,30 +19,21 @@ main(int argc, char **argv)
     cmdline_t *cmdline = smalloc(sizeof(cmdline_t));
 
     if (read_cmdline(cmdline, argc, argv))
-        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
 
-    if (cmdline->mode == MODE_RETURN_TERMINAL) {
-        load_config(cmdline);
-        char *terminal = config()->section_main->terminal;
-        printf("%s", terminal);
-        free_config();
-    } else if (cmdline->mode == MODE_OPEN_APP) {
-        load_config(cmdline);
+    load_config(cmdline);
 
-        init_search();
-        init_term_gui();
+    init_search();
+    init_term_gui();
 
-        load_cache(cmdline);
+    load_cache(cmdline);
 
-        run_term();
+    run_term();
 
-        kill_scan();
-        free_cache();
-        free_search();
-        free_config();
-    } else {
-        set_err(ERR_UNKNOWN_APP_MODE);
-    }
+    kill_scan();
+    free_cache();
+    free_search();
+    free_config();
 
     if (cmdline->verbose) {
         print_err();

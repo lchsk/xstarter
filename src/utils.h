@@ -5,11 +5,6 @@
 
 #define PRINT(x) { printf("%s\n", x); }
 
-/* MODES */
-
-#define MODE_RETURN_TERMINAL (1)
-#define MODE_OPEN_APP (2)
-
 #define RECENT_APPS_REMEMBERED (100)
 
 #define ASCII_0 (48)
@@ -19,7 +14,6 @@
 /* Errors */
 
 #define NO_ERR (0)
-#define ERR_UNKNOWN_APP_MODE (1)
 #define ERR_NO_XSTARTER_DIR (2)
 #define ERR_DIRS_TOO_LONG (3)
 #define ERR_XSTARTER_MKDIR_FAILED (4)

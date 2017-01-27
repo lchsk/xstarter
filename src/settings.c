@@ -280,7 +280,6 @@ usage()
     printf("\t-v\tShow xstarter version\n");
     printf("\t-V\tBe verbose\n");
     printf("\t-c\tPath to the configuration file\n");
-    printf("\t-t\tReturn terminal from the configuration\n");
 }
 
 static void
@@ -297,18 +296,14 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
 
     /* Default settings: */
 
-    cmdline->mode = MODE_OPEN_APP;
     cmdline->config_path = NULL;
     cmdline->verbose = false;
     cmdline->force_cache_refresh = false;
 
-    while ((c = getopt(argc, argv, "thvrVc:")) != -1) {
+    while ((c = getopt(argc, argv, "hvrVc:")) != -1) {
         switch(c) {
         case 'c':
             cmdline->config_path = optarg;
-            break;
-        case 't':
-            cmdline->mode = MODE_RETURN_TERMINAL;
             break;
         case 'v':
             print_version();
