@@ -1,4 +1,4 @@
-#define _GNU_SOURCE
+#define _GNU_SOURCE // strcasestr
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
