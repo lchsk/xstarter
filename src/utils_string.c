@@ -145,3 +145,11 @@ char *xs_dirname(char *str)
 
     return result;
 }
+
+char *strdup(const char *str)
+{
+  size_t len = 1 + strlen(str);
+  char *ptr = smalloc(len);
+
+  return ptr ? memcpy(ptr, str, len) : NULL;
+}

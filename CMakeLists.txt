@@ -13,7 +13,7 @@ find_package(PkgConfig)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-add_definitions(-std=gnu99)
+add_definitions(-std=c99)
 
 find_package(Curses REQUIRED)
 find_package(Glib REQUIRED)
