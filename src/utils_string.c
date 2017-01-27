@@ -10,8 +10,7 @@
 
 #define MAX_LEN (4096)
 
-str_array_t
-*str_array_new(char *input_str, char const *delimiters)
+str_array_t *str_array_new(char *input_str, char const *delimiters)
 {
     str_array_t *out = smalloc(sizeof(str_array_t));
 
@@ -35,8 +34,7 @@ str_array_t
     return out;
 }
 
-void
-str_array_free(str_array_t *str_array)
+void str_array_free(str_array_t *str_array)
 {
     if (str_array == NULL) return;
 
@@ -65,31 +63,26 @@ char *strip(char *str)
     return str;
 }
 
-void
-str_array_strip(str_array_t *str_array)
+void str_array_strip(str_array_t *str_array)
 {
     for (int i = 0; i < str_array->length; i++) {
         str_array->data[i] = strip(str_array->data[i]);
     }
 }
 
-char*
-expand_tilde(char *str, const char *home)
+char* expand_tilde(char *str, const char *home)
 {
     if (str == NULL || home == NULL)
         return str;
 
-    int len = strlen(home);
-
     static char dest[MAX_LEN];
 
     char *from = str;
-    int i = 0;
 
     for (int i = 0; str[i]; i++) {
         if (i >= (MAX_LEN - 1)) {
             set_err(ERR_DIRS_TOO_LONG);
-            strncpy(dest, str, MAX_LEN -1);
+            strncpy(dest, str, MAX_LEN - 1);
             return dest;
         }
 
@@ -106,8 +99,7 @@ expand_tilde(char *str, const char *home)
     return dest;
 }
 
-char *
-xs_dirname(char *str)
+char *xs_dirname(char *str)
 {
     char *result;
 
@@ -121,22 +113,21 @@ xs_dirname(char *str)
         result = smalloc(2);
         strcpy(result, ".");
 
-        goto return_result;
+        return result;
     }
 
-    int len = strlen(str);
-    int i = len;
+    int i = strlen(str);
 
     if (str[i - 1] == '/') {
         result = smalloc(2);
         strcpy(result, "/");
 
-        goto return_result;
+        return result;
     }
 
     Boolean found = False;
 
-    while(--i) {
+    while (--i) {
         if (str[i] == '/') {
             found = True;
             break;
@@ -152,6 +143,5 @@ xs_dirname(char *str)
         strcpy(result, ".");
     }
 
-return_result:
     return result;
 }

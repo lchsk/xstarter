@@ -2,15 +2,7 @@
 #define UTILS_STRING_H
 
 #include <string.h>
-#define _GNU_SOURCE //asks stdio.h to include asprintf
 #include <stdio.h>
-
-#define Sasprintf(buffer, ...)              \
-{                                           \
-    char *tmp_string = buffer;              \
-    asprintf(&(buffer), __VA_ARGS__);       \
-    free(tmp_string);                       \
-}
 
 typedef struct str_array_t {
     char **data;
