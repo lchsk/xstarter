@@ -208,8 +208,8 @@ dump_debug_int(int d)
 void
 xstarter_directory()
 {
-    xstarter_dir_avail = True;
-    Boolean using_tmp_dir = False;
+    xstarter_dir_avail = true;
+    bool using_tmp_dir = false;
 
     char *dir = NULL;
 
@@ -219,7 +219,7 @@ xstarter_directory()
     }
 
     if (! dir) {
-        using_tmp_dir = True;
+        using_tmp_dir = true;
         dir = smalloc(1024);
         strcpy(dir, "/tmp");
     }
@@ -241,10 +241,10 @@ xstarter_directory()
             if (mkdir(xstarter_dir, 0700)) {
                 set_err(ERR_XSTARTER_MKDIR_FAILED);
             } else {
-                xstarter_dir_avail = True;
+                xstarter_dir_avail = true;
             }
         } else {
-            xstarter_dir_avail = True;
+            xstarter_dir_avail = true;
         }
     }
 }

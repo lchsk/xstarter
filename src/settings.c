@@ -26,13 +26,13 @@ set_default_terminal(config_t *conf)
 static void
 set_default_emacs_bindings(config_t *conf)
 {
-    conf->section_main->emacs_bindings = True;
+    conf->section_main->emacs_bindings = true;
 }
 
 static void
 set_recent_apps_first(config_t *conf)
 {
-    conf->section_main->recent_apps_first = True;
+    conf->section_main->recent_apps_first = true;
 }
 
 static void
@@ -44,25 +44,25 @@ set_min_query_len(config_t *conf)
 static void
 set_allow_spaces(config_t *conf)
 {
-    conf->section_main->allow_spaces = True;
+    conf->section_main->allow_spaces = true;
 }
 
 static void
 set_numeric_shortcuts(config_t *conf)
 {
-    conf->section_main->numeric_shortcuts = True;
+    conf->section_main->numeric_shortcuts = true;
 }
 
 static void
 set_use_cache(config_t *conf)
 {
-    conf->section_main->use_cache = True;
+    conf->section_main->use_cache = true;
 }
 
 static void
 set_auto_cache_refresh(config_t *conf)
 {
-    conf->section_main->auto_cache_refresh = True;
+    conf->section_main->auto_cache_refresh = true;
 }
 
 static void
@@ -293,14 +293,14 @@ int
 read_cmdline(cmdline_t *cmdline, int argc, char **argv)
 {
     int c;
-    int quit = False;
+    int quit = false;
 
     /* Default settings: */
 
     cmdline->mode = MODE_OPEN_APP;
     cmdline->config_path = NULL;
-    cmdline->verbose = False;
-    cmdline->force_cache_refresh = False;
+    cmdline->verbose = false;
+    cmdline->force_cache_refresh = false;
 
     while ((c = getopt(argc, argv, "thvrVc:")) != -1) {
         switch(c) {
@@ -312,18 +312,18 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
             break;
         case 'v':
             print_version();
-            quit = True;
+            quit = true;
             break;
         case 'V':
-            cmdline->verbose = True;
+            cmdline->verbose = true;
             break;
         case 'r':
-            cmdline->force_cache_refresh = True;
+            cmdline->force_cache_refresh = true;
             break;
         case 'h':
         default:
             usage();
-            quit = True;
+            quit = true;
         }
     }
 

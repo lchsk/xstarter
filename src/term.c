@@ -39,7 +39,7 @@ static const unsigned MAX_LIST_ITEM_LENGTH = 24;
 typedef struct {
     GList *names;
     char query[MAX_INPUT_LENGTH];
-    Boolean run_app;
+    bool run_app;
     unsigned query_len;
 } search_t;
 
@@ -59,7 +59,7 @@ typedef struct {
 static search_t status = {
     .names = NULL,
     .query_len = 0,
-    .run_app = False
+    .run_app = false
 };
 
 static view_t view_search_bar = {
@@ -163,7 +163,7 @@ void run_term(void)
             break;
 
         case KEY_RETURN:
-            status.run_app = True;
+            status.run_app = true;
 
             open_app(g_list_nth_data(
                 results,
@@ -399,7 +399,7 @@ static void prepare_for_new_results(void)
 
 static void show_recent_apps(void)
 {
-    int recent_apps_valid = True;
+    int recent_apps_valid = true;
 
     for (items_list.choices_cnt = 0;
          items_list.choices_cnt < RECENT_APPS_SHOWN;
@@ -408,7 +408,7 @@ static void show_recent_apps(void)
             && strcmp(recent_apps[items_list.choices_cnt], "") != 0) {
             for (int i = 0; i < strlen(recent_apps[items_list.choices_cnt]); i++) {
                 if (! isprint(recent_apps[items_list.choices_cnt][i])) {
-                    recent_apps_valid = False;
+                    recent_apps_valid = false;
                     break;
                 }
             }
@@ -427,11 +427,11 @@ static void open_by_shortcut(int key)
 
     if (conf->section_main->numeric_shortcuts) {
         if (key >= ASCII_1 && key <= ASCII_9) {
-            status.run_app = True;
+            status.run_app = true;
 
             open_app(g_list_nth_data(results, items_list.offset + (key - ASCII_1)));
         } else if (key == ASCII_0) {
-            status.run_app = True;
+            status.run_app = true;
 
             open_app(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
         }

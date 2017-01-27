@@ -15,21 +15,21 @@
 
 typedef struct {
     int mode;
-    Boolean verbose;
+    bool verbose;
     char* config_path;
-    Boolean force_cache_refresh;
+    bool force_cache_refresh;
 } cmdline_t;
 
 typedef struct {
     str_array_t *dirs;
     char *terminal;
-    Boolean emacs_bindings;
-    Boolean recent_apps_first;
+    bool emacs_bindings;
+    bool recent_apps_first;
     int min_query_len;
-    Boolean allow_spaces;
-    Boolean numeric_shortcuts;
-    Boolean use_cache;
-    Boolean auto_cache_refresh;
+    bool allow_spaces;
+    bool numeric_shortcuts;
+    bool use_cache;
+    bool auto_cache_refresh;
 } config_main_t;
 
 typedef struct {

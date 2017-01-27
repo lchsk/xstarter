@@ -1,10 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define True (1)
-#define False (0)
-
-#define Boolean short
+#include <stdbool.h>
 
 #define PRINT(x) { printf("%s\n", x); }
 

@@ -125,11 +125,11 @@ char *xs_dirname(char *str)
         return result;
     }
 
-    Boolean found = False;
+    bool found = false;
 
     while (--i) {
         if (str[i] == '/') {
-            found = True;
+            found = true;
             break;
         }
     }

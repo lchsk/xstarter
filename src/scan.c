@@ -26,11 +26,11 @@ static GQueue *search_paths = NULL;
 
 /* Directories to traverse in order to find application paths */
 static GQueue *paths = NULL;
-static Boolean cache_ready = False;
+static bool cache_ready = false;
 
 static pthread_t th_refresh_cache;
 /* Set to true if cache refresh thread should be stopped */
-static Boolean stop_traversing;
+static bool stop_traversing;
 
 static cmdline_t *cmdline;
 
@@ -46,7 +46,7 @@ void free_search(void)
         g_list_free(results);
 }
 
-Boolean is_cache_ready(void)
+bool is_cache_ready(void)
 {
     return cache_ready;
 }
@@ -78,7 +78,7 @@ void load_cache(cmdline_t *cmdline_)
 {
     cmdline = cmdline_;
 
-    stop_traversing = False;
+    stop_traversing = false;
 
     int code = pthread_create(
         &th_refresh_cache,
@@ -93,7 +93,7 @@ void load_cache(cmdline_t *cmdline_)
 void kill_scan(void)
 {
     if (! cache_ready) {
-        stop_traversing = True;
+        stop_traversing = true;
         pthread_join(th_refresh_cache, NULL);
     } else {
         pthread_detach(th_refresh_cache);
@@ -107,18 +107,18 @@ Returns:
     true: if search was successful and we need to update GUI
     false: no need to update GUI
 */
-Boolean search(const char *query, unsigned query_len)
+bool search(const char *query, unsigned query_len)
 {
     const config_t *conf = config();
 
-    Boolean resp = True;
+    bool resp = true;
 
     if (query_len < conf->section_main->min_query_len) {
-        return False;
+        return false;
     }
 
     if (query[0] == ' ')
-        return False;
+        return false;
 
     GQueue *cache = get_cache();
 
@@ -130,7 +130,7 @@ Boolean search(const char *query, unsigned query_len)
 
         if ((query_len > 0 && query[query_len - 1] == ' ')
             || query_parts == NULL) {
-            resp = False;
+            resp = false;
             goto free_query_parts;
         }
 
@@ -142,7 +142,7 @@ Boolean search(const char *query, unsigned query_len)
 
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         char *path = g_queue_peek_nth(cache, i);
-        Boolean found = True;
+        bool found = true;
 
         if (current_query_len == 1) {
             char *name = g_path_get_basename(path);
@@ -160,7 +160,7 @@ Boolean search(const char *query, unsigned query_len)
                 char *name = g_path_get_basename(path);
 
                 if (strstr(name, query_parts->data[i]) == NULL) {
-                    found = False;
+                    found = false;
                     goto finish;
                 }
 
@@ -306,19 +306,19 @@ static void read_cache_file()
     }
 }
 
-static Boolean cache_needs_refresh()
+static bool cache_needs_refresh()
 {
     /* If a user requested cache refresh from the cmdline */
     if (cmdline->force_cache_refresh)
-        return True;
+        return true;
 
     const config_t *conf = config();
 
     if (! conf->section_main->use_cache)
-        return True;
+        return true;
 
     if (! conf->section_main->auto_cache_refresh)
-        return False;
+        return false;
 
     /* If cache file does not exist then yes */
 
@@ -330,7 +330,7 @@ static Boolean cache_needs_refresh()
 
     if (stat(path, &cache_stat) == -1) {
         /* Does not exist */
-        return True;
+        return true;
     } else {
         /* If exists, get last modification time */
         cache_time = mktime(localtime(&(cache_stat.st_ctime)));
@@ -352,12 +352,12 @@ static Boolean cache_needs_refresh()
             if (diff > 0) {
                 /* A directory is more fresh that cache file - */
                 /* Need to refresh */
-                return True;
+                return true;
             }
         }
     }
 
-    return False;
+    return false;
 }
 
 static void *refresh_cache()
@@ -408,7 +408,7 @@ static void *refresh_cache()
     } else
         read_cache_file();
 
-    cache_ready = True;
+    cache_ready = true;
     cache_loaded();
 }
 
