@@ -12,68 +12,57 @@ static config_t *CONF = NULL;
 static config_main_t *section_main = NULL;
 static config_colours_t *section_colours = NULL;
 
-static void
-set_default_dirs(config_t *conf)
+static void set_default_dirs(config_t *conf)
 {
     conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
 }
 
-static void
-set_default_terminal(config_t *conf)
+static void set_default_terminal(config_t *conf)
 {
     conf->section_main->terminal = strdup("xterm");
 }
 
-static void
-set_default_emacs_bindings(config_t *conf)
+static void set_default_emacs_bindings(config_t *conf)
 {
     conf->section_main->emacs_bindings = true;
 }
 
-static void
-set_recent_apps_first(config_t *conf)
+static void set_recent_apps_first(config_t *conf)
 {
     conf->section_main->recent_apps_first = true;
 }
 
-static void
-set_min_query_len(config_t *conf)
+static void set_min_query_len(config_t *conf)
 {
     conf->section_main->min_query_len = 1;
 }
 
-static void
-set_allow_spaces(config_t *conf)
+static void set_allow_spaces(config_t *conf)
 {
     conf->section_main->allow_spaces = true;
 }
 
-static void
-set_numeric_shortcuts(config_t *conf)
+static void set_numeric_shortcuts(config_t *conf)
 {
     conf->section_main->numeric_shortcuts = true;
 }
 
-static void
-set_use_cache(config_t *conf)
+static void set_use_cache(config_t *conf)
 {
     conf->section_main->use_cache = true;
 }
 
-static void
-set_auto_cache_refresh(config_t *conf)
+static void set_auto_cache_refresh(config_t *conf)
 {
     conf->section_main->auto_cache_refresh = true;
 }
 
-static void
-set_default_colour_selected(config_t *conf)
+static void set_default_colour_selected(config_t *conf)
 {
     conf->section_colours->selected = strdup("f44336");
 }
 
-static void
-set_default_configuration(config_t *conf)
+static void set_default_configuration(config_t *conf)
 {
     // Main
     set_default_dirs(conf);
@@ -90,10 +79,9 @@ set_default_configuration(config_t *conf)
     set_default_colour_selected(conf);
 }
 
-void
-load_config(cmdline_t *cmdline)
+void load_config(cmdline_t *cmdline)
 {
-    GError* error = NULL;
+    GError *error = NULL;
 
     conf_file = g_key_file_new();
 
@@ -296,14 +284,12 @@ void free_config()
     }
 }
 
-const
-config_t *config()
+const config_t *config()
 {
     return CONF;
 }
 
-static void
-usage()
+static void usage()
 {
     printf("Usage: xstarter\n\n");
     printf("Optional arguments:\n");
@@ -313,14 +299,12 @@ usage()
     printf("\t-c\tPath to the configuration file\n");
 }
 
-static void
-print_version()
+static void print_version()
 {
     printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
 }
 
-int
-read_cmdline(cmdline_t *cmdline, int argc, char **argv)
+int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
 {
     int c;
     int quit = false;
@@ -356,8 +340,7 @@ read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     return quit;
 }
 
-void
-free_cmdline(cmdline_t *cmdline)
+void free_cmdline(cmdline_t *cmdline)
 {
     if (cmdline) {
         if (cmdline->config_path)

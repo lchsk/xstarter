@@ -24,7 +24,7 @@
 void open_app(char *path);
 
 /* Error code */
-static int err;
+int err;
 
 char xstarter_dir[1024];
 int xstarter_dir_avail;

@@ -127,8 +127,7 @@ static void record_open_file(const char *path)
     }
 }
 
-void
-read_recently_open_list()
+void read_recently_open_list()
 {
     recent_apps_cnt = 0;
 
@@ -157,8 +156,7 @@ read_recently_open_list()
     }
 }
 
-void
-dump_debug(const char *str)
+void dump_debug(const char *str)
 {
     char debug[1024];
 
@@ -172,8 +170,7 @@ dump_debug(const char *str)
     system(debug);
 }
 
-void
-dump_debug_ptr(const char *str)
+void dump_debug_ptr(const char *str)
 {
     char debug[1024];
 
@@ -187,8 +184,7 @@ dump_debug_ptr(const char *str)
     system(debug);
 }
 
-void
-dump_debug_char(const char c)
+void dump_debug_char(const char c)
 {
     char debug[1024];
 
@@ -202,8 +198,7 @@ dump_debug_char(const char c)
     system(debug);
 }
 
-void
-dump_debug_int(int d)
+void dump_debug_int(int d)
 {
     char debug[1024];
 
@@ -217,8 +212,7 @@ dump_debug_int(int d)
     system(debug);
 }
 
-void
-xstarter_directory()
+void xstarter_directory()
 {
     xstarter_dir_avail = true;
     bool using_tmp_dir = false;
@@ -261,22 +255,19 @@ xstarter_directory()
     }
 }
 
-void
-set_err(int err_code)
+void set_err(int err_code)
 {
     /* Only set the first encountered error */
     if (err == NO_ERR)
         err = err_code;
 }
 
-int
-get_err()
+int get_err()
 {
     return err;
 }
 
-void
-print_err()
+void print_err()
 {
     printf("Error code: %d\n", err);
 
@@ -297,8 +288,7 @@ print_err()
     }
 }
 
-void*
-safe_malloc(size_t n, unsigned long line)
+void *safe_malloc(size_t n, unsigned long line)
 {
     void *p = malloc(n);
 
