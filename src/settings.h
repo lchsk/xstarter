@@ -32,7 +32,12 @@ typedef struct {
 } config_main_t;
 
 typedef struct {
+    char *selected;
+} config_colours_t;
+
+typedef struct {
     config_main_t *section_main;
+    config_colours_t *section_colours;
 } config_t;
 
 void load_config(cmdline_t *cmdline);

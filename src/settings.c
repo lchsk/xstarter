@@ -10,6 +10,7 @@ static GQueue *paths = NULL;
 
 static config_t *CONF = NULL;
 static config_main_t *section_main = NULL;
+static config_colours_t *section_colours = NULL;
 
 static void
 set_default_dirs(config_t *conf)
@@ -66,8 +67,15 @@ set_auto_cache_refresh(config_t *conf)
 }
 
 static void
+set_default_colour_selected(config_t *conf)
+{
+    conf->section_colours->selected = strdup("f44336");
+}
+
+static void
 set_default_configuration(config_t *conf)
 {
+    // Main
     set_default_dirs(conf);
     set_default_terminal(conf);
     set_default_emacs_bindings(conf);
@@ -77,6 +85,9 @@ set_default_configuration(config_t *conf)
     set_numeric_shortcuts(conf);
     set_use_cache(conf);
     set_auto_cache_refresh(conf);
+
+    // Colours
+    set_default_colour_selected(conf);
 }
 
 void
@@ -90,11 +101,13 @@ load_config(cmdline_t *cmdline)
     char path[256];
 
     section_main = smalloc(sizeof(config_main_t));
+    section_colours = smalloc(sizeof(config_colours_t));
 
     CONF = smalloc(sizeof(config_t));
 
     *CONF = (config_t) {
-        .section_main = section_main
+        .section_main = section_main,
+        .section_colours = section_colours
     };
 
     if (cmdline->config_path) {
@@ -150,6 +163,19 @@ load_config(cmdline_t *cmdline)
 
         if (error != NULL || strcmp(section_main->terminal, "") == 0) {
             set_default_terminal(CONF);
+            g_error_free(error);
+            error = NULL;
+        }
+
+        section_colours->selected = g_key_file_get_string(
+            conf_file,
+            "Colours",
+            "selected",
+            &error
+            );
+
+        if (error != NULL || strcmp(section_colours->selected, "") == 0) {
+            set_default_colour_selected(CONF);
             g_error_free(error);
             error = NULL;
         }
@@ -258,6 +284,11 @@ void free_config()
         str_array_free(section_main->dirs);
         free(section_main->terminal);
         free(section_main);
+    }
+
+    if (section_colours) {
+        free(section_colours->selected);
+        free(section_colours);
     }
 
     if (CONF) {

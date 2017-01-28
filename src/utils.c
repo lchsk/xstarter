@@ -11,6 +11,18 @@
 
 static void record_open_file(const char *path);
 
+void get_rgb(colour_t *dest, char *src)
+{
+    if (strlen(src) && src[0] == ';')
+        src++;
+
+    int c = (int)strtol(src, NULL, 16);
+
+    dest->r = ((c >> 16) & 0xff) / 255.0 * 1000;
+    dest->g = ((c >> 8) & 0xff) / 255.0 * 1000;
+    dest->b = (c & 0xff) / 255.0 * 1000;
+}
+
 void open_app(char *path)
 {
     if (! path) return;

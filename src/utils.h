@@ -32,6 +32,12 @@ int xstarter_dir_avail;
 char recent_apps[100][1024];
 int recent_apps_cnt;
 
+typedef struct {
+	double r, g, b;
+} colour_t;
+
+void get_rgb(colour_t *dest, char *src);
+
 void app_to_open(char *path);
 
 void dump_debug(const char *str);

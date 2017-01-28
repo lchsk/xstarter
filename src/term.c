@@ -26,11 +26,9 @@
 
 static const unsigned MAX_Y = 15;
 static const unsigned RECENT_APPS_SHOWN = 10;
-static const unsigned XS_COLOR_BLUE = 8;
-static const unsigned XS_COLOR_RED = 9;
+static const unsigned XS_COL_SEL = 8;
 
 static const unsigned XS_COLOR_PAIR_1 = 1;
-static const unsigned XS_COLOR_PAIR_2 = 2;
 
 static const unsigned MAX_LIST_ITEM_LENGTH = 24;
 
@@ -106,14 +104,16 @@ void init_term_gui(void)
     noecho();
     keypad(stdscr, TRUE);
 
+    const config_t *conf = config();
+
+    colour_t col_sel;
+    get_rgb(&col_sel, conf->section_colours->selected);
+
     if (can_change_color()) {
-        init_color(XS_COLOR_BLUE, 43, 180, 349);
-        init_color(XS_COLOR_RED, 886, 27, 124);
-        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, XS_COLOR_RED);
-        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, XS_COLOR_BLUE);
+        init_color(XS_COL_SEL, col_sel.r, col_sel.g, col_sel.b);
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, XS_COL_SEL);
     } else{
-        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, COLOR_RED);
-        init_pair(XS_COLOR_PAIR_2, COLOR_WHITE, COLOR_BLUE);
+        init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, COLOR_BLUE);
     }
 
     show_recent_apps();
