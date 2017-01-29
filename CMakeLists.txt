@@ -11,6 +11,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# cpack
+set(CPACK_GENERATOR "DEB;ZIP;TGZ")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "lchsk")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY, "Terminal-based application launcher for Unix-like systems")
+set(CPACK_PACKAGE_DESCRIPTION, "Terminal-based application launcher for Unix-like systems")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+
+include(CPack)
+
+# end cpack
+
 add_definitions(-std=c99)
 
 find_package(Curses REQUIRED)

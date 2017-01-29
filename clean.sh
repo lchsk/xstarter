@@ -9,6 +9,11 @@ rm -f install_manifest.txt
 rm -f nohup.out
 rm -rf CMakeFiles
 rm -rf ./bin
+rm -rf _CPack_Packages
+rm -f xstarter-*.deb
+rm -f xstarter-*.tar.gz
+rm -f xstarter-*.zip
+rm -f CPackSourceConfig.cmake CPackConfig.cmake
 
 echo "Cleaning tests..."
 
