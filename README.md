@@ -80,3 +80,18 @@ It should run on any modern terminal. It is tested on: `xterm`, `rxvt`, `gnome-t
 ## Configuration
 
 [Configuration file](./xstarter.conf) is available and includes comments that explain configuration variables. It is located in the `~/.xstarter.d/` directory.
+
+## Key shortcuts
+
+Use numbers 1..9 and 0 to open an application from the list.
+
+By default, the following shortcuts are available:
+
+| Shortcut | Action |
+| --- | --- |
+|C-n|Move down the list|
+|C-p|Move up the list|
+|C-g|Quit|
+|C-d|Delete entered character|
+|C-w|Delete entire query|
+
