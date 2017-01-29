@@ -9,8 +9,6 @@ set(PROJECT_VERSION "0.4.0")
 set(CMAKE_CXX_FLAGS "-g -Wall -pedantic")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
-find_package(PkgConfig)
-
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 add_definitions(-std=c99)
