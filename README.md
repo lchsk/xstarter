@@ -41,12 +41,15 @@ Recently open applications
 ### Using **deb** package
 
 Download `.deb` package
+
 Run `sudo dpkg -i xstarter-*.deb`
 
 ### Using archives
 
 Download `.tar.gz` or `.zip` archive
+
 Extract it
+
 Run `./bin/xstarter` to open the application in the terminal.
 
 ### From source
