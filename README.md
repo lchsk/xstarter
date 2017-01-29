@@ -25,7 +25,6 @@ Recently open applications
 * applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
 * fast, uses cache by default
 * easy to configure via a single text file
-* tested on Ubuntu, Debian, FreeBSD
 
 ## Requirements
 
