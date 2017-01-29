@@ -236,6 +236,8 @@ void run_term(void)
         if (status.run_app)
             break;
     }
+
+    endwin();
 }
 
 static void clean_line(int line_y)
