@@ -1,9 +1,11 @@
+#define _GNU_SOURCE // execvpe
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <unistd.h> // execvpe, readlink
+#include <sys/stat.h> // umask
+#include <errno.h>
 
 #include <glib.h>
-#include <menu.h>
 
 #include "settings.h"
 #include "scan.h"
@@ -22,6 +24,18 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
 
     load_config(cmdline);
+
+    if (! is_terminal()) {
+        free_cmdline(cmdline);
+
+        const config_t *conf = config();
+
+        strncpy(exec_term, conf->section_main->terminal, sizeof(exec_term));
+
+        free_config();
+
+        open_itself(argc, argv);
+    }
 
     init_search();
     init_term_gui();

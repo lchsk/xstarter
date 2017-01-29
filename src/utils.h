@@ -14,12 +14,15 @@
 /* Errors */
 
 #define NO_ERR (0)
+#define ERR_NO_XSTARTER_PATH (1)
 #define ERR_NO_XSTARTER_DIR (2)
 #define ERR_DIRS_TOO_LONG (3)
 #define ERR_XSTARTER_MKDIR_FAILED (4)
 #define ERR_FORK_FAILED (5)
 #define ERR_SETSID_FAILED (6)
 #define ERR_CHDIR_FAILED (7)
+
+#define MAX_LEN (2048)
 
 void open_app(char *path);
 
@@ -31,6 +34,8 @@ int xstarter_dir_avail;
 
 char recent_apps[100][1024];
 int recent_apps_cnt;
+
+char exec_term[32];
 
 typedef struct {
 	double r, g, b;
@@ -46,8 +51,10 @@ void dump_debug_int(int d);
 void dump_debug_char(const char);
 
 void xstarter_directory();
-
 void read_recently_open_list();
+
+bool is_terminal();
+void open_itself(int argc, char **argv);
 
 void set_err(int err_code);
 int get_err();

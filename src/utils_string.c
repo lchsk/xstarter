@@ -8,8 +8,6 @@
 #include "utils_string.h"
 #include "utils.h"
 
-#define MAX_LEN (4096)
-
 str_array_t *str_array_new(char *input_str, char const *delimiters)
 {
     str_array_t *out = smalloc(sizeof(str_array_t));
@@ -83,6 +81,7 @@ char* expand_tilde(char *str, const char *home)
         if (i >= (MAX_LEN - 1)) {
             set_err(ERR_DIRS_TOO_LONG);
             strncpy(dest, str, MAX_LEN - 1);
+
             return dest;
         }
 

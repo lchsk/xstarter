@@ -1,4 +1,5 @@
-#include <unistd.h> // execve
+#define _GNU_SOURCE
+#include <unistd.h> // execve, readlink
 #include <sys/stat.h> // umask
 #include <pwd.h>
 #include <stdio.h>
@@ -10,6 +11,8 @@
 #include "utils.h"
 
 static void record_open_file(const char *path);
+static bool check_path(char *out, char *in);
+static bool get_xstarter_path(int argc, char **argv, char *path);
 
 void get_rgb(colour_t *dest, char *src)
 {
@@ -212,6 +215,51 @@ void dump_debug_int(int d)
     system(debug);
 }
 
+bool is_terminal()
+{
+    return isatty(STDOUT_FILENO);
+}
+
+void open_itself(int argc, char **argv)
+{
+    char xstarter_path[MAX_LEN];
+
+    if (! get_xstarter_path(argc, argv, xstarter_path)) {
+        dump_debug("xstarter path not found");
+        dump_debug_int(errno);
+
+        set_err(ERR_NO_XSTARTER_PATH);
+    }
+
+    umask(0);
+
+    if (setsid() < 0) {
+        dump_debug("setsid() failed");
+        dump_debug_int(errno);
+
+        set_err(ERR_SETSID_FAILED);
+    }
+
+    if (chdir("/") < 0) {
+        dump_debug("chdir() failed");
+        dump_debug_int(errno);
+
+        set_err(ERR_CHDIR_FAILED);
+    }
+
+    /* Redirect standard files to /dev/null */
+    freopen("/dev/null", "r", stdin);
+    freopen("/dev/null", "w", stdout);
+    freopen("/dev/null", "w", stderr);
+
+    extern char **environ;
+    char *term_argv[] = {exec_term, "-e", xstarter_path, NULL};
+
+    execvpe(term_argv[0], &term_argv[0], environ);
+}
+
+/* bool get_xstarter_ */
+
 void xstarter_directory()
 {
     xstarter_dir_avail = true;
@@ -305,4 +353,61 @@ void *safe_malloc(size_t n, unsigned long line)
     }
 
     return p;
+}
+
+static bool check_path(char *out, char *in)
+{
+    if (in[0] == '/') {
+        /* Absolute path */
+
+        strcpy(out, in);
+
+        return true;
+    } else if (in[0] == '.' && in[1] == '/') {
+        /* Path starting with ./ - append it to cwd */
+
+        char cwd[MAX_LEN];
+
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            char *xs = in;
+            xs += 2;
+            strcat(cwd, "/");
+            strcat(cwd, xs);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*
+Get path to xstarter using different methods
+
+Returns true if the path was found, false otherwise
+*/
+static bool get_xstarter_path(int argc, char **argv, char *path)
+{
+    if (argc >= 1)
+        return check_path(path, argv[0]);
+
+    ssize_t len;
+
+    len = readlink("/proc/self/exe", path, MAX_LEN - 1);
+
+    if (len != -1) {
+        path[len] = '\0';
+
+        return true;
+    }
+
+    len = readlink("/proc/curproc/file", path, MAX_LEN - 1);
+
+    if (len != -1) {
+        path[len] = '\0';
+
+        return true;
+    }
+
+    return false;
 }
