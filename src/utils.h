@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define PRINT(x) { printf("%s\n", x); }
+#define PRINTS(x) { printf("%s\n", x); }
 
 #define RECENT_APPS_REMEMBERED (100)
 
@@ -13,14 +13,16 @@
 
 /* Errors */
 
-#define NO_ERR (0)
-#define ERR_NO_XSTARTER_PATH (1)
-#define ERR_NO_XSTARTER_DIR (2)
-#define ERR_DIRS_TOO_LONG (3)
-#define ERR_XSTARTER_MKDIR_FAILED (4)
-#define ERR_FORK_FAILED (5)
-#define ERR_SETSID_FAILED (6)
-#define ERR_CHDIR_FAILED (7)
+typedef enum {
+	NO_ERR,
+	ERR_NO_XSTARTER_PATH,
+	ERR_NO_XSTARTER_DIR,
+	ERR_DIRS_TOO_LONG,
+	ERR_XSTARTER_MKDIR_FAILED,
+	ERR_FORK_FAILED,
+	ERR_SETSID_FAILED,
+	ERR_CHDIR_FAILED
+} error_code_t;
 
 #define MAX_LEN (2048)
 

@@ -14,6 +14,17 @@ static void record_open_file(const char *path);
 static bool check_path(char *out, char *in);
 static bool get_xstarter_path(int argc, char **argv, char *path);
 
+static const char *error_messages[] = {
+	"No error, all's fine",
+	"No xstarter path found",
+	"No xstarter directory found",
+	"List of directories is too long",
+	"Failed to create the ~/.xstarter.d directory",
+	"Fork failed",
+	"setsid() failed",
+	"chdir() failed"
+};
+
 void get_rgb(colour_t *dest, char *src)
 {
     if (strlen(src) && src[0] == ';')
@@ -319,20 +330,12 @@ void print_err()
 {
     printf("Error code: %d\n", err);
 
-    switch (err) {
-        case NO_ERR:
-            PRINT("No error");
-            break;
-        case ERR_NO_XSTARTER_DIR:
-            PRINT("No xstarter directory found");
-            break;
-        case ERR_DIRS_TOO_LONG:
-            PRINT("List of directories is too long");
-            break;
-        case ERR_XSTARTER_MKDIR_FAILED:
-            PRINT("Failed to create the ~/.xstarter.d directory");
-        default:
-            PRINT("Unknown error");
+    ssize_t cnt = sizeof(error_messages) / sizeof(char *);
+
+    if (err < cnt) {
+        PRINTS(error_messages[err]);
+    } else {
+        PRINTS("Unknown error");
     }
 }
 
