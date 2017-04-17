@@ -7,6 +7,8 @@
 |`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
 |`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
 
+[![asciicast](https://asciinema.org/a/45bfamrd5zkz7uv3x6rrasra7.png)](https://asciinema.org/a/45bfamrd5zkz7uv3x6rrasra7)
+
 ![xstarter](xstarter_1.png)
 
 Searching
