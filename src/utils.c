@@ -226,50 +226,73 @@ void dump_debug_int(int d)
     system(debug);
 }
 
-bool is_terminal()
+bool in_terminal()
 {
-    return isatty(STDOUT_FILENO);
+    bool xstarter_run = getenv("XSTARTER") ? true : false;
+
+    return xstarter_run || isatty(STDOUT_FILENO);
 }
 
 void open_itself(int argc, char **argv)
 {
-    char xstarter_path[MAX_LEN];
+    pid_t pid = fork();
 
-    if (! get_xstarter_path(argc, argv, xstarter_path)) {
-        dump_debug("xstarter path not found");
-        dump_debug_int(errno);
+    if (pid < 0) {
+        dump_debug("Fork failed");
+        exit(1);
+    } else if (pid > 0) {
+        exit(0);
+    } else {
+        char xstarter_path[MAX_LEN];
 
-        set_err(ERR_NO_XSTARTER_PATH);
+        if (! get_xstarter_path(argc, argv, xstarter_path)) {
+            dump_debug("xstarter path not found");
+            dump_debug_int(errno);
+
+            set_err(ERR_NO_XSTARTER_PATH);
+        }
+
+        umask(0);
+
+        if (setsid() < 0) {
+            dump_debug("setsid failed");
+            dump_debug_int(errno);
+
+            set_err(ERR_SETSID_FAILED);
+        }
+
+        if (chdir("/") < 0) {
+            dump_debug("chdir failed");
+            dump_debug_int(errno);
+
+            set_err(ERR_CHDIR_FAILED);
+        }
+
+        /* Redirect standard files to /dev/null */
+        freopen("/dev/null", "r", stdin);
+        freopen("/dev/null", "w", stdout);
+        freopen("/dev/null", "w", stderr);
+
+        extern char **environ;
+
+        int env_cnt = 0;
+
+        for (char *it = environ[0]; *it; it++, env_cnt++);
+
+        char **newenvp = malloc((env_cnt + 2) * sizeof(char*));
+
+        for (int i = 0; i < env_cnt - 2; i++) {
+            newenvp[i] = environ[i];
+        }
+
+        newenvp[env_cnt - 2] = "XSTARTER=1";
+        newenvp[env_cnt - 1] = NULL;
+
+        char *term_argv[] = {exec_term, "-e", xstarter_path, NULL};
+
+        execvpe(term_argv[0], &term_argv[0], newenvp);
     }
-
-    umask(0);
-
-    if (setsid() < 0) {
-        dump_debug("setsid() failed");
-        dump_debug_int(errno);
-
-        set_err(ERR_SETSID_FAILED);
-    }
-
-    if (chdir("/") < 0) {
-        dump_debug("chdir() failed");
-        dump_debug_int(errno);
-
-        set_err(ERR_CHDIR_FAILED);
-    }
-
-    /* Redirect standard files to /dev/null */
-    freopen("/dev/null", "r", stdin);
-    freopen("/dev/null", "w", stdout);
-    freopen("/dev/null", "w", stderr);
-
-    extern char **environ;
-    char *term_argv[] = {exec_term, "-e", xstarter_path, NULL};
-
-    execvpe(term_argv[0], &term_argv[0], environ);
 }
-
-/* bool get_xstarter_ */
 
 void xstarter_directory()
 {

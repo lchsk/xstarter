@@ -55,7 +55,7 @@ void dump_debug_char(const char);
 void xstarter_directory();
 void read_recently_open_list();
 
-bool is_terminal();
+bool in_terminal();
 void open_itself(int argc, char **argv);
 
 void set_err(int err_code);

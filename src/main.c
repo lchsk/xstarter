@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     load_config(cmdline);
 
-    if (! is_terminal()) {
+    if (! in_terminal()) {
         free_cmdline(cmdline);
 
         const config_t *conf = config();
