@@ -1,0 +1,10 @@
+        xstarter change log
+
+        0.5.1
+        26/05/2017
+
+        * Fix a bug that appeared on Arch that caused problems with "open_itself" function.
+        * When attempting to find a path to the xstarter, try to find it in $PATH which
+        should work as long as xstarter is installed.
+        * Add missing -r option to the help screen and readme file.
+        * Add man page: man xstarter
