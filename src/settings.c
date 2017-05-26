@@ -296,6 +296,7 @@ static void usage()
     printf("\t-h\tShow help screen\n");
     printf("\t-v\tShow xstarter version\n");
     printf("\t-V\tBe verbose\n");
+    printf("\t-r\tRefresh cache\n");
     printf("\t-c\tPath to the configuration file\n");
 }
 

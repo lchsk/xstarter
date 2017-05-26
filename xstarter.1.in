@@ -83,6 +83,9 @@ Show xstarter version
 \fB\-V\fR
 Be verbose
 .TP
+\fB\-r\fR
+Refresh cache
+.TP
 \fB\-c\fR
 Path to the configuration file
 .SH BUGS
