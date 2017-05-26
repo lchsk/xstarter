@@ -246,10 +246,12 @@ void open_itself(int argc, char **argv)
         char xstarter_path[MAX_LEN];
 
         if (! get_xstarter_path(argc, argv, xstarter_path)) {
-            dump_debug("xstarter path not found");
+            dump_debug("xstarter path not found, will try $PATH");
             dump_debug_int(errno);
 
             set_err(ERR_NO_XSTARTER_PATH);
+
+            strcpy(xstarter_path, "xstarter");
         }
 
         umask(0);
