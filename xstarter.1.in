@@ -1,0 +1,91 @@
+.\" Manpage for xstarter.
+.TH xstarter 1 "26 May 2017" "0.5.0" "xstarter man page"
+.SH NAME
+xstarter \- application launcher
+.SH SYNOPSIS
+xstarter
+.SH DESCRIPTION
+.LP
+xstarter is a free (GPL) ncurses-based terminal launcher for Linux.
+
+.SH FEATURES
+.TP
+* a clean, simple interface that works on various terminals
+.TP
+* able to search for applications using environment variables (e.g. `$PATH`) and user-provided list of directories
+.TP
+* can be configured to launch via a key-binding
+.TP
+* can optionally open an application in terminal (see key shortcuts)
+.TP
+* remembers previously launched applications allowing to find them more quickly
+.TP
+* allows fuzzy search (parts of the query can be separated with a space)
+.TP
+* applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
+.TP
+* fast, uses cache by default
+.TP
+* easy to configure via a single text file
+
+.SH USAGE
+.TP
+xstarter needs to be launched from a terminal. It is useful to run it using a key binding, preferably by binding your preferred key to a command starting xstarter from a terminal of your choice, e.g. xterm -e xstarter. Alternatively, you can simply bind it to xstarter in which case xstarter will open itself in a terminal.
+
+.TP
+You can also create an alias in your shell (e.g. bash, zsh): alias xs=path-to-xstarter.
+
+.TP
+It should run on any modern terminal. It is tested on: xterm, rxvt, gnome-terminal, xfce4-terminal, konsole. In case of any problems please report it: (https://github.com/lchsk/xstarter/issues/new).
+
+.SH CONFIGURATION
+Configuration file "xstarter.conf" is available in the main repository and includes comments that explain configuration variables. By default, it should be placed in the ~/.xstarter.d/ directory.
+
+.SH KEY SHORTCUTS
+
+Use numbers 1..9 and 0 to open an application from the list.
+
+By default, the following shortcuts are available:
+
+.TP
+Return (enter)
+Open selected application
+.TP
+C-o
+Open selected application in terminal (defined by "terminal" variable in the config file, xterm by default)
+.TP
+C-n / Down
+Move down the list
+.TP
+C-p / Up
+Move up the list
+.TP
+C-g / Esc
+Quit
+.TP
+C-d / Backspace
+Delete entered character
+.TP
+C-w
+Delete entire query
+
+.SH UPDATE
+See https://github.com/lchsk/xstarter to get the latest version.
+.SH OPTIONS
+.LP
+.TP
+\fB\-h\fR
+Show help screen
+.TP
+\fB\-v\fR
+Show xstarter version
+.TP
+\fB\-V\fR
+Be verbose
+.TP
+\fB\-c\fR
+Path to the configuration file
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Maciej Lechowski (https://github.com/lchsk)
