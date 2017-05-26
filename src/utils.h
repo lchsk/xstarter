@@ -24,9 +24,14 @@ typedef enum {
 	ERR_CHDIR_FAILED
 } error_code_t;
 
+typedef enum {
+	APP_LAUNCH_MODE_GUI,
+	APP_LAUNCH_MODE_TERM
+} app_launch_mode_t;
+
 #define MAX_LEN (2048)
 
-void open_app(char *path);
+void open_app(char *path, app_launch_mode_t mode);
 
 /* Error code */
 int err;
