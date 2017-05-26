@@ -50,7 +50,10 @@ target_link_libraries(xstarter
   -pthread
 )
 
-install (TARGETS xstarter DESTINATION bin)
+install(TARGETS xstarter DESTINATION bin)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/xstarter.1
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)
 
 # uninstall target
 configure_file(
