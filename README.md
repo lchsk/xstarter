@@ -39,6 +39,16 @@ Recently open applications
 
 ## Installation
 
+### Using Arch User Repository (AUR) - Arch Linux
+
+`git clone https://aur.archlinux.org/xstarter.git`
+
+`cd xstarter`
+
+`makepkg -is`
+
+For more information, see https://aur.archlinux.org/packages/xstarter/
+
 ### Using **deb** package
 
 Download `.deb` package
