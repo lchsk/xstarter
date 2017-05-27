@@ -145,7 +145,7 @@ char *xs_dirname(char *str)
     return result;
 }
 
-char *strdup(const char *str)
+char *xs_strdup(const char *str)
 {
   size_t len = 1 + strlen(str);
   char *ptr = smalloc(len);

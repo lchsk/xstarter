@@ -14,12 +14,12 @@ static config_colours_t *section_colours = NULL;
 
 static void set_default_dirs(config_t *conf)
 {
-    conf->section_main->dirs = str_array_new(strdup("$PATH"), ",");
+    conf->section_main->dirs = str_array_new(xs_strdup("$PATH"), ",");
 }
 
 static void set_default_terminal(config_t *conf)
 {
-    conf->section_main->terminal = strdup("xterm");
+    conf->section_main->terminal = xs_strdup("xterm");
 }
 
 static void set_default_emacs_bindings(config_t *conf)
@@ -59,7 +59,7 @@ static void set_auto_cache_refresh(config_t *conf)
 
 static void set_default_colour_selected(config_t *conf)
 {
-    conf->section_colours->selected = strdup("f44336");
+    conf->section_colours->selected = xs_strdup("f44336");
 }
 
 static void set_default_configuration(config_t *conf)
@@ -133,7 +133,7 @@ void load_config(cmdline_t *cmdline)
         if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
             set_default_dirs(CONF);
         } else {
-            section_main->dirs = str_array_new(strdup(raw_dirs), ",");
+            section_main->dirs = str_array_new(xs_strdup(raw_dirs), ",");
 
             if (section_main->dirs == NULL)
                 set_default_dirs(CONF);

@@ -126,7 +126,7 @@ bool search(const char *query, unsigned query_len)
     str_array_t *query_parts = NULL;
 
     if (conf->section_main->allow_spaces) {
-        query_parts = str_array_new(strdup(query), " ");
+        query_parts = str_array_new(xs_strdup(query), " ");
 
         if ((query_len > 0 && query[query_len - 1] == ' ')
             || query_parts == NULL) {
@@ -260,7 +260,7 @@ static void listdir(char *name, int level)
             strcat(buf, entry->d_name);
 
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
-                g_queue_push_tail(search_paths, strdup(buf));
+                g_queue_push_tail(search_paths, xs_strdup(buf));
             }
         }
     } while ((entry = readdir(dir)) != NULL);
@@ -299,7 +299,7 @@ static void read_cache_file()
 
         while (fgets(line, 1024, fptr)) {
             line[strcspn(line, "\n")] = 0;
-            g_queue_push_tail(search_paths, strdup(line));
+            g_queue_push_tail(search_paths, xs_strdup(line));
         }
 
         fclose(fptr);
@@ -371,14 +371,14 @@ static void *refresh_cache()
             char const *var = g_getenv(++dirs->data[i]);
 
             if (var) {
-                str_array_t *var_paths = str_array_new(strdup(var), ":");
+                str_array_t *var_paths = str_array_new(xs_strdup(var), ":");
 
                 if (var_paths) {
                     for (int j = 0; j < var_paths->length; j++) {
                         if (var_paths->data[j]) {
                             g_queue_push_tail(
                                 paths,
-                                strdup(var_paths->data[j])
+                                xs_strdup(var_paths->data[j])
                             );
                         }
                     }
@@ -386,7 +386,7 @@ static void *refresh_cache()
                 str_array_free(var_paths);
             }
         } else {
-            g_queue_push_tail(paths, strdup(dirs->data[i]));
+            g_queue_push_tail(paths, xs_strdup(dirs->data[i]));
         }
     }
 
