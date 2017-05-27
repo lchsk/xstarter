@@ -1,5 +1,10 @@
         xstarter change log
 
+        0.5.2
+        27/05/2017
+        * Change name of internal function which conflicted with the builtin function.
+        Required to build xstarter on arch.
+
         0.5.1
         26/05/2017
 
