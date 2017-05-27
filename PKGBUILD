@@ -1,6 +1,6 @@
 # Maintainer: Maciej Lechowski <mjlechowski@gmail.com>
 pkgname=xstarter
-pkgver=0.5.1
+pkgver=0.5.2
 _gitname=xstarter
 pkgrel=1
 epoch=
