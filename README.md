@@ -1,21 +1,19 @@
 # xstarter
 
-**xstarter is a terminal-based application launcher for Unix-like systems.**
+**xstarter is an application launcher for Linux**
+
+It lives in terminal and works well with tiling window manages (e.g. xmonad, i3 etc).
+
+Current version: 0.5.2
 
 | Branch | Build |
 | --- | --- |
 |`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
 |`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
 
-[![asciicast](https://asciinema.org/a/45bfamrd5zkz7uv3x6rrasra7.png)](https://asciinema.org/a/45bfamrd5zkz7uv3x6rrasra7)
+## Installation
 
-![xstarter](xstarter_1.png)
-
-Searching
-
-![xstarter](xstarter_2.png)
-
-Recently open applications
+See [installation guide](INSTALL.md)
 
 ## Features
 
@@ -29,63 +27,11 @@ Recently open applications
 * fast, uses cache by default
 * easy to configure via a single text file
 
-## Requirements
-
-* ncurses 5.9 / 6.0
-* glib > 2.0
-
-### And if you want to compile it yourself
-
-* cmake
-
-## Installation
-
-### Using Arch User Repository (AUR) - Arch Linux
-
-`git clone https://aur.archlinux.org/xstarter.git`
-
-`cd xstarter`
-
-`makepkg -is`
-
-For more information, see https://aur.archlinux.org/packages/xstarter/
-
-### Using **deb** package
-
-Download `.deb` package
-
-Run `sudo dpkg -i xstarter-*.deb`
-
-### Using archives
-
-Download `.tar.gz` or `.zip` archive
-
-Extract it
-
-Run `./bin/xstarter` to open the application in the terminal.
-
-### From source
-
-```
-git clone https://github.com/lchsk/xstarter/
-cd xstarter
-cmake .
-make
-```
-
-Run `./bin/xstarter` to open the application in the terminal.
-
-To install:
-
-```
-make install
-```
-
 ## Running xstarter
 
-**xstarter** needs to be launched from a terminal. It is useful to run it using a key binding, preferably by binding your preferred key to a command starting **xstarter** from a terminal of your choice, e.g. `xterm -e xstarter`. Alternatively, you can simply bind it to `xstarter` in which case xstarter will open itself in a terminal.
+**xstarter** needs to be launched from a terminal (`$ xstarter`). It is useful to run it using a key binding, preferably by binding your preferred key to a command starting **xstarter** from a terminal of your choice, e.g. `xterm -e xstarter`. Alternatively, you can simply bind it to `xstarter` in which case xstarter will open itself in a terminal.
 
-You can also create an alias in your shell (e.g. bash, zsh): `alias xs=path-to-xstarter`.
+You can also create an alias in your shell (e.g. bash, zsh): `alias xs=xstarter`.
 
 It should run on any modern terminal. It is tested on: `xterm`, `rxvt`, `gnome-terminal`, `xfce4-terminal`, `konsole`. In case of any problems please [report it](https://github.com/lchsk/xstarter/issues/new).
 
@@ -109,3 +55,7 @@ By default, the following shortcuts are available:
 |C-d|Delete entered character|
 |C-w|Delete entire query|
 
+
+## License
+
+GPL
