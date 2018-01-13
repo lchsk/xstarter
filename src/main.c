@@ -25,12 +25,12 @@ int main(int argc, char **argv)
 
     load_config(cmdline);
 
+    const config_t *conf = config();
+
+    strncpy(exec_term, conf->section_main->terminal, sizeof(exec_term));
+
     if (! in_terminal()) {
         free_cmdline(cmdline);
-
-        const config_t *conf = config();
-
-        strncpy(exec_term, conf->section_main->terminal, sizeof(exec_term));
 
         free_config();
 

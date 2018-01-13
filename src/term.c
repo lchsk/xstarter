@@ -22,6 +22,9 @@
 #define KEY_BACKSPACE_ALTERNATIVE (8)
 #define KEY_DELETE (127)
 
+// Needed for key binding, non-standard
+#define KEY_CONTROL_RETURN (256)
+
 #define MAX_ITEMS (100)
 
 static const unsigned MAX_Y = 15;
@@ -155,13 +158,23 @@ void run_term(void)
             move_up();
             break;
 
+        case KEY_CONTROL_RETURN:
+            status.run_app = true;
+
+            open_app(
+                     g_list_nth_data(results,
+                                     items_list.selected + items_list.offset),
+                     APP_LAUNCH_MODE_TERM);
+            break;
+
         case KEY_RETURN:
             status.run_app = true;
 
-            open_app(g_list_nth_data(
-                results,
-                items_list.selected + items_list.offset
-            ));
+            open_app(
+                     g_list_nth_data(
+                                     results,
+                                     items_list.selected + items_list.offset),
+                     APP_LAUNCH_MODE_GUI);
 
             break;
 
@@ -424,11 +437,18 @@ static void open_by_shortcut(int key)
         if (key >= ASCII_1 && key <= ASCII_9) {
             status.run_app = true;
 
-            open_app(g_list_nth_data(results, items_list.offset + (key - ASCII_1)));
+            open_app(
+                     g_list_nth_data(
+                                     results,
+                                     items_list.offset + (key - ASCII_1)),
+                     APP_LAUNCH_MODE_GUI);
         } else if (key == ASCII_0) {
             status.run_app = true;
 
-            open_app(g_list_nth_data(results, RECENT_APPS_SHOWN - 1));
+            open_app(
+                     g_list_nth_data(
+                                     results, RECENT_APPS_SHOWN - 1),
+                     APP_LAUNCH_MODE_GUI);
         }
     }
 }
@@ -461,6 +481,8 @@ static int read_emacs_keys(const char *name)
         return 0;
     } else if (strcmp(name, "^D") == 0) {
         return KEY_BACKSPACE;
+    } else if (strcmp(name, "^O") == 0) {
+        return KEY_CONTROL_RETURN;
     }
 
     return -1;

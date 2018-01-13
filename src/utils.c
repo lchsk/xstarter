@@ -37,7 +37,7 @@ void get_rgb(colour_t *dest, char *src)
     dest->b = (c & 0xff) / 255.0 * 1000;
 }
 
-void open_app(char *path)
+void open_app(char *path, app_launch_mode_t mode)
 {
     if (! path) return;
 
@@ -50,7 +50,7 @@ void open_app(char *path)
 
     switch (pid = fork()) {
     case -1:
-        dump_debug("fork() failed");
+        dump_debug("fork failed");
         dump_debug_int(errno);
 
         set_err(ERR_FORK_FAILED);
@@ -62,14 +62,14 @@ void open_app(char *path)
         umask(0);
 
         if (setsid() < 0) {
-            dump_debug("setsid() failed");
+            dump_debug("setsid failed");
             dump_debug_int(errno);
 
             set_err(ERR_SETSID_FAILED);
         }
 
         if (chdir("/") < 0) {
-            dump_debug("chdir() failed");
+            dump_debug("chdir failed");
             dump_debug_int(errno);
 
             set_err(ERR_CHDIR_FAILED);
@@ -81,9 +81,16 @@ void open_app(char *path)
         freopen("/dev/null", "w", stderr);
 
         extern char** environ;
-        char *argv[] = {path_cpy, NULL};
 
-        execve(argv[0], &argv[0], environ);
+        if (mode == APP_LAUNCH_MODE_GUI) {
+            char *args[] = {path_cpy, NULL};
+
+            execve(args[0], &args[0], environ);
+        } else if (mode == APP_LAUNCH_MODE_TERM){
+            char *args_term[] = {exec_term, "-e", path_cpy, NULL};
+
+            execvpe(args_term[0], &args_term[0], environ);
+        }
     }
 }
 
