@@ -87,7 +87,13 @@ void load_cache(cmdline_t *cmdline_)
         NULL
     );
 
-    assert(code == 0);
+    if (! code) {
+        dump_debug("Failed t create refresh_cache thread, pthread_create error code:");
+        dump_debug_int(code);
+
+        // Refresh cache in current thread
+        refresh_cache();
+    }
 }
 
 void kill_scan(void)
