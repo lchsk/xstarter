@@ -393,8 +393,6 @@ static void *refresh_cache()
     if (cache_needs_refresh()) {
         search_paths = g_queue_new();
 
-        char *path;
-
         for (int i = 0; i < g_queue_get_length(paths); i++) {
             char *t = g_queue_peek_nth(paths, i);
 
@@ -410,6 +408,8 @@ static void *refresh_cache()
 
     cache_ready = true;
     cache_loaded();
+
+    return NULL;
 }
 
 static GQueue *get_cache(void)

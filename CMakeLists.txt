@@ -6,7 +6,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 project(xstarter)
 
 set(PROJECT_VERSION "0.5.2")
-set(CMAKE_CXX_FLAGS "-g -Wall -pedantic")
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  set(CMAKE_C_FLAGS "-g -Wall -pedantic")
+else()
+  set(CMAKE_C_FLAGS "-Wall -pedantic -O3")
+endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

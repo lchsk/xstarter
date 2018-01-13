@@ -6,7 +6,6 @@
 #include "utils_string.h"
 
 static GKeyFile *conf_file = NULL;
-static GQueue *paths = NULL;
 
 static config_t *CONF = NULL;
 static config_main_t *section_main = NULL;
@@ -85,7 +84,6 @@ void load_config(cmdline_t *cmdline)
 
     conf_file = g_key_file_new();
 
-    char home_dir[64];
     char path[256];
 
     section_main = smalloc(sizeof(config_main_t));

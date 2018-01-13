@@ -63,11 +63,6 @@ static view_t view_search_bar = {
     .row_end = 0
 };
 
-static view_t view_menu = {
-    .row_start = 3,
-    .row_end = 12
-};
-
 static view_t view_info_bar = {
     .row_start = 13,
     .row_end = 14

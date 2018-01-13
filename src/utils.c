@@ -192,7 +192,7 @@ void dump_debug_ptr(const char *str)
         debug,
         1024,
         "echo %p>> ~/debug_xstarter",
-        &str
+        (void*) &str
     );
 
     system(debug);
