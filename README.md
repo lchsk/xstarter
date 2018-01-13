@@ -2,6 +2,8 @@
 
 **xstarter is a terminal-based application launcher for Unix-like systems.**
 
+Current version: 0.5.2
+
 | Branch | Build |
 | --- | --- |
 |`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|

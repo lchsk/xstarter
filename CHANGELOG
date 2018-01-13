@@ -1,5 +1,13 @@
         xstarter change log
 
+        0.6.0
+        14/01/2018
+        * Add ability to open an application in terminal
+        * When calling chdir, change to user's home directory
+        * Remove compiler warnings
+        * Update deb package
+        * Add rpm package
+
         0.5.2
         27/05/2017
         * Change name of internal function which conflicted with the builtin function.
