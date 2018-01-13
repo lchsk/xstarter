@@ -17,13 +17,19 @@ set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # cpack
 set(CPACK_PACKAGE_CONTACT "Maciej Lechowski")
-set(CPACK_GENERATOR "DEB;ZIP;TGZ")
+set(CPACK_GENERATOR "DEB;RPM;ZIP;TGZ")
 set(CPACK_PACKAGE_DESCRIPTION, "Application launcher for Linux")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 # deb stuff
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://xstarter.org")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libncurses5 (>= 5.0), libglib2.0-0 (>= 2.0)")
+
+# rpm stuff
+set(CPACK_RPM_PACKAGE_LICENSE "GPL")
+set(CPACK_RPM_PACKAGE_URL "http://xstarter.org")
+set(CPACK_RPM_PACKAGE_DESCRIPTION "Application launcher for Linux")
+set(CPACK_RPM_PACKAGE_REQUIRES "ncurses >= 5.0, glib2 >= 2.0")
 
 include(CPack)
 
@@ -48,6 +54,7 @@ add_executable(xstarter
   src/term.c
   src/utils.c
   src/utils_string.c
+  xstarter.1
 )
 
 target_link_libraries(xstarter
@@ -58,9 +65,8 @@ target_link_libraries(xstarter
 )
 
 install(TARGETS xstarter DESTINATION bin)
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/xstarter.1
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1)
+
+install(FILES xstarter.1 DESTINATION share/man/man1)
 
 # uninstall target
 configure_file(
