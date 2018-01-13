@@ -16,11 +16,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # cpack
+set(CPACK_PACKAGE_CONTACT "Maciej Lechowski")
 set(CPACK_GENERATOR "DEB;ZIP;TGZ")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "lchsk")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY, "Terminal-based application launcher for Unix-like systems")
-set(CPACK_PACKAGE_DESCRIPTION, "Terminal-based application launcher for Unix-like systems")
+set(CPACK_PACKAGE_DESCRIPTION, "Application launcher for Linux")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+
+# deb stuff
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://xstarter.org")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "ncurses (>= 5.0), glib2 (>= 2.0)")
 
 include(CPack)
 
