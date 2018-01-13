@@ -45,6 +45,14 @@ matrix:
       env: COMPILER=gcc-6
 
     - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['gcc-7']
+      env: COMPILER=gcc-7
+
+    - os: linux
       compiler: clang
       env: COMPILER=clang
 
