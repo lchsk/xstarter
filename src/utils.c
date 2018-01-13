@@ -13,6 +13,7 @@
 static void record_open_file(const char *path);
 static bool check_path(char *out, char *in);
 static bool get_xstarter_path(int argc, char **argv, char *path);
+static char* get_home_dir();
 
 static const char *error_messages[] = {
 	"No error, all's fine",
@@ -68,7 +69,9 @@ void open_app(char *path, app_launch_mode_t mode)
             set_err(ERR_SETSID_FAILED);
         }
 
-        if (chdir("/") < 0) {
+        char *dir = get_home_dir();
+
+        if (chdir(dir ? dir : "/tmp") < 0) {
             dump_debug("chdir failed");
             dump_debug_int(errno);
 
@@ -308,12 +311,7 @@ void xstarter_directory()
     xstarter_dir_avail = true;
     bool using_tmp_dir = false;
 
-    char *dir = NULL;
-
-    if ((dir = (getenv("HOME"))) == NULL) {
-        struct passwd *pw = getpwuid(getuid());
-        dir = pw->pw_dir;
-    }
+    char *dir = get_home_dir();
 
     if (! dir) {
         using_tmp_dir = true;
@@ -445,4 +443,21 @@ static bool get_xstarter_path(int argc, char **argv, char *path)
     }
 
     return false;
+}
+
+/*
+Get user's home directory
+*/
+static char* get_home_dir()
+{
+    char *dir = NULL;
+
+    if ((dir = (getenv("HOME"))) == NULL) {
+        struct passwd *pw = getpwuid(getuid());
+
+        if (pw)
+          dir = pw->pw_dir;
+    }
+
+    return dir;
 }
