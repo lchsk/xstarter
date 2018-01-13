@@ -23,7 +23,7 @@ set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 # deb stuff
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://xstarter.org")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "ncurses (>= 5.0), glib2 (>= 2.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libncurses5 (>= 5.0), libglib2.0-0 (>= 2.0)")
 
 include(CPack)
 
