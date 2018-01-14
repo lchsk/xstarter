@@ -4,7 +4,7 @@ pkgver=0.5.2
 _gitname=xstarter
 pkgrel=1
 epoch=
-pkgdesc="Terminal-based application launcher for Unix systems "
+pkgdesc="Application launcher for Linux"
 arch=('any')
 url="https://github.com/lchsk/xstarter"
 license=('GPL')
@@ -20,18 +20,14 @@ backup=()
 options=()
 install=
 changelog=
-source=(https://github.com/lchsk/xstarter/archive/v0.5.2.tar.gz)
+source=(https://github.com/lchsk/xstarter/releases/download/v0.5.2/xstarter-0.5.2-Linux.tar.gz)
 noextract=()
-md5sums=(f4f2970aff8b44c28711f65b90c7d2cf)
+md5sums=(2a7533b6b1bd79958a3324c56f9b595c)
 validpgpkeys=()
 
-build() {
-	cd "$srcdir/$pkgname-${pkgver}"
-	cmake .
-	make
-}
-
 package() {
-	cd "$srcdir/$pkgname-${pkgver}"
-	make DESTDIR="$pkgdir/" install
+    cd "$srcdir"
+
+    install -Dm755 "$srcdir"/xstarter-"$pkgver"-Linux/bin/xstarter "$pkgdir"/usr/bin/xstarter
+    install -Dm644 "$srcdir"/xstarter-"$pkgver"-Linux/share/man/man1/xstarter.1 "$pkgdir"/usr/share/man/man1/xstarter.1
 }
