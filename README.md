@@ -4,7 +4,7 @@
 
 It lives in terminal and works well with tiling window managers (e.g. xmonad, i3 etc).
 
-Current version: 0.6.0
+Current version: 0.7.0
 
 | Branch | Build |
 | --- | --- |
@@ -21,6 +21,7 @@ See [installation guide](INSTALL.md)
 * able to search for applications using environment variables (e.g. `$PATH`) and user-provided list of directories
 * can be configured to launch via a key-binding
 * can optionally open an application in terminal (see key shortcuts)
+* allows to provide arguments to applications (see key shortcuts)
 * remembers previously launched applications allowing to find them more quickly
 * allows fuzzy search (parts of the query can be separated with a space)
 * applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
@@ -39,6 +40,15 @@ It should run on any modern terminal. It is tested on: `xterm`, `rxvt`, `gnome-t
 
 [Configuration file](./xstarter.conf) is available and includes comments that explain configuration variables. It is located in the `~/.xstarter.d/` directory.
 
+## Providing arguments to applications
+
+You can provide arguments to applications you wish to open.
+
+* If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. `surf xstarter.org`
+* You can provide multiple arguments, e.g. `emacs -nw -Q`
+* You can select the application you want to provide arguments for by pressing Tab key
+* This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)
+
 ## Key shortcuts
 
 Use numbers 1..9 and 0 to open an application from the list.
@@ -54,6 +64,7 @@ By default, the following shortcuts are available:
 |C-g|Quit|
 |C-d|Delete entered character|
 |C-w|Delete entire query|
+|Tab|Auto-complete using current selection; allow to provide arguments|
 
 
 ## License
