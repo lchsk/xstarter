@@ -14,7 +14,7 @@
 #include "scan.h"
 #include "utils.h"
 
-#define MAX_INPUT_LENGTH (20)
+#define MAX_INPUT_LENGTH (80)
 #define KEY_ESCAPE (27)
 #define KEY_RETURN (10)
 
@@ -40,6 +40,9 @@ typedef struct {
     char query[MAX_INPUT_LENGTH];
     bool run_app;
     unsigned query_len;
+
+    // Selection is fixed in order to provide arguments
+    bool fixed_selection;
 } search_t;
 
 typedef struct {
@@ -58,7 +61,8 @@ typedef struct {
 static search_t status = {
     .names = NULL,
     .query_len = 0,
-    .run_app = false
+    .run_app = false,
+    .fixed_selection = false,
 };
 
 static view_t view_search_bar = {
@@ -83,6 +87,7 @@ static void clean_line(int line_y);
 static void prepare_for_new_results(void);
 static void show_menu(void);
 static void show_recent_apps(void);
+static void complete_selected_entry(void);
 
 void cache_loaded(void)
 {
@@ -164,6 +169,7 @@ void run_term(void)
             open_app(
                      g_list_nth_data(results,
                                      items_list.selected + items_list.offset),
+                     status.query,
                      APP_LAUNCH_MODE_TERM);
             break;
 
@@ -174,7 +180,17 @@ void run_term(void)
                      g_list_nth_data(
                                      results,
                                      items_list.selected + items_list.offset),
+                     status.query,
                      APP_LAUNCH_MODE_GUI);
+
+            break;
+
+        case '\t':
+            complete_selected_entry();
+            erase_view(&view_search_bar);
+            mvprintw(0, 0, status.query);
+
+            prepare_for_new_results();
 
             break;
 
@@ -196,8 +212,10 @@ void run_term(void)
                 erase_view(&view_search_bar);
                 mvprintw(0, 0, status.query);
 
-                search(new_query, status.query_len);
-                prepare_for_new_results();
+                if (! status.fixed_selection) {
+                    search(new_query, status.query_len);
+                    prepare_for_new_results();
+                }
 
                 free(new_query);
             } else
@@ -232,6 +250,10 @@ void run_term(void)
 
             memcpy(new_query, status.query, status.query_len);
             new_query[status.query_len] = '\0';
+
+            if (g_list_length(results) == 1) {
+                continue;
+            }
 
             if (search(new_query, status.query_len))
                 prepare_for_new_results();
@@ -441,6 +463,7 @@ static void open_by_shortcut(int key)
                      g_list_nth_data(
                                      results,
                                      items_list.offset + (key - ASCII_1)),
+                     status.query,
                      APP_LAUNCH_MODE_GUI);
         } else if (key == ASCII_0) {
             status.run_app = true;
@@ -448,6 +471,7 @@ static void open_by_shortcut(int key)
             open_app(
                      g_list_nth_data(
                                      results, RECENT_APPS_SHOWN - 1),
+                     status.query,
                      APP_LAUNCH_MODE_GUI);
         }
     }
@@ -459,6 +483,7 @@ static void reset_query(void)
     clear_menu();
     strcpy(status.query, "");
     status.query_len = 0;
+    status.fixed_selection = false;
 
     g_list_free(results);
     results = NULL;
@@ -466,6 +491,27 @@ static void reset_query(void)
     items_list.offset = 0;
     show_recent_apps();
     prepare_for_new_results();
+}
+
+static void complete_selected_entry(void)
+{
+    char* selected = g_list_nth_data(results,
+                                     items_list.selected + items_list.offset);
+
+    if (! selected) return;
+
+    char *name = g_path_get_basename(selected);
+    strcpy(status.query, name);
+    status.query_len = strlen(name);
+    status.fixed_selection = true;
+
+    if (name)
+        free(name);
+
+    g_list_free(results);
+    results = NULL;
+
+    results = g_list_prepend(results, selected);
 }
 
 static int read_emacs_keys(const char *name)

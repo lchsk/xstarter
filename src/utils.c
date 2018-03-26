@@ -9,6 +9,7 @@
 #include <errno.h>
 
 #include "utils.h"
+#include "utils_string.h"
 
 static void record_open_file(const char *path);
 static bool check_path(char *out, char *in);
@@ -38,9 +39,9 @@ void get_rgb(colour_t *dest, char *src)
     dest->b = (c & 0xff) / 255.0 * 1000;
 }
 
-void open_app(char *path, app_launch_mode_t mode)
+void open_app(const char *path, const char *query, app_launch_mode_t mode)
 {
-    if (! path) return;
+    if (! path || ! query) return;
 
     char path_cpy[1024];
     strcpy(path_cpy, path);
@@ -83,16 +84,51 @@ void open_app(char *path, app_launch_mode_t mode)
         freopen("/dev/null", "w", stdout);
         freopen("/dev/null", "w", stderr);
 
+        str_array_t *query_parts = str_array_new(query, " ");
+        int args_cnt = 0;
+        const int STR_SIZE = 255;
+
         extern char** environ;
 
         if (mode == APP_LAUNCH_MODE_GUI) {
-            char *args[] = {path_cpy, NULL};
+            if (query_parts->length <= 1)
+                args_cnt = 2;
+            else {
+                args_cnt = 2 + query_parts->length - 1; // First argument is command name
+            }
+
+            char (*args[args_cnt])[STR_SIZE];
+            strncpy(args[0], path_cpy, STR_SIZE);
+            args[args_cnt - 1] = NULL;
+
+            for (int i = 1; i < query_parts->length; i++) {
+                strncpy(args[i], query_parts->data[i], STR_SIZE);
+            }
 
             execve(args[0], &args[0], environ);
         } else if (mode == APP_LAUNCH_MODE_TERM){
-            char *args_term[] = {exec_term, "-e", path_cpy, NULL};
+            if (query_parts->length <= 1)
+                args_cnt = 4;
+            else {
+                args_cnt = 4 + query_parts->length - 1; // First argument is command name
+            }
 
-            execvpe(args_term[0], &args_term[0], environ);
+            char **args = malloc(args_cnt * sizeof(char*));
+
+            for (int i = 0; i < args_cnt; i++) {
+                args[i] = malloc(STR_SIZE);
+            }
+
+            strncpy(args[0], exec_term, STR_SIZE);
+            strncpy(args[1], "-e", STR_SIZE);
+            strncpy(args[2], path_cpy, STR_SIZE);
+            args[args_cnt - 1] = NULL;
+
+            for (int i = 1; i < query_parts->length; i++) {
+                strncpy(args[i + 2], query_parts->data[i], STR_SIZE);
+            }
+
+            execvpe(args[0], &args[0], environ);
         }
     }
 }
