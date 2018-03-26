@@ -5,7 +5,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 project(xstarter)
 
-set(PROJECT_VERSION "0.6.0")
+set(PROJECT_VERSION "0.7.0")
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   set(CMAKE_C_FLAGS "-g -Wall -pedantic")
 else()
