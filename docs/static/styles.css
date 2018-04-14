@@ -1,0 +1,13 @@
+body {
+	font-family: "Georgia", serif;
+	font-size: 1.2em;
+	line-height: 120%;
+}
+
+a:link {
+	color: #bd4f6c;
+}
+
+h2, h3, h4, h5, h6 {
+	font-style: italic;
+}
