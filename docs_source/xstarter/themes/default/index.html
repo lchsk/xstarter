@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="static/styles.css">
+  </head>
+  <body>
+    <div>
+      <h1>{{title}}</h1>
+    <div>
+    <div>
+      {{@downloads}} | {{@screenshots-and-videos}}
+    <div>
+    <div style="width: 100%; display: flex;">
+      <div style="width: 70%">
+        {{body}}
+      </div>
+      <div style="width: 30%">
+        <ul>
+        {{posts-begin}}
+        <li>{{post_link}}</li>
+        {{posts-end}}
+        <ul>
+      </div>
+    </div>
+  </body>
+</html>
