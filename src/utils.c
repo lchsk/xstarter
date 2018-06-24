@@ -26,6 +26,7 @@ static const char *error_messages[] = {
 	"setsid() failed",
 	"chdir() failed",
 	"dumping debugging data failed",
+	"redirecting to dev/null failed",
 };
 
 void get_rgb(colour_t *dest, char *src)
@@ -84,9 +85,16 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
         }
 
         /* Redirect standard files to /dev/null */
-        freopen("/dev/null", "r", stdin);
-        freopen("/dev/null", "w", stdout);
-        freopen("/dev/null", "w", stderr);
+        if (freopen("/dev/null", "r", stdin) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
+
+        if (freopen("/dev/null", "w", stdout) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
+        if (freopen("/dev/null", "w", stderr) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
 
         str_array_t *query_parts = str_array_new(query, " ");
         int args_cnt = 0;
@@ -346,9 +354,17 @@ void open_itself(int argc, char **argv)
         }
 
         /* Redirect standard files to /dev/null */
-        freopen("/dev/null", "r", stdin);
-        freopen("/dev/null", "w", stdout);
-        freopen("/dev/null", "w", stderr);
+        if (freopen("/dev/null", "r", stdin) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
+
+        if (freopen("/dev/null", "w", stdout) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
+
+        if (freopen("/dev/null", "w", stderr) == NULL) {
+            set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
+        }
 
         extern char **environ;
 

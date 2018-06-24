@@ -23,6 +23,7 @@ typedef enum {
 	ERR_SETSID_FAILED,
 	ERR_CHDIR_FAILED,
 	ERR_DUMP_DEBUG_FAILED,
+	ERR_REDIRECTING_TO_DEV_NULL_FAILED,
 } error_code_t;
 
 typedef enum {
