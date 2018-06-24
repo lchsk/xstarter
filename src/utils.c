@@ -24,7 +24,8 @@ static const char *error_messages[] = {
 	"Failed to create the ~/.xstarter.d directory",
 	"Fork failed",
 	"setsid() failed",
-	"chdir() failed"
+	"chdir() failed",
+	"dumping debugging data failed",
 };
 
 void get_rgb(colour_t *dest, char *src)
@@ -239,7 +240,11 @@ void dump_debug(const char *str)
         str
     );
 
-    system(debug);
+    int ret = system(debug);
+
+    if (ret) {
+        set_err(ERR_DUMP_DEBUG_FAILED);
+    }
 }
 
 void dump_debug_ptr(const char *str)
@@ -253,7 +258,11 @@ void dump_debug_ptr(const char *str)
         (void*) &str
     );
 
-    system(debug);
+    int ret = system(debug);
+
+    if (ret) {
+        set_err(ERR_DUMP_DEBUG_FAILED);
+    }
 }
 
 void dump_debug_char(const char c)
@@ -267,7 +276,11 @@ void dump_debug_char(const char c)
         c
     );
 
-    system(debug);
+    int ret = system(debug);
+
+    if (ret) {
+        set_err(ERR_DUMP_DEBUG_FAILED);
+    }
 }
 
 void dump_debug_int(int d)
@@ -281,7 +294,11 @@ void dump_debug_int(int d)
         d
     );
 
-    system(debug);
+    int ret = system(debug);
+
+    if (ret) {
+        set_err(ERR_DUMP_DEBUG_FAILED);
+    }
 }
 
 bool in_terminal()
