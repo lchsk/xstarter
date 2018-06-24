@@ -96,7 +96,7 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
             set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
         }
 
-        str_array_t *query_parts = str_array_new(query, " ");
+        str_array_t *query_parts = str_array_new((char*) query, " ");
         int args_cnt = 0;
         const int STR_SIZE = 255;
 
