@@ -251,7 +251,7 @@ void run_term(void)
             memcpy(new_query, status.query, status.query_len);
             new_query[status.query_len] = '\0';
 
-            if (g_list_length(results) == 1) {
+            if (status.fixed_selection) {
                 continue;
             }
 
