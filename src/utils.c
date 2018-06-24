@@ -39,14 +39,17 @@ void get_rgb(colour_t *dest, char *src)
     dest->b = (c & 0xff) / 255.0 * 1000;
 }
 
-void open_app(const char *path, const char *query, app_launch_mode_t mode)
+void open_app(const char *path, const char *query, app_launch_mode_t mode,
+              bool save_open_file)
 {
     if (! path || ! query) return;
 
     char path_cpy[1024];
     strcpy(path_cpy, path);
 
-    record_open_file(path_cpy);
+    if (save_open_file) {
+        record_open_file(path_cpy);
+    }
 
     pid_t pid;
 
@@ -110,7 +113,11 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode)
                 strncpy(args[i], query_parts->data[i], STR_SIZE);
             }
 
-            execve(args[0], &args[0], environ);
+            if (args[0][0] == '/') {
+                execve(args[0], &args[0], environ);
+            } else {
+                execvpe(args[0], &args[0], environ);
+            }
         } else if (mode == APP_LAUNCH_MODE_TERM){
             if (query_parts->length <= 1)
                 args_cnt = 4;

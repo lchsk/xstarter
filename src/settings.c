@@ -294,6 +294,7 @@ static void usage()
     printf("\t-h\tShow help screen\n");
     printf("\t-v\tShow xstarter version\n");
     printf("\t-V\tBe verbose\n");
+    printf("\t-e\tExecute application and detach it from terminal\n");
     printf("\t-r\tRefresh cache\n");
     printf("\t-c\tPath to the configuration file\n");
 }
@@ -314,10 +315,14 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     cmdline->verbose = false;
     cmdline->force_cache_refresh = false;
 
-    while ((c = getopt(argc, argv, "hvrVc:")) != -1) {
+    while ((c = getopt(argc, argv, "hvre:Vc:")) != -1) {
         switch(c) {
         case 'c':
             cmdline->config_path = optarg;
+            break;
+        case 'e':
+            open_app(optarg, "", APP_LAUNCH_MODE_GUI, false);
+            quit = true;
             break;
         case 'v':
             print_version();

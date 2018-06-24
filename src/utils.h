@@ -31,7 +31,8 @@ typedef enum {
 
 #define MAX_LEN (2048)
 
-void open_app(const char *path, const char *query, app_launch_mode_t mode);
+void open_app(const char *path, const char *query, app_launch_mode_t mode,
+			  bool save_open_file);
 
 /* Error code */
 int err;

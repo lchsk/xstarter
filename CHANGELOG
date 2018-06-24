@@ -1,5 +1,11 @@
         xstarter change log
 
+        0.8.0
+
+        * Add -e option: execute an application and detach it from terminal
+        * Fix bug that breaks the application if it's built without compiler optimisation
+        * Remove some compiler warnings
+
         0.7.0
         26/03/2018
         * Add ability to provide arguments to applications

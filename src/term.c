@@ -170,7 +170,7 @@ void run_term(void)
                      g_list_nth_data(results,
                                      items_list.selected + items_list.offset),
                      status.query,
-                     APP_LAUNCH_MODE_TERM);
+                     APP_LAUNCH_MODE_TERM, true);
             break;
 
         case KEY_RETURN:
@@ -181,7 +181,7 @@ void run_term(void)
                                      results,
                                      items_list.selected + items_list.offset),
                      status.query,
-                     APP_LAUNCH_MODE_GUI);
+                     APP_LAUNCH_MODE_GUI, true);
 
             break;
 
@@ -464,7 +464,7 @@ static void open_by_shortcut(int key)
                                      results,
                                      items_list.offset + (key - ASCII_1)),
                      status.query,
-                     APP_LAUNCH_MODE_GUI);
+                     APP_LAUNCH_MODE_GUI, true);
         } else if (key == ASCII_0) {
             status.run_app = true;
 
@@ -472,7 +472,7 @@ static void open_by_shortcut(int key)
                      g_list_nth_data(
                                      results, RECENT_APPS_SHOWN - 1),
                      status.query,
-                     APP_LAUNCH_MODE_GUI);
+                     APP_LAUNCH_MODE_GUI, true);
         }
     }
 }
