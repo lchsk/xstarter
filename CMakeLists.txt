@@ -5,6 +5,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 project(xstarter)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
+
 set(PROJECT_VERSION "0.7.0")
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   set(CMAKE_C_FLAGS "-g -Wall -pedantic")
