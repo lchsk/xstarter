@@ -97,7 +97,12 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode)
                 args_cnt = 2 + query_parts->length - 1; // First argument is command name
             }
 
-            char (*args[args_cnt])[STR_SIZE];
+            char **args = smalloc(args_cnt * sizeof(char*));
+
+            for (int i = 0; i < args_cnt; i++) {
+                args[i] = smalloc(STR_SIZE);
+            }
+
             strncpy(args[0], path_cpy, STR_SIZE);
             args[args_cnt - 1] = NULL;
 
@@ -113,10 +118,10 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode)
                 args_cnt = 4 + query_parts->length - 1; // First argument is command name
             }
 
-            char **args = malloc(args_cnt * sizeof(char*));
+            char **args = smalloc(args_cnt * sizeof(char*));
 
             for (int i = 0; i < args_cnt; i++) {
-                args[i] = malloc(STR_SIZE);
+                args[i] = smalloc(STR_SIZE);
             }
 
             strncpy(args[0], exec_term, STR_SIZE);
