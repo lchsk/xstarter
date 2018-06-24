@@ -40,7 +40,8 @@ add_definitions(-std=c99)
 find_package(Curses REQUIRED)
 find_package(Glib REQUIRED)
 
-message (${CURSES_INCLUDE_DIR})
+message(STATUS "Cmake build type: " ${CMAKE_BUILD_TYPE})
+message(STATUS "Curses inclue directory: " ${CURSES_INCLUDE_DIR})
 
 include_directories(
   ${Glib_INCLUDE_DIRS}
