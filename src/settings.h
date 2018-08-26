@@ -11,7 +11,7 @@
 #define CONFIG_FILE "xstarter.conf"
 
 #define PROGRAM_NAME "xstarter"
-#define XSTARTER_VERSION "0.7.0"
+#define XSTARTER_VERSION "0.8.0"
 
 typedef struct {
     bool verbose;
