@@ -323,7 +323,7 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
             cmdline->config_path = optarg;
             break;
         case 'e':
-            open_app(optarg, "", APP_LAUNCH_MODE_GUI, false);
+            open_app(optarg, "", APP_LAUNCH_MODE_GUI, /* save_open_file */ true);
             quit = true;
             break;
         case 'v':

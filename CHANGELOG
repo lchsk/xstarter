@@ -5,6 +5,7 @@
         * Add -e option: execute an application and detach it from terminal
         * Print a list of applications from cache (-P param)
         * Fix bug that breaks the application if it's built without compiler optimisation
+        * Save last open app when open with -e option
         * Remove some compiler warnings
 
         0.7.0

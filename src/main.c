@@ -18,6 +18,8 @@ int main(int argc, char **argv)
 
     xstarter_directory();
 
+    init_search();
+
     cmdline_t *cmdline = smalloc(sizeof(cmdline_t));
 
     if (read_cmdline(cmdline, argc, argv))
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
         open_itself(argc, argv);
     }
 
-    init_search();
+
     init_term_gui();
 
     load_cache(cmdline, /* extra_thread */ true);
