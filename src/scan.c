@@ -197,8 +197,14 @@ free_query_parts:
 
 void print_cache_apps(void)
 {
+    // Print recently open apps
+	for (int i = 0; i < recent_apps_cnt; i++) {
+        printf("%s\n", recent_apps[i]);
+    }
+
     GQueue *cache = get_cache();
 
+    // Print other apps
     for (int i = 0; i < g_queue_get_length(cache); i++) {
         const char *path = g_queue_peek_nth(search_paths, i);
 
