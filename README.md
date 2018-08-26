@@ -27,6 +27,8 @@ See [installation guide](INSTALL.md)
 * applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results
 * fast, uses cache by default
 * easy to configure via a single text file
+* is able to run an application and detach it from terminal (e.g. `xstarter -e firefox`)
+* can provide contents of the cache to outside programs (`xstarter -P`)
 
 ## Running xstarter
 
