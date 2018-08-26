@@ -3,6 +3,7 @@
         0.8.0
 
         * Add -e option: execute an application and detach it from terminal
+        * Print a list of applications from cache (-P param)
         * Fix bug that breaks the application if it's built without compiler optimisation
         * Remove some compiler warnings
 

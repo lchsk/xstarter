@@ -17,6 +17,10 @@ typedef struct {
     bool verbose;
     char* config_path;
     bool force_cache_refresh;
+
+    // Print a list of cache applications
+    // Can be used by external programs
+    bool print_list_of_cache_apps;
 } cmdline_t;
 
 typedef struct {

@@ -25,6 +25,14 @@ int main(int argc, char **argv)
 
     load_config(cmdline);
 
+    if (cmdline->print_list_of_cache_apps) {
+        // Print applications from cache; to be used by external programs
+        load_cache(cmdline, /* extra_thread */ false);
+        print_cache_apps();
+
+        exit(EXIT_SUCCESS);
+    }
+
     const config_t *conf = config();
 
     strncpy(exec_term, conf->section_main->terminal, sizeof(exec_term));
@@ -40,7 +48,7 @@ int main(int argc, char **argv)
     init_search();
     init_term_gui();
 
-    load_cache(cmdline);
+    load_cache(cmdline, /* extra_thread */ true);
 
     run_term();
 

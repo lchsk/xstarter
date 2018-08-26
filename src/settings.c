@@ -297,6 +297,7 @@ static void usage()
     printf("\t-e\tExecute application and detach it from terminal\n");
     printf("\t-r\tRefresh cache\n");
     printf("\t-c\tPath to the configuration file\n");
+    printf("\t-P\tPrint a list of applications from cache\n");
 }
 
 static void print_version()
@@ -314,8 +315,9 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     cmdline->config_path = NULL;
     cmdline->verbose = false;
     cmdline->force_cache_refresh = false;
+    cmdline->print_list_of_cache_apps = false;
 
-    while ((c = getopt(argc, argv, "hvre:Vc:")) != -1) {
+    while ((c = getopt(argc, argv, "hvre:VPc:")) != -1) {
         switch(c) {
         case 'c':
             cmdline->config_path = optarg;
@@ -334,6 +336,9 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
         case 'r':
             cmdline->force_cache_refresh = true;
             break;
+	    case 'P':
+            cmdline->print_list_of_cache_apps = true;
+			break;
         case 'h':
         default:
             usage();

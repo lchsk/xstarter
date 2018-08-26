@@ -74,11 +74,16 @@ void free_cache(void)
         g_queue_free(paths);
 }
 
-void load_cache(cmdline_t *cmdline_)
+void load_cache(cmdline_t *cmdline_, bool extra_thread)
 {
     cmdline = cmdline_;
 
     stop_traversing = false;
+
+    if (!extra_thread) {
+        refresh_cache();
+        return;
+    }
 
     int code = pthread_create(
         &th_refresh_cache,
@@ -188,6 +193,17 @@ free_query_parts:
     str_array_free(query_parts);
 
     return resp;
+}
+
+void print_cache_apps(void)
+{
+    GQueue *cache = get_cache();
+
+    for (int i = 0; i < g_queue_get_length(cache); i++) {
+        const char *path = g_queue_peek_nth(search_paths, i);
+
+        printf("%s\n", path);
+    }
 }
 
 /*
