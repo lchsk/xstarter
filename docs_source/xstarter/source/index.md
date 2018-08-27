@@ -1,5 +1,7 @@
 ---
-title: xstarter
+title: xstarter - GNU/Linux terminal application launcher
+description: xstarter.org - terminal application launcher for GNU/Linux
+keywords: xstarter, c, gnu gpl, linux, gnu, terminal, urxvt, gnome, xterm, konsole, emacs, vim
 ---
 
 xstarter is an application launcher for Linux

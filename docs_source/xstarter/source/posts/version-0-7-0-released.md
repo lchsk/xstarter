@@ -1,5 +1,9 @@
 ---
 title: Version 0.7.0 released
+created: 2018-03-26T00:00:00Z
+description: New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.
+keywords: xstarter, c, application launcher, linux, open source, gui, terminal
+
 ---
 
 New version of **xstarter** is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike. This allows to start a program like this: `surf xstarter.org` (GUI) or e.g. `emacs -nw -Q`.
@@ -10,6 +14,8 @@ This feature works both with GUI (press Enter to start) and terminal application
 
 ## How to get it?
 
-It is available on [AUR](https://aur.archlinux.org/packages/xstarter)
-You can also get get [DEB and RPM packages](https://github.com/lchsk/xstarter/releases)
-Alternatively, it can be easily compiled from [source code](https://github.com/lchsk/xstarter)
+- It is available on [AUR](https://aur.archlinux.org/packages/xstarter)
+
+- You can also get get [DEB and RPM packages](https://github.com/lchsk/xstarter/releases)
+
+- Alternatively, it can be easily compiled from [source code](https://github.com/lchsk/xstarter)
