@@ -11,6 +11,8 @@ Current version: 0.8.0
 |`master`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=master)](https://travis-ci.org/lchsk/xstarter)|
 |`dev`|[![Build Status](https://travis-ci.org/lchsk/xstarter.svg?branch=dev)](https://travis-ci.org/lchsk/xstarter)|
 
+**Check out [Emacs interface](https://github.com/lchsk/helm-xstarter) for xstarter**
+
 ## Installation
 
 See [installation guide](INSTALL.md)
