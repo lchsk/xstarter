@@ -18,8 +18,8 @@ ul li.float {
 	display: inline-block;
 }
 
-h1 {
-	line-height: 100%;
+h1, h2, h3, h4, h5, h6 {
+	line-height: 140%;
 }
 
 h2, h3, h4, h5, h6 {
