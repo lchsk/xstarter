@@ -12,20 +12,26 @@
   <body>
     <div>
       <h1>{{title}}</h1>
+    </div>
     <div>
-    <div>
-      {{@downloads}} | {{@screenshots-and-videos}}
-    <div>
+      <ul>
+        <li class="float">{{@downloads}}</li>
+        <li class="float">{{@screenshots-and-videos}}</li>
+        <li class="float">{{@emacs-interface}}</li>
+        <li class="float"><a title="xstarter on github" href="https://github.com/lchsk/xstarter">xstarter on github</a></li>
+      </ul>
+    </div>
     <div style="width: 100%; display: flex;">
-      <div style="width: 70%">
-        {{body}}
-      </div>
-      <div style="width: 30%">
+      <div style="margin-right: 10pt;">
+        <h3>News</h3>
         <ul>
         {{posts-begin}}
         <li>{{post_link}}</li>
         {{posts-end}}
         <ul>
+      </div>
+      <div style="width: 70%">
+        {{body}}
       </div>
     </div>
   </body>

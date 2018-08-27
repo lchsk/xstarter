@@ -3,7 +3,6 @@ title: Version 0.7.0 released
 created: 2018-03-26T00:00:00Z
 description: New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.
 keywords: xstarter, c, application launcher, linux, open source, gui, terminal
-
 ---
 
 New version of **xstarter** is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike. This allows to start a program like this: `surf xstarter.org` (GUI) or e.g. `emacs -nw -Q`.
