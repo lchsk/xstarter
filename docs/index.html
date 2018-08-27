@@ -1,11 +1,17 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title>xstarter</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="xstarter.org - terminal application launcher for GNU/Linux">
+    <meta name="keywords" content="xstarter, c, gnu gpl, linux, gnu, terminal, urxvt, gnome, xterm, konsole, emacs, vim">
+    <meta name="author" content="Maciej Lechowski">
+    <title>xstarter - GNU/Linux terminal application launcher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="static/styles.css">
   </head>
   <body>
     <div>
-      <h1>xstarter</h1>
+      <h1>xstarter - GNU/Linux terminal application launcher</h1>
     <div>
     <div>
       <a href="downloads.html">Downloads</a> | <a href="screenshots-and-videos.html">Screenshots and videos</a>
@@ -13,74 +19,44 @@
     <div style="width: 100%; display: flex;">
       <div style="width: 70%">
         <p>xstarter is an application launcher for Linux</p>
-
 <p>It lives in terminal and works well with tiling window managers (e.g. xmonad, i3 etc).</p>
-
-<p><img src='./data/xstarter_1.png' alt='xstarter screenshot' /></p>
-
-<h2 id='features'>Features</h2>
-
+<p><img src="./data/xstarter_1.png" alt="xstarter screenshot" /></p>
+<h2>Features</h2>
 <ul>
 <li>a clean, simple interface that works on various terminals</li>
-
 <li>able to search for applications using environment variables (e.g. $PATH) and user-provided list of directories</li>
-
 <li>can be configured to launch via a key-binding</li>
-
 <li>can optionally open an application in terminal (see key shortcuts)</li>
-
 <li>allows to provide arguments to applications (see key shortcuts)</li>
-
 <li>remembers previously launched applications allowing to find them more quickly</li>
-
 <li>allows fuzzy search (parts of the query can be separated with a space)</li>
-
 <li>applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results</li>
-
 <li>fast, uses cache by default</li>
-
 <li>easy to configure via a single text file</li>
 </ul>
-
-<h2 id='running_xstarter'>Running xstarter</h2>
-
+<h2>Running xstarter</h2>
 <p>xstarter needs to be launched from a terminal ($ xstarter). It is useful to run it using a key binding, preferably by binding your preferred key to a command starting xstarter from a terminal of your choice, e.g. xterm -e xstarter. Alternatively, you can simply bind it to xstarter in which case xstarter will open itself in a terminal.</p>
-
 <p>You can also create an alias in your shell (e.g. bash, zsh): <code>alias xs=xstarter</code>.</p>
-
 <p>It should run on any modern terminal. It is tested on: <code>xterm, rxvt, gnome-terminal, xfce4-terminal, konsole</code>. In case of any problems please report it.</p>
-
-<h2 id='configuration'>Configuration</h2>
-
+<h2>Configuration</h2>
 <p>Configuration file is available and includes comments that explain configuration variables. It is located in the <code>~/.xstarter.d/</code> directory.</p>
-
-<h2 id='providing_arguments_to_applications'>Providing arguments to applications</h2>
-
+<h2>Providing arguments to applications</h2>
 <p>You can provide arguments to applications you wish to open.</p>
-
-<p>If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. <code>surf xstarter.org</code> You can provide multiple arguments, e.g. <code>emacs -nw -Q</code> You can select the application you want to provide arguments for by pressing Tab key This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)</p>
-
-<h2 id='key_shortcuts'>Key shortcuts</h2>
-
+<p>If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. <code>surf xstarter.org</code>
+You can provide multiple arguments, e.g. <code>emacs -nw -Q</code>
+You can select the application you want to provide arguments for by pressing Tab key
+This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)</p>
+<h2>Key shortcuts</h2>
 <p>Use numbers 1..9 and 0 to open an application from the list.</p>
-
 <p>By default, the following shortcuts are available:</p>
-
 <ul>
 <li>Return (enter) Open selected application</li>
-
 <li>C-o Open selected application in terminal (defined by &quot;terminal&quot; variable in the config file, xterm by default)</li>
-
 <li>C-n Move down the list</li>
-
 <li>C-p Move up the list</li>
-
 <li>C-g Quit</li>
-
 <li>C-d Delete entered character</li>
-
 <li>C-w Delete entire query</li>
-
 <li>Tab Auto-complete using current selection; allow to provide arguments</li>
 </ul>
 
@@ -88,7 +64,9 @@
       <div style="width: 30%">
         <ul>
         
-        <li><a href="version-0-7-0-released.html">Version 0.7.0 released</a></li>
+        <li><a title="Version 0.8.0 released" href="version-0-8-0-released.html">Version 0.8.0 released</a></li>
+        
+        <li><a title="Version 0.7.0 released" href="version-0-7-0-released.html">Version 0.7.0 released</a></li>
         
         <ul>
       </div>
