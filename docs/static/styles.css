@@ -8,6 +8,20 @@ a:link {
 	color: #bd4f6c;
 }
 
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul li.float {
+	display: inline-block;
+}
+
+h1 {
+	line-height: 100%;
+}
+
 h2, h3, h4, h5, h6 {
 	font-style: italic;
 }
