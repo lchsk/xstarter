@@ -13,6 +13,8 @@ Current version: 0.8.0
 
 **Check out [Emacs interface](https://github.com/lchsk/helm-xstarter) for xstarter**
 
+![xstarter screenshot](./docs_source/xstarter/source/data/xstarter_2.png "xstarter application launcher")
+
 ## Installation
 
 See [installation guide](INSTALL.md)
