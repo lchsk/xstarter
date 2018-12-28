@@ -55,3 +55,7 @@ By default, the following shortcuts are available:
 - C-d Delete entered character
 - C-w Delete entire query
 - Tab Auto-complete using current selection; allow to provide arguments
+
+[source code](https://github.com/lchsk/xstarter)
+
+See also: [personal website](https://lchsk.com) | [twitter](https://twitter.com/lchsk) | [postgres linux desktop client](https://sanchosql.com)
