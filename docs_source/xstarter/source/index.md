@@ -58,4 +58,4 @@ By default, the following shortcuts are available:
 
 [source code](https://github.com/lchsk/xstarter)
 
-See also: [personal website](https://lchsk.com) | [twitter](https://twitter.com/lchsk) | [postgres linux desktop client](https://sanchosql.com)
+See also: [personal website](https://lchsk.com) | [twitter](https://twitter.com/lchsk) | [postgres linux desktop client](https://lchsk.com/sanchosql)

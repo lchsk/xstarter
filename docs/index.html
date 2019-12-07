@@ -25,9 +25,9 @@
     </div>
     <div>
       <ul>
-        <li class="float"><a href="downloads.html">Downloads</a></li>
-        <li class="float"><a href="screenshots-and-videos.html">Screenshots and videos</a></li>
-        <li class="float"><a href="emacs-interface.html">Emacs interface</a></li>
+        <li class="float"><a href="downloads.html" title="Downloads page for xstarter application launcher">Downloads</a></li>
+        <li class="float"><a href="screenshots-and-videos.html" title="xstarter screenshots and videos">Screenshots and videos</a></li>
+        <li class="float"><a href="emacs-interface.html" title="Emacs interface for xstarter">Emacs interface</a></li>
         <li class="float"><a title="xstarter on github" href="https://github.com/lchsk/xstarter">xstarter on github</a></li>
       </ul>
     </div>
@@ -36,19 +36,23 @@
         <h3>News</h3>
         <ul>
         
-        <li><a title="Emacs interface available" href="emacs-interface-available-for-xstarter.html">Emacs interface available</a></li>
+        <li><a href="emacs-interface-available.html" title="New Emacs package allows to launch application with xstarter directly from Emacs!">Emacs interface available</a></li>
         
-        <li><a title="Version 0.8.0 released" href="version-0-8-0-released.html">Version 0.8.0 released</a></li>
+        <li><a href="version-0-8-0-released.html" title="New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.">Version 0.8.0 released</a></li>
         
-        <li><a title="Version 0.7.0 released" href="version-0-7-0-released.html">Version 0.7.0 released</a></li>
+        <li><a href="version-0-7-0-released.html" title="New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.">Version 0.7.0 released</a></li>
         
         <ul>
       </div>
       <div style="width: 70%">
         <p>xstarter is an application launcher for Linux</p>
+
 <p>It lives in terminal and works well with tiling window managers (e.g. xmonad, i3 etc).</p>
+
 <p><img src="./data/xstarter_1.png" alt="xstarter screenshot" /></p>
+
 <h2>Features</h2>
+
 <ul>
 <li>a clean, simple interface that works on various terminals</li>
 <li>able to search for applications using environment variables (e.g. $PATH) and user-provided list of directories</li>
@@ -57,28 +61,41 @@
 <li>allows to provide arguments to applications (see key shortcuts)</li>
 <li>remembers previously launched applications allowing to find them more quickly</li>
 <li>allows fuzzy search (parts of the query can be separated with a space)</li>
-<li>applications can be launched with 1, 2, ..., 0 keys, depending on their position in the search results</li>
+<li>applications can be launched with 1, 2, &hellip;, 0 keys, depending on their position in the search results</li>
 <li>fast, uses cache by default</li>
 <li>easy to configure via a single text file</li>
 </ul>
+
 <h2>Running xstarter</h2>
+
 <p>xstarter needs to be launched from a terminal ($ xstarter). It is useful to run it using a key binding, preferably by binding your preferred key to a command starting xstarter from a terminal of your choice, e.g. xterm -e xstarter. Alternatively, you can simply bind it to xstarter in which case xstarter will open itself in a terminal.</p>
+
 <p>You can also create an alias in your shell (e.g. bash, zsh): <code>alias xs=xstarter</code>.</p>
+
 <p>It should run on any modern terminal. It is tested on: <code>xterm, rxvt, gnome-terminal, xfce4-terminal, konsole</code>. In case of any problems please report it.</p>
+
 <h2>Configuration</h2>
+
 <p>Configuration file is available and includes comments that explain configuration variables. It is located in the <code>~/.xstarter.d/</code> directory.</p>
+
 <h2>Providing arguments to applications</h2>
+
 <p>You can provide arguments to applications you wish to open.</p>
+
 <p>If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. <code>surf xstarter.org</code>
 You can provide multiple arguments, e.g. <code>emacs -nw -Q</code>
 You can select the application you want to provide arguments for by pressing Tab key
 This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)</p>
+
 <h2>Key shortcuts</h2>
+
 <p>Use numbers 1..9 and 0 to open an application from the list.</p>
+
 <p>By default, the following shortcuts are available:</p>
+
 <ul>
 <li>Return (enter) Open selected application</li>
-<li>C-o Open selected application in terminal (defined by &quot;terminal&quot; variable in the config file, xterm by default)</li>
+<li>C-o Open selected application in terminal (defined by &ldquo;terminal&rdquo; variable in the config file, xterm by default)</li>
 <li>C-n Move down the list</li>
 <li>C-p Move up the list</li>
 <li>C-g Quit</li>
@@ -86,8 +103,10 @@ This feature works both with GUI (press Enter to start) and terminal application
 <li>C-w Delete entire query</li>
 <li>Tab Auto-complete using current selection; allow to provide arguments</li>
 </ul>
+
 <p><a href="https://github.com/lchsk/xstarter">source code</a></p>
-<p>See also: <a href="https://lchsk.com">personal website</a> | <a href="https://twitter.com/lchsk">twitter</a> | <a href="https://sanchosql.com">postgres linux desktop client</a></p>
+
+<p>See also: <a href="https://lchsk.com">personal website</a> | <a href="https://twitter.com/lchsk">twitter</a> | <a href="https://lchsk.com/sanchosql">postgres linux desktop client</a></p>
 
       </div>
     </div>
