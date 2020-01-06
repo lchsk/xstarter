@@ -1,6 +1,6 @@
 ---
 title: xstarter - GNU/Linux terminal application launcher
-description: xstarter.org - terminal application launcher for GNU/Linux
+description: xstarter - terminal application launcher for GNU/Linux
 keywords: xstarter, c, gnu gpl, linux, gnu, terminal, urxvt, gnome, xterm, konsole, emacs, vim
 ---
 
@@ -35,7 +35,7 @@ Configuration file is available and includes comments that explain configuration
 ## Providing arguments to applications
 You can provide arguments to applications you wish to open.
 
-If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. `surf xstarter.org`
+If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. `surf gnu.org`
 You can provide multiple arguments, e.g. `emacs -nw -Q`
 You can select the application you want to provide arguments for by pressing Tab key
 This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)

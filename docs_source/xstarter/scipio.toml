@@ -1,10 +1,10 @@
 # Base URL of the website
-url = "https://xstarter.org"
+url = "https://lchsk.com/xstarter"
 
 [rss]
 # Settings for the RSS feed
 generate_rss = true
 title = "xstarter - GNU/Linux terminal application launcher"
-description = "xstarter.org - terminal application launcher for GNU/Linux"
+description = "xstarter - terminal application launcher for GNU/Linux"
 author_name = "Maciej Lechowski"
 author_email = ""

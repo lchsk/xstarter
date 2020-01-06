@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>xstarter - GNU/Linux terminal application launcher</title>
-    <link>https://xstarter.org</link>
-    <description>xstarter.org - terminal application launcher for GNU/Linux</description>
+    <link>https://lchsk.com/xstarter</link>
+    <description>xstarter - terminal application launcher for GNU/Linux</description>
     <managingEditor> (Maciej Lechowski)</managingEditor>
-    <pubDate>Sat, 07 Dec 2019 22:09:05 +0000</pubDate>
+    <pubDate>Mon, 06 Jan 2020 22:29:29 +0000</pubDate>
     <item>
       <title>Emacs interface available</title>
-      <link>https://xstarter.org/emacs-interface-available.html</link>
+      <link>https://lchsk.com/xstarter/emacs-interface-available.html</link>
       <description>New Emacs package allows to launch application with xstarter directly from Emacs!</description>
       <pubDate>Tue, 28 Aug 2018 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>Version 0.8.0 released</title>
-      <link>https://xstarter.org/version-0-8-0-released.html</link>
+      <link>https://lchsk.com/xstarter/version-0-8-0-released.html</link>
       <description>New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.</description>
       <pubDate>Mon, 27 Aug 2018 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>Version 0.7.0 released</title>
-      <link>https://xstarter.org/version-0-7-0-released.html</link>
+      <link>https://lchsk.com/xstarter/version-0-7-0-released.html</link>
       <description>New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.</description>
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
     </item>
