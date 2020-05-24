@@ -37,15 +37,15 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
 			  bool save_open_file);
 
 /* Error code */
-int err;
+extern int err;
 
-char xstarter_dir[1024];
-int xstarter_dir_avail;
+extern char xstarter_dir[1024];
+extern int xstarter_dir_avail;
 
-char recent_apps[100][1024];
-int recent_apps_cnt;
+extern char recent_apps[100][1024];
+extern int recent_apps_cnt;
 
-char exec_term[32];
+extern char exec_term[32];
 
 typedef struct {
 	double r, g, b;

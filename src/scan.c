@@ -16,6 +16,8 @@
 #include "utils_string.h"
 #include "term.h"
 
+GList *results;
+
 static const int PATH = 1024;
 static void recent_apps_on_top(void);
 static GQueue *get_cache(void);

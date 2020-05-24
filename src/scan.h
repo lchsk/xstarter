@@ -9,7 +9,7 @@
 void init_search(void);
 void free_search(void);
 bool search(const char *query, unsigned query_len);
-GList *results;
+extern GList *results;
 
 void load_cache(cmdline_t *cmdline, bool extra_thread);
 void print_cache_apps(void);

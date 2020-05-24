@@ -16,6 +16,13 @@ static bool check_path(char *out, char *in);
 static bool get_xstarter_path(int argc, char **argv, char *path);
 static char* get_home_dir();
 
+int err;
+char xstarter_dir[1024];
+int xstarter_dir_avail;
+char recent_apps[100][1024];
+int recent_apps_cnt;
+char exec_term[32];
+
 static const char *error_messages[] = {
 	"No error, all's fine",
 	"No xstarter path found",
