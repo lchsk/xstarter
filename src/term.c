@@ -323,24 +323,12 @@ static void draw_menu_item(unsigned i)
 
         unsigned shortcut = (i == 9) ? 0 : i + 1;
 
-        char spaces[MAX_LIST_ITEM_LENGTH];
-
-        unsigned item_len = strlen(items_list.items[item_id]);
-
-        unsigned k = 0;
-
-        for (unsigned j = item_len; j < MAX_LIST_ITEM_LENGTH; j++, k++)
-            spaces[k] = ' ';
-
-        spaces[k] = '\0';
-
         snprintf(
             item,
             MAX_LIST_ITEM_LENGTH,
-            "%d %s%s",
+            "%d %s",
             shortcut,
-            items_list.items[item_id],
-            spaces
+            items_list.items[item_id]
         );
 
         mvprintw(i + 2, 0, item);
