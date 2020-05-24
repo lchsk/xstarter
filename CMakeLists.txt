@@ -41,15 +41,17 @@ include(CPack)
 
 add_definitions(-std=c99)
 
-find_package(Curses REQUIRED)
-find_package(Glib REQUIRED)
+find_package(PkgConfig REQUIRED)
 
 message(STATUS "Cmake build type: " ${CMAKE_BUILD_TYPE})
 message(STATUS "Curses inclue directory: " ${CURSES_INCLUDE_DIR})
 
+pkg_check_modules(GLIB REQUIRED glib-2.0)
+pkg_check_modules(CURSES REQUIRED ncurses)
+
 include_directories(
-  ${Glib_INCLUDE_DIRS}
-  ${CURSES_INCLUDE_DIR}
+  ${GLIB_INCLUDE_DIRS}
+  ${CURSES_INCLUDE_DIRS}
 )
 
 add_executable(xstarter
@@ -63,9 +65,8 @@ add_executable(xstarter
 )
 
 target_link_libraries(xstarter
-  ${Glib_LIBRARIES}
+  ${GLIB_LIBRARIES}
   ${CURSES_LIBRARIES}
-  -lncurses
   -pthread
 )
 
