@@ -97,15 +97,19 @@ void load_config(cmdline_t *cmdline)
     };
 
     if (cmdline->config_path) {
-        snprintf(path, sizeof(path), "%s", cmdline->config_path);
+        if (snprintf(path, sizeof(path), "%s", cmdline->config_path) < 0) {
+            return;
+        }
     } else if (xstarter_dir_avail) {
-        snprintf(
+        if (snprintf(
             path,
             sizeof(path),
             "%s/%s",
             xstarter_dir,
             CONFIG_FILE
-        );
+                ) < 0) {
+            return;
+        }
     } else {
         set_err(ERR_NO_XSTARTER_DIR);
     }

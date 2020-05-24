@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "utils_string.h"
 #include "utils.h"
@@ -80,7 +80,7 @@ char* expand_tilde(char *str, const char *home)
     for (int i = 0; str[i]; i++) {
         if (i >= (MAX_LEN - 1)) {
             set_err(ERR_DIRS_TOO_LONG);
-            strncpy(dest, str, MAX_LEN - 1);
+            str_copy(dest, str, MAX_LEN - 1);
 
             return dest;
         }
@@ -135,7 +135,7 @@ char *xs_dirname(char *str)
 
     if (found) {
         result = smalloc(i + 1);
-        strncpy(result, str, i);
+        str_copy(result, str, i);
         result[i] = '\0';
     } else {
         result = smalloc(2);
@@ -151,4 +151,11 @@ char *xs_strdup(const char *str)
   char *ptr = smalloc(len);
 
   return ptr ? memcpy(ptr, str, len) : NULL;
+}
+
+void str_copy(char *dest, const char *src, size_t dest_size)
+{
+    const size_t size = strlen(src);
+    memcpy(dest, src, size);
+    dest[size] = '\0';
 }

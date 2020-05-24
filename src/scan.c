@@ -273,6 +273,10 @@ static void listdir(char *name, int level)
                 entry->d_name
                 );
 
+            if (len < 0) {
+                return;
+            }
+
             path[len] = 0;
 
             if (strcmp(entry->d_name, ".") == 0
@@ -301,7 +305,9 @@ static void listdir(char *name, int level)
 static void cache_to_file()
 {
     char path[1024];
-    snprintf(path, sizeof(path), "%s/cache", xstarter_dir);
+    if (snprintf(path, sizeof(path), "%s/cache", xstarter_dir) < 0) {
+        return;
+    }
 
     FILE *file = fopen(path, "w");
 
@@ -320,7 +326,9 @@ static void read_cache_file()
 
     char path[1024];
     search_paths = g_queue_new();
-    snprintf(path, sizeof(path), "%s/cache", xstarter_dir);
+    if (snprintf(path, sizeof(path), "%s/cache", xstarter_dir) < 0) {
+        return;
+    }
 
     fptr = fopen(path, "r");
 
@@ -356,7 +364,9 @@ static bool cache_needs_refresh()
     time_t cache_time;
 
     char path[1024];
-    snprintf(path, sizeof(path), "%s/cache", xstarter_dir);
+    if (snprintf(path, sizeof(path), "%s/cache", xstarter_dir) < 0) {
+        return false;
+    }
 
     if (stat(path, &cache_stat) == -1) {
         /* Does not exist */

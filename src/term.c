@@ -306,7 +306,9 @@ static void update_info_bar(void)
         if (l) {
             char text[100];
 
-            snprintf(text, 100, "Results: %d", items_list.choices_cnt);
+            if (snprintf(text, 100, "Results: %d", items_list.choices_cnt) < 0) {
+                return;
+            }
 
             mvprintw(MAX_Y - 2, 0, text);
             mvprintw(MAX_Y - 1, 0, l->data);
@@ -323,13 +325,15 @@ static void draw_menu_item(unsigned i)
 
         unsigned shortcut = (i == 9) ? 0 : i + 1;
 
-        snprintf(
+        if (snprintf(
             item,
             MAX_LIST_ITEM_LENGTH,
             "%d %s",
             shortcut,
             items_list.items[item_id]
-        );
+                ) < 0) {
+            return;
+        }
 
         mvprintw(i + 2, 0, item);
     }

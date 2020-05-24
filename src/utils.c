@@ -122,11 +122,11 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
                 args[i] = smalloc(STR_SIZE);
             }
 
-            strncpy(args[0], path_cpy, STR_SIZE);
+            str_copy(args[0], path_cpy, STR_SIZE);
             args[args_cnt - 1] = NULL;
 
             for (int i = 1; i < query_parts->length; i++) {
-                strncpy(args[i], query_parts->data[i], STR_SIZE);
+                str_copy(args[i], query_parts->data[i], STR_SIZE);
             }
 
             if (args[0][0] == '/') {
@@ -147,13 +147,14 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
                 args[i] = smalloc(STR_SIZE);
             }
 
-            strncpy(args[0], exec_term, STR_SIZE);
-            strncpy(args[1], "-e", STR_SIZE);
-            strncpy(args[2], path_cpy, STR_SIZE);
+            str_copy(args[0], exec_term, STR_SIZE);
+            str_copy(args[1], "-e", STR_SIZE);
+            str_copy(args[2], path_cpy, STR_SIZE);
+
             args[args_cnt - 1] = NULL;
 
             for (int i = 1; i < query_parts->length; i++) {
-                strncpy(args[i + 2], query_parts->data[i], STR_SIZE);
+                str_copy(args[i + 2], query_parts->data[i], STR_SIZE);
             }
 
             execvpe(args[0], &args[0], environ);

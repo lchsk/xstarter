@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 
     const config_t *conf = config();
 
-    strncpy(exec_term, conf->section_main->terminal, sizeof(exec_term));
+    str_copy(exec_term, conf->section_main->terminal, sizeof(exec_term));
 
     if (! in_terminal()) {
         free_cmdline(cmdline);
