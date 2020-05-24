@@ -166,7 +166,9 @@ static void record_open_file(const char *path)
     if (xstarter_dir_avail) {
         char recently_f[1024];
 
-        snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
+        if (snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir) < 0) {
+            return;
+        }
 
         FILE *file = fopen(recently_f, "w");
 
@@ -223,7 +225,9 @@ void read_recently_open_list()
         FILE *fptr;
         char recently_f[1024];
 
-        snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir);
+        if (snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir) < 0) {
+            return;
+        }
 
         fptr = fopen(recently_f, "r");
 
