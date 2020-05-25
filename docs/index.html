@@ -36,9 +36,11 @@
         <h3>News</h3>
         <ul>
         
+        <li><a href="version-0-8-1-released.html" title="It's a tiny release but it contains necessary fixes for xstarter to compile with gcc 10.">Version 0.8.1 released</a></li>
+        
         <li><a href="emacs-interface-available.html" title="New Emacs package allows to launch application with xstarter directly from Emacs!">Emacs interface available</a></li>
         
-        <li><a href="version-0-8-0-released.html" title="New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.">Version 0.8.0 released</a></li>
+        <li><a href="version-0-8-0-released.html" title="New version of xstarter is available (v0.8.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.">Version 0.8.0 released</a></li>
         
         <li><a href="version-0-7-0-released.html" title="New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.">Version 0.7.0 released</a></li>
         
@@ -54,21 +56,30 @@
 <h2>Features</h2>
 
 <ul>
-<li>a clean, simple interface that works on various terminals</li>
-<li>able to search for applications using environment variables (e.g. $PATH) and user-provided list of directories</li>
-<li>can be configured to launch via a key-binding</li>
-<li>can optionally open an application in terminal (see key shortcuts)</li>
-<li>allows to provide arguments to applications (see key shortcuts)</li>
-<li>remembers previously launched applications allowing to find them more quickly</li>
-<li>allows fuzzy search (parts of the query can be separated with a space)</li>
-<li>applications can be launched with 1, 2, &hellip;, 0 keys, depending on their position in the search results</li>
-<li>fast, uses cache by default</li>
-<li>easy to configure via a single text file</li>
+<li><p>a clean, simple interface that works on various terminals</p></li>
+
+<li><p>able to search for applications using environment variables (e.g. $PATH) and user-provided list of directories</p></li>
+
+<li><p>can be configured to launch via a key-binding</p></li>
+
+<li><p>can optionally open an application in terminal (see key shortcuts)</p></li>
+
+<li><p>allows to provide arguments to applications (see key shortcuts)</p></li>
+
+<li><p>remembers previously launched applications allowing to find them more quickly</p></li>
+
+<li><p>allows fuzzy search (parts of the query can be separated with a space)</p></li>
+
+<li><p>applications can be launched with 1, 2, &hellip;, 0 keys, depending on their position in the search results</p></li>
+
+<li><p>fast, uses cache by default</p></li>
+
+<li><p>easy to configure via a single text file</p></li>
 </ul>
 
 <h2>Running xstarter</h2>
 
-<p>xstarter needs to be launched from a terminal ($ xstarter). It is useful to run it using a key binding, preferably by binding your preferred key to a command starting xstarter from a terminal of your choice, e.g. xterm -e xstarter. Alternatively, you can simply bind it to xstarter in which case xstarter will open itself in a terminal.</p>
+<p>xstarter needs to be launched from a terminal (<code>$ xstarter</code>). It is useful to run it using a key binding, preferably by binding your preferred key to a command starting xstarter from a terminal of your choice, e.g. xterm -e xstarter. Alternatively, you can simply bind it to xstarter in which case xstarter will open itself in a terminal.</p>
 
 <p>You can also create an alias in your shell (e.g. bash, zsh): <code>alias xs=xstarter</code>.</p>
 
@@ -82,10 +93,13 @@
 
 <p>You can provide arguments to applications you wish to open.</p>
 
-<p>If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. <code>surf gnu.org</code>
-You can provide multiple arguments, e.g. <code>emacs -nw -Q</code>
-You can select the application you want to provide arguments for by pressing Tab key
-This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)</p>
+<p>If the number of search results is equal to 1, you can provide arguments the selected application should be started with, e.g. <code>surf gnu.org</code></p>
+
+<p>You can provide multiple arguments, e.g. <code>emacs -nw -Q</code></p>
+
+<p>You can select the application you want to provide arguments for by pressing Tab key</p>
+
+<p>This feature works both with GUI (press Enter to start) and terminal applications (press C-o to start)</p>
 
 <h2>Key shortcuts</h2>
 
@@ -94,14 +108,21 @@ This feature works both with GUI (press Enter to start) and terminal application
 <p>By default, the following shortcuts are available:</p>
 
 <ul>
-<li>Return (enter) Open selected application</li>
-<li>C-o Open selected application in terminal (defined by &ldquo;terminal&rdquo; variable in the config file, xterm by default)</li>
-<li>C-n Move down the list</li>
-<li>C-p Move up the list</li>
-<li>C-g Quit</li>
-<li>C-d Delete entered character</li>
-<li>C-w Delete entire query</li>
-<li>Tab Auto-complete using current selection; allow to provide arguments</li>
+<li><p>Return (enter) Open selected application</p></li>
+
+<li><p>C-o Open selected application in terminal (defined by &ldquo;terminal&rdquo; variable in the config file, xterm by default)</p></li>
+
+<li><p>C-n Move down the list</p></li>
+
+<li><p>C-p Move up the list</p></li>
+
+<li><p>C-g Quit</p></li>
+
+<li><p>C-d Delete entered character</p></li>
+
+<li><p>C-w Delete entire query</p></li>
+
+<li><p>Tab Auto-complete using current selection; allow to provide arguments</p></li>
 </ul>
 
 <p><a href="https://github.com/lchsk/xstarter">source code</a></p>

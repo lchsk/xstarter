@@ -4,7 +4,13 @@
     <link>https://lchsk.com/xstarter</link>
     <description>xstarter - terminal application launcher for GNU/Linux</description>
     <managingEditor> (Maciej Lechowski)</managingEditor>
-    <pubDate>Mon, 06 Jan 2020 22:29:29 +0000</pubDate>
+    <pubDate>Mon, 25 May 2020 13:53:42 +0100</pubDate>
+    <item>
+      <title>Version 0.8.1 released</title>
+      <link>https://lchsk.com/xstarter/version-0-8-1-released.html</link>
+      <description>It&#39;s a tiny release but it contains necessary fixes for xstarter to compile with gcc 10.</description>
+      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Emacs interface available</title>
       <link>https://lchsk.com/xstarter/emacs-interface-available.html</link>
@@ -14,7 +20,7 @@
     <item>
       <title>Version 0.8.0 released</title>
       <link>https://lchsk.com/xstarter/version-0-8-0-released.html</link>
-      <description>New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.</description>
+      <description>New version of xstarter is available (v0.8.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.</description>
       <pubDate>Mon, 27 Aug 2018 00:00:00 +0000</pubDate>
     </item>
     <item>

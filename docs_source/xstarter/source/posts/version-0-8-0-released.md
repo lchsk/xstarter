@@ -1,7 +1,7 @@
 ---
 title: Version 0.8.0 released
 created: 2018-08-27T00:00:00Z
-description: New version of xstarter is available (v0.7.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.
+description: New version of xstarter is available (v0.8.0). It adds one useful feature: you can now provide arguments to the application. It works for GUI and terminal programs alike.
 keywords: new release, xstarter, c, application launcher, linux, open source, external programs, blog
 
 ---
