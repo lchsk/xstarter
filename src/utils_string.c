@@ -1,21 +1,18 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <ctype.h>
 #include <assert.h>
-#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-#include "utils_string.h"
 #include "utils.h"
+#include "utils_string.h"
 
 str_array_t *str_array_new(char *input_str, char const *delimiters)
 {
     str_array_t *out = smalloc(sizeof(str_array_t));
 
-    *out = (str_array_t) {
-        .length = 0,
-        .base_str = input_str
-    };
+    *out = (str_array_t){.length = 0, .base_str = input_str};
 
     char *txt = strtok(input_str, delimiters);
 
@@ -24,7 +21,7 @@ str_array_t *str_array_new(char *input_str, char const *delimiters)
     }
 
     while (txt) {
-        out->data = realloc(out->data, sizeof(char*) * ++(out->length));
+        out->data = realloc(out->data, sizeof(char *) * ++(out->length));
         out->data[out->length - 1] = txt;
         txt = strtok(NULL, delimiters);
     }
@@ -34,7 +31,8 @@ str_array_t *str_array_new(char *input_str, char const *delimiters)
 
 void str_array_free(str_array_t *str_array)
 {
-    if (str_array == NULL) return;
+    if (str_array == NULL)
+        return;
 
     free(str_array->base_str);
     free(str_array->data);
@@ -46,14 +44,16 @@ char *strip(char *str)
     char *end;
 
     // Trim leading space
-    while (isspace(*str)) str++;
+    while (isspace(*str))
+        str++;
 
-    if (*str == 0)  // All spaces?
+    if (*str == 0) // All spaces?
         return str;
 
     // Trim trailing space
     end = str + strlen(str) - 1;
-    while (end > str && isspace(*end)) end--;
+    while (end > str && isspace(*end))
+        end--;
 
     // Write new null terminator
     *(end + 1) = 0;
@@ -68,7 +68,7 @@ void str_array_strip(str_array_t *str_array)
     }
 }
 
-char* expand_tilde(char *str, const char *home)
+char *expand_tilde(char *str, const char *home)
 {
     if (str == NULL || home == NULL)
         return str;
@@ -104,11 +104,8 @@ char *xs_dirname(char *str)
 
     /* Special cases */
 
-    if (str == NULL
-        || strcmp(str, ".") == 0
-        || strcmp(str, "..") == 0
-        || strcmp(str, "") == 0
-    ) {
+    if (str == NULL || strcmp(str, ".") == 0 || strcmp(str, "..") == 0 ||
+        strcmp(str, "") == 0) {
         result = smalloc(2);
         strcpy(result, ".");
 
@@ -147,10 +144,10 @@ char *xs_dirname(char *str)
 
 char *xs_strdup(const char *str)
 {
-  size_t len = 1 + strlen(str);
-  char *ptr = smalloc(len);
+    size_t len = 1 + strlen(str);
+    char *ptr = smalloc(len);
 
-  return ptr ? memcpy(ptr, str, len) : NULL;
+    return ptr ? memcpy(ptr, str, len) : NULL;
 }
 
 void str_copy(char *dest, const char *src, size_t dest_size)

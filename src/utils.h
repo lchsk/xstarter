@@ -3,7 +3,10 @@
 
 #include <stdbool.h>
 
-#define PRINTS(x) { printf("%s\n", x); }
+#define PRINTS(x)                                                              \
+    {                                                                          \
+        printf("%s\n", x);                                                     \
+    }
 
 #define RECENT_APPS_REMEMBERED (100)
 
@@ -14,27 +17,24 @@
 /* Errors */
 
 typedef enum {
-	NO_ERR,
-	ERR_NO_XSTARTER_PATH,
-	ERR_NO_XSTARTER_DIR,
-	ERR_DIRS_TOO_LONG,
-	ERR_XSTARTER_MKDIR_FAILED,
-	ERR_FORK_FAILED,
-	ERR_SETSID_FAILED,
-	ERR_CHDIR_FAILED,
-	ERR_DUMP_DEBUG_FAILED,
-	ERR_REDIRECTING_TO_DEV_NULL_FAILED,
+    NO_ERR,
+    ERR_NO_XSTARTER_PATH,
+    ERR_NO_XSTARTER_DIR,
+    ERR_DIRS_TOO_LONG,
+    ERR_XSTARTER_MKDIR_FAILED,
+    ERR_FORK_FAILED,
+    ERR_SETSID_FAILED,
+    ERR_CHDIR_FAILED,
+    ERR_DUMP_DEBUG_FAILED,
+    ERR_REDIRECTING_TO_DEV_NULL_FAILED,
 } error_code_t;
 
-typedef enum {
-	APP_LAUNCH_MODE_GUI,
-	APP_LAUNCH_MODE_TERM
-} app_launch_mode_t;
+typedef enum { APP_LAUNCH_MODE_GUI, APP_LAUNCH_MODE_TERM } app_launch_mode_t;
 
 #define MAX_LEN (2048)
 
 void open_app(const char *path, const char *query, app_launch_mode_t mode,
-			  bool save_open_file);
+              bool save_open_file);
 
 /* Error code */
 extern int err;
@@ -48,7 +48,7 @@ extern int recent_apps_cnt;
 extern char exec_term[32];
 
 typedef struct {
-	double r, g, b;
+    double r, g, b;
 } colour_t;
 
 void get_rgb(colour_t *dest, char *src);

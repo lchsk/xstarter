@@ -3,8 +3,8 @@
 
 #include <glib.h>
 
-#include "utils.h"
 #include "settings.h"
+#include "utils.h"
 
 void init_search(void);
 void free_search(void);

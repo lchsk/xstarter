@@ -1,0 +1,10 @@
+﻿---
+AllowShortFunctionsOnASingleLine: None
+BreakBeforeBraces: Linux
+ColumnLimit: '80'
+IndentWidth: '4'
+Language: Cpp
+PointerAlignment: Right
+SortIncludes: 'true'
+SpaceAfterLogicalNot: 'true'
+TabWidth: '0'

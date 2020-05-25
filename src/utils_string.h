@@ -1,8 +1,8 @@
 #ifndef UTILS_STRING_H
 #define UTILS_STRING_H
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct str_array_t {
     char **data;

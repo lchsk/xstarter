@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <getopt.h>
+#include <stdlib.h>
 
 #include "settings.h"
 #include "utils.h"
@@ -91,43 +91,26 @@ void load_config(cmdline_t *cmdline)
 
     CONF = smalloc(sizeof(config_t));
 
-    *CONF = (config_t) {
-        .section_main = section_main,
-        .section_colours = section_colours
-    };
+    *CONF = (config_t){.section_main = section_main,
+                       .section_colours = section_colours};
 
     if (cmdline->config_path) {
         if (snprintf(path, sizeof(path), "%s", cmdline->config_path) < 0) {
             return;
         }
     } else if (xstarter_dir_avail) {
-        if (snprintf(
-            path,
-            sizeof(path),
-            "%s/%s",
-            xstarter_dir,
-            CONFIG_FILE
-                ) < 0) {
+        if (snprintf(path, sizeof(path), "%s/%s", xstarter_dir, CONFIG_FILE) <
+            0) {
             return;
         }
     } else {
         set_err(ERR_NO_XSTARTER_DIR);
     }
 
-    if (g_key_file_load_from_file(
-        conf_file,
-        path,
-        G_KEY_FILE_NONE,
-        NULL
-    )) {
+    if (g_key_file_load_from_file(conf_file, path, G_KEY_FILE_NONE, NULL)) {
         // Read directories from config
 
-        char *raw = g_key_file_get_string(
-            conf_file,
-            "Main",
-            "dirs",
-            NULL
-        );
+        char *raw = g_key_file_get_string(conf_file, "Main", "dirs", NULL);
 
         char *raw_dirs = expand_tilde(raw, getenv("HOME"));
         free(raw);
@@ -144,12 +127,8 @@ void load_config(cmdline_t *cmdline)
         /* Strip trailing spaces */
         str_array_strip(section_main->dirs);
 
-        section_main->terminal = g_key_file_get_string(
-            conf_file,
-            "Main",
-            "terminal",
-            &error
-            );
+        section_main->terminal =
+            g_key_file_get_string(conf_file, "Main", "terminal", &error);
 
         if (error != NULL || strcmp(section_main->terminal, "") == 0) {
             set_default_terminal(CONF);
@@ -157,12 +136,8 @@ void load_config(cmdline_t *cmdline)
             error = NULL;
         }
 
-        section_colours->selected = g_key_file_get_string(
-            conf_file,
-            "Colours",
-            "selected",
-            &error
-            );
+        section_colours->selected =
+            g_key_file_get_string(conf_file, "Colours", "selected", &error);
 
         if (error != NULL || strcmp(section_colours->selected, "") == 0) {
             set_default_colour_selected(CONF);
@@ -170,12 +145,8 @@ void load_config(cmdline_t *cmdline)
             error = NULL;
         }
 
-        section_main->emacs_bindings = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "emacs_bindings",
-            &error
-        );
+        section_main->emacs_bindings =
+            g_key_file_get_boolean(conf_file, "Main", "emacs_bindings", &error);
 
         if (error != NULL) {
             set_default_emacs_bindings(CONF);
@@ -184,11 +155,7 @@ void load_config(cmdline_t *cmdline)
         }
 
         section_main->recent_apps_first = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "recent_apps_first",
-            &error
-        );
+            conf_file, "Main", "recent_apps_first", &error);
 
         if (error != NULL) {
             set_recent_apps_first(CONF);
@@ -196,12 +163,8 @@ void load_config(cmdline_t *cmdline)
             error = NULL;
         }
 
-        section_main->min_query_len = g_key_file_get_integer(
-            conf_file,
-            "Main",
-            "min_query_len",
-            &error
-        );
+        section_main->min_query_len =
+            g_key_file_get_integer(conf_file, "Main", "min_query_len", &error);
 
         if (error != NULL) {
             set_min_query_len(CONF);
@@ -209,12 +172,8 @@ void load_config(cmdline_t *cmdline)
             error = NULL;
         }
 
-        section_main->allow_spaces = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "allow_spaces",
-            &error
-        );
+        section_main->allow_spaces =
+            g_key_file_get_boolean(conf_file, "Main", "allow_spaces", &error);
 
         if (error != NULL) {
             set_allow_spaces(CONF);
@@ -223,11 +182,7 @@ void load_config(cmdline_t *cmdline)
         }
 
         section_main->numeric_shortcuts = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "numeric_shortcuts",
-            &error
-        );
+            conf_file, "Main", "numeric_shortcuts", &error);
 
         if (error != NULL) {
             set_numeric_shortcuts(CONF);
@@ -235,12 +190,8 @@ void load_config(cmdline_t *cmdline)
             error = NULL;
         }
 
-        section_main->use_cache = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "use_cache",
-            &error
-        );
+        section_main->use_cache =
+            g_key_file_get_boolean(conf_file, "Main", "use_cache", &error);
 
         if (error != NULL) {
             set_use_cache(CONF);
@@ -249,11 +200,7 @@ void load_config(cmdline_t *cmdline)
         }
 
         section_main->auto_cache_refresh = g_key_file_get_boolean(
-            conf_file,
-            "Main",
-            "auto_cache_refresh",
-            &error
-        );
+            conf_file, "Main", "auto_cache_refresh", &error);
 
         if (error != NULL) {
             set_auto_cache_refresh(CONF);
@@ -322,12 +269,13 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     cmdline->print_list_of_cache_apps = false;
 
     while ((c = getopt(argc, argv, "hvre:VPc:")) != -1) {
-        switch(c) {
+        switch (c) {
         case 'c':
             cmdline->config_path = optarg;
             break;
         case 'e':
-            open_app(optarg, "", APP_LAUNCH_MODE_GUI, /* save_open_file */ true);
+            open_app(optarg, "", APP_LAUNCH_MODE_GUI,
+                     /* save_open_file */ true);
             quit = true;
             break;
         case 'v':
@@ -340,9 +288,9 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
         case 'r':
             cmdline->force_cache_refresh = true;
             break;
-	    case 'P':
+        case 'P':
             cmdline->print_list_of_cache_apps = true;
-			break;
+            break;
         case 'h':
         default:
             usage();

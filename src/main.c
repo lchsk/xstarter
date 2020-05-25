@@ -1,14 +1,14 @@
 #define _GNU_SOURCE // execvpe
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> // execvpe, readlink
 #include <sys/stat.h> // umask
-#include <errno.h>
+#include <unistd.h>   // execvpe, readlink
 
 #include <glib.h>
 
-#include "settings.h"
 #include "scan.h"
+#include "settings.h"
 #include "term.h"
 #include "utils.h"
 
@@ -46,7 +46,6 @@ int main(int argc, char **argv)
 
         open_itself(argc, argv);
     }
-
 
     init_term_gui();
 

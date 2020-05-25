@@ -1,9 +1,9 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <glib.h>
 #include "utils.h"
 #include "utils_string.h"
+#include <glib.h>
 
 /* Name of the configuration file that
    should be in a $HOME/.xstarter.d directory */
@@ -15,7 +15,7 @@
 
 typedef struct {
     bool verbose;
-    char* config_path;
+    char *config_path;
     bool force_cache_refresh;
 
     // Print a list of cache applications

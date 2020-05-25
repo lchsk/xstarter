@@ -1,12 +1,12 @@
 #define _GNU_SOURCE
-#include <unistd.h> // execve, readlink
-#include <sys/stat.h> // umask
+#include <errno.h>
+#include <fcntl.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/stat.h> // umask
+#include <unistd.h>   // execve, readlink
 
 #include "utils.h"
 #include "utils_string.h"
@@ -14,7 +14,7 @@
 static void record_open_file(const char *path);
 static bool check_path(char *out, char *in);
 static bool get_xstarter_path(int argc, char **argv, char *path);
-static char* get_home_dir();
+static char *get_home_dir();
 
 int err;
 char xstarter_dir[1024];
@@ -24,16 +24,16 @@ int recent_apps_cnt;
 char exec_term[32];
 
 static const char *error_messages[] = {
-	"No error, all's fine",
-	"No xstarter path found",
-	"No xstarter directory found",
-	"List of directories is too long",
-	"Failed to create the ~/.xstarter.d directory",
-	"Fork failed",
-	"setsid() failed",
-	"chdir() failed",
-	"dumping debugging data failed",
-	"redirecting to dev/null failed",
+    "No error, all's fine",
+    "No xstarter path found",
+    "No xstarter directory found",
+    "List of directories is too long",
+    "Failed to create the ~/.xstarter.d directory",
+    "Fork failed",
+    "setsid() failed",
+    "chdir() failed",
+    "dumping debugging data failed",
+    "redirecting to dev/null failed",
 };
 
 void get_rgb(colour_t *dest, char *src)
@@ -51,7 +51,8 @@ void get_rgb(colour_t *dest, char *src)
 void open_app(const char *path, const char *query, app_launch_mode_t mode,
               bool save_open_file)
 {
-    if (! path || ! query) return;
+    if (! path || ! query)
+        return;
 
     char path_cpy[1024];
     strcpy(path_cpy, path);
@@ -103,20 +104,21 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
             set_err(ERR_REDIRECTING_TO_DEV_NULL_FAILED);
         }
 
-        str_array_t *query_parts = str_array_new((char*) query, " ");
+        str_array_t *query_parts = str_array_new((char *)query, " ");
         int args_cnt = 0;
         const int STR_SIZE = 255;
 
-        extern char** environ;
+        extern char **environ;
 
         if (mode == APP_LAUNCH_MODE_GUI) {
             if (query_parts->length <= 1)
                 args_cnt = 2;
             else {
-                args_cnt = 2 + query_parts->length - 1; // First argument is command name
+                args_cnt = 2 + query_parts->length -
+                           1; // First argument is command name
             }
 
-            char **args = smalloc(args_cnt * sizeof(char*));
+            char **args = smalloc(args_cnt * sizeof(char *));
 
             for (int i = 0; i < args_cnt; i++) {
                 args[i] = smalloc(STR_SIZE);
@@ -134,14 +136,15 @@ void open_app(const char *path, const char *query, app_launch_mode_t mode,
             } else {
                 execvpe(args[0], &args[0], environ);
             }
-        } else if (mode == APP_LAUNCH_MODE_TERM){
+        } else if (mode == APP_LAUNCH_MODE_TERM) {
             if (query_parts->length <= 1)
                 args_cnt = 4;
             else {
-                args_cnt = 4 + query_parts->length - 1; // First argument is command name
+                args_cnt = 4 + query_parts->length -
+                           1; // First argument is command name
             }
 
-            char **args = smalloc(args_cnt * sizeof(char*));
+            char **args = smalloc(args_cnt * sizeof(char *));
 
             for (int i = 0; i < args_cnt; i++) {
                 args[i] = smalloc(STR_SIZE);
@@ -167,7 +170,8 @@ static void record_open_file(const char *path)
     if (xstarter_dir_avail) {
         char recently_f[1024];
 
-        if (snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir) < 0) {
+        if (snprintf(recently_f, sizeof(recently_f), "%s/recent",
+                     xstarter_dir) < 0) {
             return;
         }
 
@@ -226,7 +230,8 @@ void read_recently_open_list()
         FILE *fptr;
         char recently_f[1024];
 
-        if (snprintf(recently_f, sizeof(recently_f), "%s/recent", xstarter_dir) < 0) {
+        if (snprintf(recently_f, sizeof(recently_f), "%s/recent",
+                     xstarter_dir) < 0) {
             return;
         }
 
@@ -237,7 +242,7 @@ void read_recently_open_list()
 
             int i = 0;
 
-            while(fgets(line, 1024, fptr)) {
+            while (fgets(line, 1024, fptr)) {
                 memmove(recent_apps[i], line, strlen(line) - 1);
                 i++;
             }
@@ -253,12 +258,7 @@ void dump_debug(const char *str)
 {
     char debug[1024];
 
-    snprintf(
-        debug,
-        1024,
-        "echo %s>> ~/debug_xstarter",
-        str
-    );
+    snprintf(debug, 1024, "echo %s>> ~/debug_xstarter", str);
 
     int ret = system(debug);
 
@@ -271,12 +271,7 @@ void dump_debug_ptr(const char *str)
 {
     char debug[1024];
 
-    snprintf(
-        debug,
-        1024,
-        "echo %p>> ~/debug_xstarter",
-        (void*) &str
-    );
+    snprintf(debug, 1024, "echo %p>> ~/debug_xstarter", (void *)&str);
 
     int ret = system(debug);
 
@@ -289,12 +284,7 @@ void dump_debug_char(const char c)
 {
     char debug[1024];
 
-    snprintf(
-        debug,
-        1024,
-        "echo %c>> ~/debug_xstarter",
-        c
-    );
+    snprintf(debug, 1024, "echo %c>> ~/debug_xstarter", c);
 
     int ret = system(debug);
 
@@ -307,12 +297,7 @@ void dump_debug_int(int d)
 {
     char debug[1024];
 
-    snprintf(
-        debug,
-        1024,
-        "echo %d >> ~/debug_xstarter",
-        d
-    );
+    snprintf(debug, 1024, "echo %d >> ~/debug_xstarter", d);
 
     int ret = system(debug);
 
@@ -382,9 +367,10 @@ void open_itself(int argc, char **argv)
 
         int env_cnt = 0;
 
-        for (char *it = environ[0]; *it; it++, env_cnt++);
+        for (char *it = environ[0]; *it; it++, env_cnt++)
+            ;
 
-        char **newenvp = malloc((env_cnt + 2) * sizeof(char*));
+        char **newenvp = malloc((env_cnt + 2) * sizeof(char *));
 
         for (int i = 0; i < env_cnt - 2; i++) {
             newenvp[i] = environ[i];
@@ -413,12 +399,7 @@ void xstarter_directory()
     }
 
     if (dir) {
-        snprintf(
-            xstarter_dir,
-            sizeof(xstarter_dir),
-            "%s/.xstarter.d",
-            dir
-        );
+        snprintf(xstarter_dir, sizeof(xstarter_dir), "%s/.xstarter.d", dir);
 
         if (using_tmp_dir)
             free(dir);
@@ -467,13 +448,8 @@ void *safe_malloc(size_t n, unsigned long line)
     void *p = malloc(n);
 
     if (! p) {
-        fprintf(
-            stderr,
-            "[%s:%lu] Out of memory(%lu bytes)\n",
-             __FILE__,
-            line,
-            (unsigned long) n
-        );
+        fprintf(stderr, "[%s:%lu] Out of memory(%lu bytes)\n", __FILE__, line,
+                (unsigned long)n);
 
         exit(EXIT_FAILURE);
     }
@@ -541,7 +517,7 @@ static bool get_xstarter_path(int argc, char **argv, char *path)
 /*
 Get user's home directory
 */
-static char* get_home_dir()
+static char *get_home_dir()
 {
     char *dir = NULL;
 
@@ -549,7 +525,7 @@ static char* get_home_dir()
         struct passwd *pw = getpwuid(getuid());
 
         if (pw)
-          dir = pw->pw_dir;
+            dir = pw->pw_dir;
     }
 
     return dir;

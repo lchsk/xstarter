@@ -1,17 +1,17 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <libgen.h>
 #include <ctype.h>
-#include <unistd.h> // execve
-#include <sys/stat.h> // umask
 #include <errno.h>
+#include <libgen.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h> // umask
+#include <unistd.h>   // execve
 
 #include <ncurses.h>
 
+#include "scan.h"
 #include "settings.h"
 #include "term.h"
-#include "scan.h"
 #include "utils.h"
 
 #define MAX_INPUT_LENGTH (80)
@@ -65,15 +65,9 @@ static search_t status = {
     .fixed_selection = false,
 };
 
-static view_t view_search_bar = {
-    .row_start = 0,
-    .row_end = 0
-};
+static view_t view_search_bar = {.row_start = 0, .row_end = 0};
 
-static view_t view_info_bar = {
-    .row_start = 13,
-    .row_end = 14
-};
+static view_t view_info_bar = {.row_start = 13, .row_end = 14};
 
 static items_list_t items_list;
 
@@ -115,7 +109,7 @@ void init_term_gui(void)
     if (can_change_color()) {
         init_color(XS_COL_SEL, col_sel.r, col_sel.g, col_sel.b);
         init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, XS_COL_SEL);
-    } else{
+    } else {
         init_pair(XS_COLOR_PAIR_1, COLOR_WHITE, COLOR_BLUE);
     }
 
@@ -166,22 +160,17 @@ void run_term(void)
         case KEY_CONTROL_RETURN:
             status.run_app = true;
 
-            open_app(
-                     g_list_nth_data(results,
+            open_app(g_list_nth_data(results,
                                      items_list.selected + items_list.offset),
-                     status.query,
-                     APP_LAUNCH_MODE_TERM, true);
+                     status.query, APP_LAUNCH_MODE_TERM, true);
             break;
 
         case KEY_RETURN:
             status.run_app = true;
 
-            open_app(
-                     g_list_nth_data(
-                                     results,
+            open_app(g_list_nth_data(results,
                                      items_list.selected + items_list.offset),
-                     status.query,
-                     APP_LAUNCH_MODE_GUI, true);
+                     status.query, APP_LAUNCH_MODE_GUI, true);
 
             break;
 
@@ -306,7 +295,8 @@ static void update_info_bar(void)
         if (l) {
             char text[100];
 
-            if (snprintf(text, 100, "Results: %d", items_list.choices_cnt) < 0) {
+            if (snprintf(text, 100, "Results: %d", items_list.choices_cnt) <
+                0) {
                 return;
             }
 
@@ -325,13 +315,8 @@ static void draw_menu_item(unsigned i)
 
         unsigned shortcut = (i == 9) ? 0 : i + 1;
 
-        if (snprintf(
-            item,
-            MAX_LIST_ITEM_LENGTH,
-            "%d %s",
-            shortcut,
-            items_list.items[item_id]
-                ) < 0) {
+        if (snprintf(item, MAX_LIST_ITEM_LENGTH, "%d %s", shortcut,
+                     items_list.items[item_id]) < 0) {
             return;
         }
 
@@ -396,7 +381,8 @@ static void prepare_for_new_results(void)
 
     items_list.choices_cnt = g_list_length(results);
 
-    int cnt = items_list.choices_cnt > MAX_ITEMS ? MAX_ITEMS : items_list.choices_cnt;
+    int cnt =
+        items_list.choices_cnt > MAX_ITEMS ? MAX_ITEMS : items_list.choices_cnt;
 
     for (int i = 0; i < cnt; i++) {
         GList *l = g_list_nth(results, i);
@@ -408,8 +394,7 @@ static void prepare_for_new_results(void)
         if (conf->section_main->numeric_shortcuts) {
             if (i < 10) {
                 items_list.items[i] = name;
-            }
-            else
+            } else
                 items_list.items[i] = name;
         } else {
             items_list.items[i] = name;
@@ -423,12 +408,12 @@ static void show_recent_apps(void)
 {
     int recent_apps_valid = true;
 
-    for (items_list.choices_cnt = 0;
-         items_list.choices_cnt < RECENT_APPS_SHOWN;
+    for (items_list.choices_cnt = 0; items_list.choices_cnt < RECENT_APPS_SHOWN;
          items_list.choices_cnt++) {
-        if (recent_apps[items_list.choices_cnt] != NULL
-            && strcmp(recent_apps[items_list.choices_cnt], "") != 0) {
-            for (int i = 0; i < strlen(recent_apps[items_list.choices_cnt]); i++) {
+        if (recent_apps[items_list.choices_cnt] != NULL &&
+            strcmp(recent_apps[items_list.choices_cnt], "") != 0) {
+            for (int i = 0; i < strlen(recent_apps[items_list.choices_cnt]);
+                 i++) {
                 if (! isprint(recent_apps[items_list.choices_cnt][i])) {
                     recent_apps_valid = false;
                     break;
@@ -438,7 +423,8 @@ static void show_recent_apps(void)
             if (! recent_apps_valid)
                 break;
 
-            results = g_list_append(results, recent_apps[items_list.choices_cnt]);
+            results =
+                g_list_append(results, recent_apps[items_list.choices_cnt]);
         }
     }
 }
@@ -452,19 +438,13 @@ static void open_by_shortcut(int key)
             status.run_app = true;
 
             open_app(
-                     g_list_nth_data(
-                                     results,
-                                     items_list.offset + (key - ASCII_1)),
-                     status.query,
-                     APP_LAUNCH_MODE_GUI, true);
+                g_list_nth_data(results, items_list.offset + (key - ASCII_1)),
+                status.query, APP_LAUNCH_MODE_GUI, true);
         } else if (key == ASCII_0) {
             status.run_app = true;
 
-            open_app(
-                     g_list_nth_data(
-                                     results, RECENT_APPS_SHOWN - 1),
-                     status.query,
-                     APP_LAUNCH_MODE_GUI, true);
+            open_app(g_list_nth_data(results, RECENT_APPS_SHOWN - 1),
+                     status.query, APP_LAUNCH_MODE_GUI, true);
         }
     }
 }
@@ -487,10 +467,11 @@ static void reset_query(void)
 
 static void complete_selected_entry(void)
 {
-    char* selected = g_list_nth_data(results,
-                                     items_list.selected + items_list.offset);
+    char *selected =
+        g_list_nth_data(results, items_list.selected + items_list.offset);
 
-    if (! selected) return;
+    if (! selected)
+        return;
 
     char *name = g_path_get_basename(selected);
     strcpy(status.query, name);

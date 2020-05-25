@@ -1,20 +1,20 @@
 #define _GNU_SOURCE // strcasestr
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <assert.h>
 #include <dirent.h>
 #include <glib.h>
 #include <limits.h>
-#include <string.h>
 #include <pthread.h>
-#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "scan.h"
-#include "utils_string.h"
 #include "term.h"
+#include "utils_string.h"
 
 GList *results;
 
@@ -82,20 +82,16 @@ void load_cache(cmdline_t *cmdline_, bool extra_thread)
 
     stop_traversing = false;
 
-    if (!extra_thread) {
+    if (! extra_thread) {
         refresh_cache();
         return;
     }
 
-    int code = pthread_create(
-        &th_refresh_cache,
-        NULL,
-        refresh_cache,
-        NULL
-    );
+    int code = pthread_create(&th_refresh_cache, NULL, refresh_cache, NULL);
 
     if (code) {
-        dump_debug("Failed t create refresh_cache thread, pthread_create error code:");
+        dump_debug(
+            "Failed t create refresh_cache thread, pthread_create error code:");
         dump_debug_int(code);
 
         // Refresh cache in current thread
@@ -141,8 +137,8 @@ bool search(const char *query, unsigned query_len)
     if (conf->section_main->allow_spaces) {
         query_parts = str_array_new(xs_strdup(query), " ");
 
-        if ((query_len > 0 && query[query_len - 1] == ' ')
-            || query_parts == NULL) {
+        if ((query_len > 0 && query[query_len - 1] == ' ') ||
+            query_parts == NULL) {
             resp = false;
             goto free_query_parts;
         }
@@ -200,7 +196,7 @@ free_query_parts:
 void print_cache_apps(void)
 {
     // Print recently open apps
-	for (int i = 0; i < recent_apps_cnt; i++) {
+    for (int i = 0; i < recent_apps_cnt; i++) {
         printf("%s\n", recent_apps[i]);
     }
 
@@ -225,7 +221,7 @@ static void recent_apps_on_top(void)
         int new_pos = 0;
 
         for (int i = 0; i < recent_apps_cnt; i++) {
-            GList* to_remove = NULL;
+            GList *to_remove = NULL;
 
             for (GList *l = results; l != NULL; l = l->next) {
                 if (strcmp(l->data, recent_apps[i]) == 0) {
@@ -265,13 +261,8 @@ static void listdir(char *name, int level)
 
         if (entry->d_type == DT_DIR) {
             char path[PATH];
-            int len = snprintf(
-                path,
-                sizeof(path) - 1,
-                "%s/%s",
-                name,
-                entry->d_name
-                );
+            int len =
+                snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
 
             if (len < 0) {
                 return;
@@ -279,8 +270,8 @@ static void listdir(char *name, int level)
 
             path[len] = 0;
 
-            if (strcmp(entry->d_name, ".") == 0
-                || strcmp(entry->d_name, "..") == 0)
+            if (strcmp(entry->d_name, ".") == 0 ||
+                strcmp(entry->d_name, "..") == 0)
                 continue;
 
             listdir(path, level + 1);
@@ -416,10 +407,8 @@ static void *refresh_cache()
                 if (var_paths) {
                     for (int j = 0; j < var_paths->length; j++) {
                         if (var_paths->data[j]) {
-                            g_queue_push_tail(
-                                paths,
-                                xs_strdup(var_paths->data[j])
-                            );
+                            g_queue_push_tail(paths,
+                                              xs_strdup(var_paths->data[j]));
                         }
                     }
                 }
