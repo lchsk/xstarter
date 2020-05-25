@@ -2,27 +2,23 @@
 
 ## Arch Linux (AUR)
 
-You can use yaourt or similar:
-
-`yaourt -S xstarter`
-
-Alternatively, you can install it manually:
+Use AUR to install it:
 
 `git clone https://aur.archlinux.org/xstarter.git`
 
 `cd xstarter && makepkg -is`
 
-For more information, see https://aur.archlinux.org/packages/xstarter/
+See xstarter in Arch Linux AUR: https://aur.archlinux.org/packages/xstarter/
 
 ## DEB package
 
-Download `.deb` package
+Download `.deb` package from https://github.com/lchsk/xstarter/releases
 
 `apt install -f xstarter-*.deb`
 
 ## RPM package
 
-Download `.rpm` package
+Download `.rpm` package from https://github.com/lchsk/xstarter/releases
 
 `dnf install xstarter-*.rpm`
 
@@ -40,8 +36,8 @@ In order to compile it, you need development versions of the following libraries
 
 ## Using archives
 
-Download `.tar.gz` or `.zip` archive
+Download `.tar.gz` or `.zip` archive from https://github.com/lchsk/xstarter/releases
 
 Extract it
 
-Run `./bin/xstarter` to open the application in the terminal. You can manually copy it to a directory included in your $PATH.
+Run `./bin/xstarter` to open the application in the terminal. You can manually copy it to a directory included in your `$PATH`.

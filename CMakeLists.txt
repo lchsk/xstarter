@@ -11,7 +11,7 @@ endif()
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
-set(PROJECT_VERSION "0.8.0")
+set(PROJECT_VERSION "0.8.1")
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   set(CMAKE_C_FLAGS "-g -Wall -pedantic")
 else()

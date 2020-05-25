@@ -1,5 +1,11 @@
         xstarter change log
 
+        0.8.1
+        25/05/2020
+        * Make xstarter compile with gcc 10
+        * Fix buggy item highlighting
+        * Improve build script
+
         0.8.0
         27/08/2018
         * Add -e option: execute an application and detach it from terminal
