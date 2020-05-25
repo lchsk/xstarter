@@ -22,7 +22,7 @@ install=
 changelog=
 source=(https://github.com/lchsk/xstarter/releases/download/v0.8.1/xstarter-0.8.1-Linux.tar.gz)
 noextract=()
-md5sums=(2ddeb05f8591ba7f204c46f7d5df0225)
+md5sums=(e478ff94bd7cc9ca2e483c18fb260174)
 validpgpkeys=()
 
 package() {
