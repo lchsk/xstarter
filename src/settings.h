@@ -1,9 +1,8 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef XSTARTER_SETTINGS_H
+#define XSTARTER_SETTINGS_H
 
 #include "utils.h"
 #include "utils_string.h"
-#include <glib.h>
 
 /* Name of the configuration file that
    should be in a $HOME/.xstarter.d directory */
@@ -21,10 +20,10 @@ typedef struct {
     // Print a list of cache applications
     // Can be used by external programs
     bool print_list_of_cache_apps;
-} cmdline_t;
+} CmdLine;
 
 typedef struct {
-    str_array_t *dirs;
+    StrArray *dirs;
     char *terminal;
     bool emacs_bindings;
     bool recent_apps_first;
@@ -33,22 +32,22 @@ typedef struct {
     bool numeric_shortcuts;
     bool use_cache;
     bool auto_cache_refresh;
-} config_main_t;
+} ConfigMain;
 
 typedef struct {
     char *selected;
-} config_colours_t;
+} ConfigColors;
 
 typedef struct {
-    config_main_t *section_main;
-    config_colours_t *section_colours;
-} config_t;
+    ConfigMain *section_main;
+    ConfigColors *section_colors;
+} Config;
 
-void load_config(cmdline_t *cmdline);
-void free_config();
+Config* config_load(CmdLine *cmdline);
+void config_free(Config* config);
+const Config *config_get();
 
-const config_t *config();
-int read_cmdline(cmdline_t *cmdline, int argc, char **argv);
-void free_cmdline(cmdline_t *cmdline);
+int cmdline_read(CmdLine *cmdline, int argc, char **argv);
+void cmdline_free(CmdLine *cmdline);
 
 #endif

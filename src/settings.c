@@ -1,67 +1,67 @@
 #include <getopt.h>
 #include <stdlib.h>
 
+#include <inih/ini.h>
+
 #include "settings.h"
 #include "utils.h"
 #include "utils_string.h"
 
-static GKeyFile *conf_file = NULL;
+#define MATCH(s, n) (strcmp(section, s) == 0 && strcmp(name, n) == 0)
 
-static config_t *CONF = NULL;
-static config_main_t *section_main = NULL;
-static config_colours_t *section_colours = NULL;
+static Config *_config = NULL;
 
-static void set_default_dirs(config_t *conf)
+static void set_default_dirs(Config *conf)
 {
     conf->section_main->dirs = str_array_new(xs_strdup("$PATH"), ",");
 }
 
-static void set_default_terminal(config_t *conf)
+static void set_default_terminal(Config *conf)
 {
     conf->section_main->terminal = xs_strdup("xterm");
 }
 
-static void set_default_emacs_bindings(config_t *conf)
+static void set_default_emacs_bindings(Config *conf)
 {
     conf->section_main->emacs_bindings = true;
 }
 
-static void set_recent_apps_first(config_t *conf)
+static void set_recent_apps_first(Config *conf)
 {
     conf->section_main->recent_apps_first = true;
 }
 
-static void set_min_query_len(config_t *conf)
+static void set_min_query_len(Config *conf)
 {
     conf->section_main->min_query_len = 1;
 }
 
-static void set_allow_spaces(config_t *conf)
+static void set_allow_spaces(Config *conf)
 {
     conf->section_main->allow_spaces = true;
 }
 
-static void set_numeric_shortcuts(config_t *conf)
+static void set_numeric_shortcuts(Config *conf)
 {
     conf->section_main->numeric_shortcuts = true;
 }
 
-static void set_use_cache(config_t *conf)
+static void set_use_cache(Config *conf)
 {
     conf->section_main->use_cache = true;
 }
 
-static void set_auto_cache_refresh(config_t *conf)
+static void set_auto_cache_refresh(Config *conf)
 {
     conf->section_main->auto_cache_refresh = true;
 }
 
-static void set_default_colour_selected(config_t *conf)
+static void set_default_color_selected(Config *conf)
 {
-    conf->section_colours->selected = xs_strdup("f44336");
+    conf->section_colors->selected = xs_strdup("f44336");
 }
 
-static void set_default_configuration(config_t *conf)
+static void set_default_configuration(Config *conf)
 {
     // Main
     set_default_dirs(conf);
@@ -74,181 +74,159 @@ static void set_default_configuration(config_t *conf)
     set_use_cache(conf);
     set_auto_cache_refresh(conf);
 
-    // Colours
-    set_default_colour_selected(conf);
+    // Colors
+    set_default_color_selected(conf);
 }
 
-void load_config(cmdline_t *cmdline)
+static int parse_bool(const char* value, bool *b) {
+    if (strcmp(value, "true") == 0) {
+        *b = true;
+        return 1;
+    } else if (strcmp(value, "false") == 0) {
+        *b = false;
+        return 1;
+    }
+
+    return 0;
+}
+
+static int config_read(void* data, const char* section, const char* name, const char* value)
 {
-    GError *error = NULL;
+    Config* conf = (Config*) data;
 
-    conf_file = g_key_file_new();
+    if (MATCH("Main", "dirs")) {
+        char *raw_dirs = expand_tilde(value, getenv("HOME"));
 
-    char path[256];
+        if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
+            set_default_dirs(conf);
+        } else {
+            conf->section_main->dirs = str_array_new(xs_strdup(raw_dirs), ",");
 
-    section_main = smalloc(sizeof(config_main_t));
-    section_colours = smalloc(sizeof(config_colours_t));
+            if (conf->section_main->dirs == NULL) {
+                set_default_dirs(conf);
+            }
+        }
 
-    CONF = smalloc(sizeof(config_t));
+        /* Strip trailing spaces */
+        str_array_strip(conf->section_main->dirs);
+    } else if (MATCH("Main", "terminal")) {
+        conf->section_main->terminal = xs_strdup(value);
 
-    *CONF = (config_t){.section_main = section_main,
-                       .section_colours = section_colours};
+        if (strcmp(conf->section_main->terminal, "") == 0) {
+            set_default_terminal(conf);
+        }
+    } else if (MATCH("Main", "emacs_bindings")) {
+        if (!parse_bool(value, &conf->section_main->emacs_bindings)) {
+            set_default_emacs_bindings(conf);
+        }
+    } else if (MATCH("Main", "recent_apps_first")) {
+        if (!parse_bool(value, &conf->section_main->recent_apps_first)) {
+            set_recent_apps_first(conf);
+        }
+    } else if (MATCH("Main", "min_query_len")) {
+        conf->section_main->min_query_len = atoi(value);
+    } else if (MATCH("Main", "numeric_shortcuts")) {
+        if (!parse_bool(value, &conf->section_main->numeric_shortcuts)) {
+            set_numeric_shortcuts(conf);
+        }
+    } else if (MATCH("Main", "use_cache")) {
+        if (!parse_bool(value, &conf->section_main->use_cache)) {
+            set_use_cache(conf);
+        }
+    } else if (MATCH("Main", "auto_cache_refresh")) {
+        if (!parse_bool(value, &conf->section_main->auto_cache_refresh)) {
+            set_auto_cache_refresh(conf);
+        }
+    } else if (MATCH("Main", "allow_spaces")) {
+        if (!parse_bool(value, &conf->section_main->allow_spaces)) {
+            set_allow_spaces(conf);
+        }
+    } else if (MATCH("Colours", "selected") || MATCH("Colors", "selected")) {
+        conf->section_colors->selected = xs_strdup(value);
+    } else {
+        return 0;
+    }
+
+    return 1;
+}
+
+static Config* config_new()
+{
+    ConfigMain* section_main = smalloc(sizeof(ConfigMain));
+    ConfigColors* section_colors = smalloc(sizeof(ConfigColors));
+
+    Config* c = smalloc(sizeof(Config));
+
+    *c = (Config) {.section_main = section_main,
+                     .section_colors = section_colors};
+
+    return c;
+}
+
+Config* config_load(CmdLine* cmdline)
+{
+    char path[1024];
+    Config* config = config_new();
 
     if (cmdline->config_path) {
         if (snprintf(path, sizeof(path), "%s", cmdline->config_path) < 0) {
-            return;
+            return config;
         }
     } else if (xstarter_dir_avail) {
-        if (snprintf(path, sizeof(path), "%s/%s", xstarter_dir, CONFIG_FILE) <
-            0) {
-            return;
+        if (snprintf(path, sizeof(path), "%s/%s", xstarter_dir, CONFIG_FILE) < 0) {
+            return config;
         }
     } else {
         set_err(ERR_NO_XSTARTER_DIR);
     }
 
-    if (g_key_file_load_from_file(conf_file, path, G_KEY_FILE_NONE, NULL)) {
-        // Read directories from config
-
-        char *raw = g_key_file_get_string(conf_file, "Main", "dirs", NULL);
-
-        char *raw_dirs = expand_tilde(raw, getenv("HOME"));
-        free(raw);
-
-        if (raw_dirs == NULL || strcmp(raw_dirs, "") == 0) {
-            set_default_dirs(CONF);
-        } else {
-            section_main->dirs = str_array_new(xs_strdup(raw_dirs), ",");
-
-            if (section_main->dirs == NULL)
-                set_default_dirs(CONF);
-        }
-
-        /* Strip trailing spaces */
-        str_array_strip(section_main->dirs);
-
-        section_main->terminal =
-            g_key_file_get_string(conf_file, "Main", "terminal", &error);
-
-        if (error != NULL || strcmp(section_main->terminal, "") == 0) {
-            set_default_terminal(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_colours->selected =
-            g_key_file_get_string(conf_file, "Colours", "selected", &error);
-
-        if (error != NULL || strcmp(section_colours->selected, "") == 0) {
-            set_default_colour_selected(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->emacs_bindings =
-            g_key_file_get_boolean(conf_file, "Main", "emacs_bindings", &error);
-
-        if (error != NULL) {
-            set_default_emacs_bindings(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->recent_apps_first = g_key_file_get_boolean(
-            conf_file, "Main", "recent_apps_first", &error);
-
-        if (error != NULL) {
-            set_recent_apps_first(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->min_query_len =
-            g_key_file_get_integer(conf_file, "Main", "min_query_len", &error);
-
-        if (error != NULL) {
-            set_min_query_len(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->allow_spaces =
-            g_key_file_get_boolean(conf_file, "Main", "allow_spaces", &error);
-
-        if (error != NULL) {
-            set_allow_spaces(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->numeric_shortcuts = g_key_file_get_boolean(
-            conf_file, "Main", "numeric_shortcuts", &error);
-
-        if (error != NULL) {
-            set_numeric_shortcuts(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->use_cache =
-            g_key_file_get_boolean(conf_file, "Main", "use_cache", &error);
-
-        if (error != NULL) {
-            set_use_cache(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-        section_main->auto_cache_refresh = g_key_file_get_boolean(
-            conf_file, "Main", "auto_cache_refresh", &error);
-
-        if (error != NULL) {
-            set_auto_cache_refresh(CONF);
-            g_error_free(error);
-            error = NULL;
-        }
-
-    } else {
-        set_default_configuration(CONF);
+    if (ini_parse(path, config_read, config) < 0) {
+        set_default_configuration(config);
     }
 
-    g_key_file_free(conf_file);
+    _config = config;
+
+    return config;
 }
 
-void free_config()
+void config_free(Config* config)
 {
-    if (section_main) {
-        str_array_free(section_main->dirs);
-        free(section_main->terminal);
-        free(section_main);
+    if (!config) {
+        return;
     }
 
-    if (section_colours) {
-        free(section_colours->selected);
-        free(section_colours);
+    if (config->section_main) {
+        str_array_free(config->section_main->dirs);
+        free(config->section_main->terminal);
+        free(config->section_main);
     }
 
-    if (CONF) {
-        free(CONF);
+    if (config->section_colors) {
+        free(config->section_colors->selected);
+        free(config->section_colors);
     }
+
+    free(config);
+    config = NULL;
+    _config = NULL;
 }
 
-const config_t *config()
+const Config *config_get()
 {
-    return CONF;
+    return _config;
 }
 
 static void usage()
 {
     printf("Usage: xstarter\n\n");
     printf("Optional arguments:\n");
-    printf("\t-h\tShow help screen\n");
-    printf("\t-v\tShow xstarter version\n");
-    printf("\t-V\tBe verbose\n");
-    printf("\t-e\tExecute application and detach it from terminal\n");
-    printf("\t-r\tRefresh cache\n");
-    printf("\t-c\tPath to the configuration file\n");
-    printf("\t-P\tPrint a list of applications from cache\n");
+    printf("  -h  Show help screen\n");
+    printf("  -v  Show xstarter version\n");
+    printf("  -V  Be verbose\n");
+    printf("  -e  Execute application and detach it from terminal\n");
+    printf("  -r  Refresh cache\n");
+    printf("  -c  Path to the configuration file\n");
+    printf("  -P  Print a list of applications from cache\n");
 }
 
 static void print_version()
@@ -256,13 +234,12 @@ static void print_version()
     printf("%s %s\n", PROGRAM_NAME, XSTARTER_VERSION);
 }
 
-int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
+int cmdline_read(CmdLine *cmdline, int argc, char **argv)
 {
     int c;
-    int quit = false;
+    bool quit = false;
 
     /* Default settings: */
-
     cmdline->config_path = NULL;
     cmdline->verbose = false;
     cmdline->force_cache_refresh = false;
@@ -301,7 +278,7 @@ int read_cmdline(cmdline_t *cmdline, int argc, char **argv)
     return quit;
 }
 
-void free_cmdline(cmdline_t *cmdline)
+void cmdline_free(CmdLine *cmdline)
 {
     if (cmdline) {
         if (cmdline->config_path)
