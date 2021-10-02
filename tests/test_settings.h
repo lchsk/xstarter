@@ -1,10 +1,6 @@
 #include <stddef.h>
 
-#include "test.h"
-
 #include "../src/settings.h"
-
-int tests_run;
 
 mu_test(test_settings_default_file) {
     config_free(config_get());
@@ -27,6 +23,8 @@ mu_test(test_settings_default_file) {
     mu_assert("min_query_len", conf->section_main->min_query_len == 1);
 
     mu_assert("selected color", strcmp(conf->section_colors->selected, "f44336") == 0);
+
+    return 0;
 }
 
 mu_test(test_settings_no_file) {
@@ -50,24 +48,6 @@ mu_test(test_settings_no_file) {
     mu_assert("min_query_len", conf->section_main->min_query_len == 1);
 
     mu_assert("selected color", strcmp(conf->section_colors->selected, "f44336") == 0);
-}
 
-
-static char* all_tests() {
-    mu_run_test(test_settings_default_file);
-    mu_run_test(test_settings_no_file);
     return 0;
-}
-
-int main() {
-    char *result = all_tests();
-     if (result != 0) {
-         printf("%s\n", result);
-     }
-     else {
-         printf("ALL TESTS PASSED\n");
-     }
-     printf("Tests run: %d\n", tests_run);
-
-     return result != 0;
 }

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ctype.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,6 +75,7 @@ char *expand_tilde(char *str, const char *home)
         return str;
 
     static char dest[MAX_LEN];
+    memcpy(dest, "", MAX_LEN);
 
     char *from = str;
 
@@ -132,7 +134,7 @@ char *xs_dirname(char *str)
 
     if (found) {
         result = smalloc(i + 1);
-        str_copy(result, str, i);
+        str_copy(result, str, i + 1);
         result[i] = '\0';
     } else {
         result = smalloc(2);
@@ -153,6 +155,12 @@ char *xs_strdup(const char *str)
 void str_copy(char *dest, const char *src, size_t dest_size)
 {
     const size_t size = strlen(src);
-    memcpy(dest, src, size);
-    dest[size] = '\0';
+
+    if (dest_size > size) {
+        memcpy(dest, src, size);
+        dest[size] = '\0';
+    } else {
+        memcpy(dest, src, dest_size - 1);
+        dest[dest_size - 1] = '\0';
+    }
 }
