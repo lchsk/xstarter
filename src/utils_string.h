@@ -1,20 +1,20 @@
-#ifndef UTILS_STRING_H
-#define UTILS_STRING_H
+#ifndef XSTARTER_UTILS_STRING_H
+#define XSTARTER_UTILS_STRING_H
 
 #include <stdio.h>
 #include <string.h>
 
-typedef struct str_array_t {
+typedef struct StrArray {
     char **data;
     char *base_str;
     int length;
-} str_array_t;
+} StrArray;
 
 char *xs_strdup(const char *str);
 
-str_array_t *str_array_new(char *input_str, char const *delimiters);
-void str_array_strip(str_array_t *str_array);
-void str_array_free(str_array_t *str_array);
+StrArray *str_array_new(char *input_str, char const *delimiters);
+void str_array_strip(StrArray *str_array);
+void str_array_free(StrArray *str_array);
 
 /* Replace tilde with a home directory */
 char *expand_tilde(char *str, const char *home);

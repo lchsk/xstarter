@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef XSTARTER_UTILS_H
+#define XSTARTER_UTILS_H
 
 #include <stdbool.h>
 

@@ -1,5 +1,5 @@
-#ifndef SCAN_H
-#define SCAN_H
+#ifndef XSTARTER_SCAN_H
+#define XSTARTER_SCAN_H
 
 #include <glib.h>
 
@@ -11,7 +11,7 @@ void free_search(void);
 bool search(const char *query, unsigned query_len);
 extern GList *results;
 
-void load_cache(cmdline_t *cmdline, bool extra_thread);
+void load_cache(CmdLine *cmdline, bool extra_thread);
 void print_cache_apps(void);
 void free_cache(void);
 void kill_scan(void);

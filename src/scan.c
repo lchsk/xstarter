@@ -34,7 +34,7 @@ static pthread_t th_refresh_cache;
 /* Set to true if cache refresh thread should be stopped */
 static bool stop_traversing;
 
-static cmdline_t *cmdline;
+static CmdLine *cmdline;
 
 void init_search(void)
 {
@@ -76,7 +76,7 @@ void free_cache(void)
         g_queue_free(paths);
 }
 
-void load_cache(cmdline_t *cmdline_, bool extra_thread)
+void load_cache(CmdLine *cmdline_, bool extra_thread)
 {
     cmdline = cmdline_;
 
@@ -118,7 +118,7 @@ Returns:
 */
 bool search(const char *query, unsigned query_len)
 {
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     bool resp = true;
 
@@ -132,7 +132,7 @@ bool search(const char *query, unsigned query_len)
     GQueue *cache = get_cache();
 
     int current_query_len = 1;
-    str_array_t *query_parts = NULL;
+    StrArray *query_parts = NULL;
 
     if (conf->section_main->allow_spaces) {
         query_parts = str_array_new(xs_strdup(query), " ");
@@ -215,7 +215,7 @@ Get apps that were recently started to the top of the list
 */
 static void recent_apps_on_top(void)
 {
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     if (conf->section_main->recent_apps_first) {
         int new_pos = 0;
@@ -341,7 +341,7 @@ static bool cache_needs_refresh()
     if (cmdline->force_cache_refresh)
         return true;
 
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     if (! conf->section_main->use_cache)
         return true;
@@ -395,14 +395,14 @@ static void *refresh_cache()
 {
     paths = g_queue_new();
 
-    str_array_t *dirs = config()->section_main->dirs;
+    StrArray *dirs = config_get()->section_main->dirs;
 
     for (int i = 0; i < dirs->length; i++) {
         if (dirs->data[i][0] == '$') {
             char const *var = g_getenv(++dirs->data[i]);
 
             if (var) {
-                str_array_t *var_paths = str_array_new(xs_strdup(var), ":");
+                StrArray *var_paths = str_array_new(xs_strdup(var), ":");
 
                 if (var_paths) {
                     for (int j = 0; j < var_paths->length; j++) {
@@ -428,7 +428,7 @@ static void *refresh_cache()
             listdir(t, 0);
         }
 
-        const config_t *conf = config();
+        const Config *conf = config_get();
 
         if (conf->section_main->use_cache)
             cache_to_file();

@@ -101,10 +101,10 @@ void init_term_gui(void)
     noecho();
     keypad(stdscr, TRUE);
 
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     colour_t col_sel;
-    get_rgb(&col_sel, conf->section_colours->selected);
+    get_rgb(&col_sel, conf->section_colors->selected);
 
     if (can_change_color()) {
         init_color(XS_COL_SEL, col_sel.r, col_sel.g, col_sel.b);
@@ -127,7 +127,7 @@ void init_term_gui(void)
 
 void run_term(void)
 {
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     int c;
 
@@ -375,7 +375,7 @@ static void move_up(void)
 
 static void prepare_for_new_results(void)
 {
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     clear_menu();
 
@@ -431,7 +431,7 @@ static void show_recent_apps(void)
 
 static void open_by_shortcut(int key)
 {
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     if (conf->section_main->numeric_shortcuts) {
         if (key >= ASCII_1 && key <= ASCII_9) {

@@ -15,17 +15,15 @@
 int main(int argc, char **argv)
 {
     set_err(NO_ERR);
-
     xstarter_directory();
-
     init_search();
 
-    cmdline_t *cmdline = smalloc(sizeof(cmdline_t));
+    CmdLine *cmdline = smalloc(sizeof(CmdLine));
 
-    if (read_cmdline(cmdline, argc, argv))
+    if (cmdline_read(cmdline, argc, argv))
         exit(EXIT_FAILURE);
 
-    load_config(cmdline);
+    config_load(cmdline);
 
     if (cmdline->print_list_of_cache_apps) {
         // Print applications from cache; to be used by external programs
@@ -35,14 +33,13 @@ int main(int argc, char **argv)
         exit(EXIT_SUCCESS);
     }
 
-    const config_t *conf = config();
+    const Config *conf = config_get();
 
     str_copy(exec_term, conf->section_main->terminal, sizeof(exec_term));
 
     if (! in_terminal()) {
-        free_cmdline(cmdline);
-
-        free_config();
+        cmdline_free(cmdline);
+        config_free(config_get());
 
         open_itself(argc, argv);
     }
@@ -56,13 +53,13 @@ int main(int argc, char **argv)
     kill_scan();
     free_cache();
     free_search();
-    free_config();
+    config_free(config_get());
 
     if (cmdline->verbose) {
         print_err();
     }
 
-    free_cmdline(cmdline);
+    cmdline_free(cmdline);
 
     return get_err();
 }

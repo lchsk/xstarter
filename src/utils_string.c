@@ -8,11 +8,11 @@
 #include "utils.h"
 #include "utils_string.h"
 
-str_array_t *str_array_new(char *input_str, char const *delimiters)
+StrArray *str_array_new(char *input_str, char const *delimiters)
 {
-    str_array_t *out = smalloc(sizeof(str_array_t));
+    StrArray *out = smalloc(sizeof(StrArray));
 
-    *out = (str_array_t){.length = 0, .base_str = input_str};
+    *out = (StrArray){.length = 0, .base_str = input_str};
 
     char *txt = strtok(input_str, delimiters);
 
@@ -29,7 +29,7 @@ str_array_t *str_array_new(char *input_str, char const *delimiters)
     return out;
 }
 
-void str_array_free(str_array_t *str_array)
+void str_array_free(StrArray *str_array)
 {
     if (str_array == NULL)
         return;
@@ -61,7 +61,7 @@ char *strip(char *str)
     return str;
 }
 
-void str_array_strip(str_array_t *str_array)
+void str_array_strip(StrArray *str_array)
 {
     for (int i = 0; i < str_array->length; i++) {
         str_array->data[i] = strip(str_array->data[i]);
