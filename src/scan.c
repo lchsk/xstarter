@@ -1,7 +1,6 @@
 #define _GNU_SOURCE // strcasestr
 #include <assert.h>
 #include <dirent.h>
-#include <glib.h>
 #include <limits.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -12,22 +11,23 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "list.h"
 #include "scan.h"
 #include "term.h"
 #include "utils_string.h"
 
-GList *results;
+List *results;
 
 static const int PATH = 1024;
 static void recent_apps_on_top(void);
-static GQueue *get_cache(void);
+static List *get_cache(void);
 static void *refresh_cache();
 
 /* Paths of applications we will search to find what we want */
-static GQueue *search_paths = NULL;
+static List *search_paths = NULL;
 
 /* Directories to traverse in order to find application paths */
-static GQueue *paths = NULL;
+static List *paths = NULL;
 static bool cache_ready = false;
 
 static pthread_t th_refresh_cache;
@@ -38,14 +38,15 @@ static CmdLine *cmdline;
 
 void init_search(void)
 {
-    results = NULL;
+    results = list_new(10);
     read_recently_open_list();
 }
 
 void free_search(void)
 {
-    if (results)
-        g_list_free(results);
+    if (results) {
+        list_free(results);
+    }
 }
 
 bool is_cache_ready(void)
@@ -56,24 +57,25 @@ bool is_cache_ready(void)
 void free_cache(void)
 {
     if (search_paths) {
-        for (int i = 0; i < g_queue_get_length(search_paths); i++) {
-            char *t = g_queue_peek_nth(search_paths, i);
+        for (int i = 0; i < list_size(search_paths); i++) {
+            char *t = list_get(search_paths, i);
             free(t);
         }
     }
 
     if (search_paths)
-        g_queue_free(search_paths);
+        list_free(search_paths);
 
     if (paths) {
-        for (int i = 0; i < g_queue_get_length(paths); i++) {
-            char *t = g_queue_peek_nth(paths, i);
-            free(t);
+        for (int i = 0; i < list_size(paths); i++) {
+            char *t = list_get(paths, i);
+            if (t)
+                free(t);
         }
     }
 
     if (paths)
-        g_queue_free(paths);
+        list_free(paths);
 }
 
 void load_cache(CmdLine *cmdline_, bool extra_thread)
@@ -82,7 +84,7 @@ void load_cache(CmdLine *cmdline_, bool extra_thread)
 
     stop_traversing = false;
 
-    if (! extra_thread) {
+    if (!extra_thread) {
         refresh_cache();
         return;
     }
@@ -101,7 +103,7 @@ void load_cache(CmdLine *cmdline_, bool extra_thread)
 
 void kill_scan(void)
 {
-    if (! cache_ready) {
+    if (!cache_ready) {
         stop_traversing = true;
         pthread_join(th_refresh_cache, NULL);
     } else {
@@ -129,7 +131,7 @@ bool search(const char *query, unsigned query_len)
     if (query[0] == ' ')
         return false;
 
-    GQueue *cache = get_cache();
+    List *cache = get_cache();
 
     int current_query_len = 1;
     StrArray *query_parts = NULL;
@@ -146,18 +148,18 @@ bool search(const char *query, unsigned query_len)
         current_query_len = query_parts->length;
     }
 
-    g_list_free(results);
-    results = NULL;
+    list_free(results);
+    results = list_new(10);
 
-    for (int i = 0; i < g_queue_get_length(cache); i++) {
-        char *path = g_queue_peek_nth(cache, i);
+    for (int i = 0; i < list_size(cache); i++) {
+        char *path = (char *)list_get(cache, i);
         bool found = true;
 
         if (current_query_len == 1) {
-            char *name = g_path_get_basename(path);
+            char *name = xs_basename(path);
 
             if (strcasestr(name, query) != NULL) {
-                results = g_list_prepend(results, path);
+                list_append(results, path);
             }
 
             free(name);
@@ -166,7 +168,7 @@ bool search(const char *query, unsigned query_len)
                 if (strcmp(query_parts->data[i], " ") == 0)
                     continue;
 
-                char *name = g_path_get_basename(path);
+                char *name = (path);
 
                 if (strstr(name, query_parts->data[i]) == NULL) {
                     found = false;
@@ -176,12 +178,13 @@ bool search(const char *query, unsigned query_len)
             finish:
                 free(name);
 
-                if (! found)
+                if (!found)
                     break;
             }
 
-            if (found)
-                results = g_list_prepend(results, path);
+            if (found) {
+                list_append(results, path);
+            }
         }
     }
 
@@ -200,11 +203,11 @@ void print_cache_apps(void)
         printf("%s\n", recent_apps[i]);
     }
 
-    GQueue *cache = get_cache();
+    List *cache = get_cache();
 
     // Print other apps
-    for (int i = 0; i < g_queue_get_length(cache); i++) {
-        const char *path = g_queue_peek_nth(search_paths, i);
+    for (int i = 0; i < list_size(cache); i++) {
+        const char *path = list_get(search_paths, i);
 
         printf("%s\n", path);
     }
@@ -217,26 +220,31 @@ static void recent_apps_on_top(void)
 {
     const Config *conf = config_get();
 
-    if (conf->section_main->recent_apps_first) {
-        int new_pos = 0;
+    if (!conf->section_main->recent_apps_first) {
+        return;
+    }
 
-        for (int i = 0; i < recent_apps_cnt; i++) {
-            GList *to_remove = NULL;
+    List *temp = list_new(list_size(results));
 
-            for (GList *l = results; l != NULL; l = l->next) {
-                if (strcmp(l->data, recent_apps[i]) == 0) {
-                    results = g_list_insert(results, l->data, new_pos);
+    for (int i = 0; i < recent_apps_cnt; i++) {
+        for (int j = 0; j < list_size(results); j++) {
+            if (strcmp(list_get(results, j), recent_apps[i]) == 0) {
+                char *el = list_get(results, j);
+                list_append(temp, el);
 
-                    to_remove = l;
-                    new_pos++;
-                    break;
-                }
+                list_del(results, j);
+                break;
             }
-
-            if (to_remove != NULL)
-                results = g_list_delete_link(results, to_remove);
         }
     }
+
+    for (int j = 0; j < list_size(results); j++) {
+        char *r = list_get(results, j);
+        list_append(temp, r);
+    }
+
+    list_free(results);
+    results = temp;
 }
 
 static void listdir(char *name, int level)
@@ -244,11 +252,11 @@ static void listdir(char *name, int level)
     DIR *dir;
     struct dirent *entry;
 
-    if (! (dir = opendir(name))) {
+    if (!(dir = opendir(name))) {
         return;
     }
 
-    if (! (entry = readdir(dir))) {
+    if (!(entry = readdir(dir))) {
         closedir(dir);
         return;
     }
@@ -285,7 +293,7 @@ static void listdir(char *name, int level)
             strcat(buf, entry->d_name);
 
             if (stat(buf, &sb) == 0 && sb.st_mode & S_IXUSR) {
-                g_queue_push_tail(search_paths, xs_strdup(buf));
+                list_append(search_paths, xs_strdup(buf));
             }
         }
     } while ((entry = readdir(dir)) != NULL);
@@ -302,8 +310,8 @@ static void cache_to_file()
 
     FILE *file = fopen(path, "w");
 
-    for (int i = 0; i < g_queue_get_length(search_paths); i++) {
-        char *t = g_queue_peek_nth(search_paths, i);
+    for (int i = 0; i < list_size(search_paths); i++) {
+        char *t = list_get(search_paths, i);
 
         fprintf(file, "%s\n", t);
     }
@@ -316,23 +324,25 @@ static void read_cache_file()
     FILE *fptr;
 
     char path[1024];
-    search_paths = g_queue_new();
+    search_paths = list_new(10);
     if (snprintf(path, sizeof(path), "%s/cache", xstarter_dir) < 0) {
         return;
     }
 
     fptr = fopen(path, "r");
 
-    if (fptr) {
-        char line[1024];
-
-        while (fgets(line, 1024, fptr)) {
-            line[strcspn(line, "\n")] = 0;
-            g_queue_push_tail(search_paths, xs_strdup(line));
-        }
-
-        fclose(fptr);
+    if (!fptr) {
+        return;
     }
+
+    char line[1024];
+
+    while (fgets(line, 1024, fptr)) {
+        line[strcspn(line, "\n")] = 0;
+        list_append(search_paths, xs_strdup(line));
+    }
+
+    fclose(fptr);
 }
 
 static bool cache_needs_refresh()
@@ -343,10 +353,10 @@ static bool cache_needs_refresh()
 
     const Config *conf = config_get();
 
-    if (! conf->section_main->use_cache)
+    if (!conf->section_main->use_cache)
         return true;
 
-    if (! conf->section_main->auto_cache_refresh)
+    if (!conf->section_main->auto_cache_refresh)
         return false;
 
     /* If cache file does not exist then yes */
@@ -372,8 +382,8 @@ static bool cache_needs_refresh()
     struct stat dir_stat;
     time_t dir_time;
 
-    for (int i = 0; i < g_queue_get_length(paths); i++) {
-        char *dir = g_queue_peek_nth(paths, i);
+    for (int i = 0; i < list_size(paths); i++) {
+        char *dir = list_get(paths, i);
 
         if (stat(dir, &dir_stat) == 0) {
             dir_time = mktime(localtime(&(dir_stat.st_ctime)));
@@ -393,13 +403,13 @@ static bool cache_needs_refresh()
 
 static void *refresh_cache()
 {
-    paths = g_queue_new();
+    paths = list_new(10);
 
     StrArray *dirs = config_get()->section_main->dirs;
 
     for (int i = 0; i < dirs->length; i++) {
         if (dirs->data[i][0] == '$') {
-            char const *var = g_getenv(++dirs->data[i]);
+            char const *var = getenv(++dirs->data[i]);
 
             if (var) {
                 StrArray *var_paths = str_array_new(xs_strdup(var), ":");
@@ -407,23 +417,22 @@ static void *refresh_cache()
                 if (var_paths) {
                     for (int j = 0; j < var_paths->length; j++) {
                         if (var_paths->data[j]) {
-                            g_queue_push_tail(paths,
-                                              xs_strdup(var_paths->data[j]));
+                            list_append(paths, xs_strdup(var_paths->data[j]));
                         }
                     }
                 }
                 str_array_free(var_paths);
             }
         } else {
-            g_queue_push_tail(paths, xs_strdup(dirs->data[i]));
+            list_append(paths, xs_strdup(dirs->data[i]));
         }
     }
 
     if (cache_needs_refresh()) {
-        search_paths = g_queue_new();
+        search_paths = list_new(10);
 
-        for (int i = 0; i < g_queue_get_length(paths); i++) {
-            char *t = g_queue_peek_nth(paths, i);
+        for (int i = 0; i < list_size(paths); i++) {
+            char *t = list_get(paths, i);
 
             listdir(t, 0);
         }
@@ -441,7 +450,7 @@ static void *refresh_cache()
     return NULL;
 }
 
-static GQueue *get_cache(void)
+static List *get_cache(void)
 {
     return search_paths;
 }

@@ -51,7 +51,7 @@ void get_rgb(colour_t *dest, char *src)
 void open_app(const char *path, const char *query, app_launch_mode_t mode,
               bool save_open_file)
 {
-    if (! path || ! query)
+    if (!path || !query)
         return;
 
     char path_cpy[1024];
@@ -325,7 +325,7 @@ void open_itself(int argc, char **argv)
     } else {
         char xstarter_path[MAX_LEN];
 
-        if (! get_xstarter_path(argc, argv, xstarter_path)) {
+        if (!get_xstarter_path(argc, argv, xstarter_path)) {
             dump_debug("xstarter path not found, will try $PATH");
             dump_debug_int(errno);
 
@@ -392,7 +392,7 @@ void xstarter_directory()
 
     char *dir = get_home_dir();
 
-    if (! dir) {
+    if (!dir) {
         using_tmp_dir = true;
         dir = smalloc(1024);
         strcpy(dir, "/tmp");
@@ -447,7 +447,7 @@ void *safe_malloc(size_t n, unsigned long line)
 {
     void *p = malloc(n);
 
-    if (! p) {
+    if (!p) {
         fprintf(stderr, "[%s:%lu] Out of memory(%lu bytes)\n", __FILE__, line,
                 (unsigned long)n);
 

@@ -1,15 +1,14 @@
 #ifndef XSTARTER_SCAN_H
 #define XSTARTER_SCAN_H
 
-#include <glib.h>
-
+#include "list.h"
 #include "settings.h"
 #include "utils.h"
 
 void init_search(void);
 void free_search(void);
 bool search(const char *query, unsigned query_len);
-extern GList *results;
+extern List *results;
 
 void load_cache(CmdLine *cmdline, bool extra_thread);
 void print_cache_apps(void);

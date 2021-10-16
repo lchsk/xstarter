@@ -5,8 +5,6 @@
 #include <sys/stat.h> // umask
 #include <unistd.h>   // execvpe, readlink
 
-#include <glib.h>
-
 #include "scan.h"
 #include "settings.h"
 #include "term.h"
@@ -37,7 +35,7 @@ int main(int argc, char **argv)
 
     str_copy(exec_term, conf->section_main->terminal, sizeof(exec_term));
 
-    if (! in_terminal()) {
+    if (!in_terminal()) {
         cmdline_free(cmdline);
         config_free(config_get());
 

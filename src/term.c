@@ -9,6 +9,7 @@
 
 #include <ncurses.h>
 
+#include "list.h"
 #include "scan.h"
 #include "settings.h"
 #include "term.h"
@@ -36,7 +37,7 @@ static const unsigned XS_COLOR_PAIR_1 = 1;
 static const unsigned MAX_LIST_ITEM_LENGTH = 24;
 
 typedef struct {
-    GList *names;
+    List *names;
     char query[MAX_INPUT_LENGTH];
     bool run_app;
     unsigned query_len;
@@ -160,16 +161,14 @@ void run_term(void)
         case KEY_CONTROL_RETURN:
             status.run_app = true;
 
-            open_app(g_list_nth_data(results,
-                                     items_list.selected + items_list.offset),
+            open_app(list_get(results, items_list.selected + items_list.offset),
                      status.query, APP_LAUNCH_MODE_TERM, true);
             break;
 
         case KEY_RETURN:
             status.run_app = true;
 
-            open_app(g_list_nth_data(results,
-                                     items_list.selected + items_list.offset),
+            open_app(list_get(results, items_list.selected + items_list.offset),
                      status.query, APP_LAUNCH_MODE_GUI, true);
 
             break;
@@ -186,7 +185,7 @@ void run_term(void)
         case KEY_DELETE:
         case KEY_BACKSPACE:
         case KEY_BACKSPACE_ALTERNATIVE:
-            if (! status.query_len)
+            if (!status.query_len)
                 continue;
 
             status.query_len--;
@@ -201,7 +200,7 @@ void run_term(void)
                 erase_view(&view_search_bar);
                 mvprintw(0, 0, status.query);
 
-                if (! status.fixed_selection) {
+                if (!status.fixed_selection) {
                     search(new_query, status.query_len);
                     prepare_for_new_results();
                 }
@@ -216,10 +215,10 @@ void run_term(void)
             if (status.query_len >= MAX_INPUT_LENGTH)
                 continue;
 
-            if (! isprint(c))
+            if (!isprint(c))
                 continue;
 
-            if (! is_cache_ready())
+            if (!is_cache_ready())
                 continue;
 
             if (status.query_len == 0 && c == ' ') {
@@ -290,7 +289,7 @@ static void update_info_bar(void)
 
         unsigned item = items_list.selected + items_list.offset;
 
-        GList *l = g_list_nth(results, item);
+        char *l = list_get(results, item);
 
         if (l) {
             char text[100];
@@ -301,7 +300,7 @@ static void update_info_bar(void)
             }
 
             mvprintw(MAX_Y - 2, 0, text);
-            mvprintw(MAX_Y - 1, 0, l->data);
+            mvprintw(MAX_Y - 1, 0, l);
         }
     }
 }
@@ -379,17 +378,19 @@ static void prepare_for_new_results(void)
 
     clear_menu();
 
-    items_list.choices_cnt = g_list_length(results);
+    if (!status.names) {
+        status.names = list_new(10);
+    }
+
+    items_list.choices_cnt = list_size(results);
 
     int cnt =
         items_list.choices_cnt > MAX_ITEMS ? MAX_ITEMS : items_list.choices_cnt;
 
     for (int i = 0; i < cnt; i++) {
-        GList *l = g_list_nth(results, i);
-        char *path = l->data;
-
-        char *name = g_path_get_basename(path);
-        status.names = g_list_prepend(status.names, name);
+        char *path = list_get(results, i);
+        char *name = xs_basename(path);
+        list_append(status.names, name);
 
         if (conf->section_main->numeric_shortcuts) {
             if (i < 10) {
@@ -406,7 +407,7 @@ static void prepare_for_new_results(void)
 
 static void show_recent_apps(void)
 {
-    int recent_apps_valid = true;
+    bool recent_apps_valid = true;
 
     for (items_list.choices_cnt = 0; items_list.choices_cnt < RECENT_APPS_SHOWN;
          items_list.choices_cnt++) {
@@ -414,17 +415,16 @@ static void show_recent_apps(void)
             strcmp(recent_apps[items_list.choices_cnt], "") != 0) {
             for (int i = 0; i < strlen(recent_apps[items_list.choices_cnt]);
                  i++) {
-                if (! isprint(recent_apps[items_list.choices_cnt][i])) {
+                if (!isprint(recent_apps[items_list.choices_cnt][i])) {
                     recent_apps_valid = false;
                     break;
                 }
             }
 
-            if (! recent_apps_valid)
+            if (!recent_apps_valid)
                 break;
 
-            results =
-                g_list_append(results, recent_apps[items_list.choices_cnt]);
+            list_append(results, recent_apps[items_list.choices_cnt]);
         }
     }
 }
@@ -433,19 +433,20 @@ static void open_by_shortcut(int key)
 {
     const Config *conf = config_get();
 
-    if (conf->section_main->numeric_shortcuts) {
-        if (key >= ASCII_1 && key <= ASCII_9) {
-            status.run_app = true;
+    if (!conf->section_main->numeric_shortcuts) {
+        return;
+    }
 
-            open_app(
-                g_list_nth_data(results, items_list.offset + (key - ASCII_1)),
-                status.query, APP_LAUNCH_MODE_GUI, true);
-        } else if (key == ASCII_0) {
-            status.run_app = true;
+    if (key >= ASCII_1 && key <= ASCII_9) {
+        status.run_app = true;
 
-            open_app(g_list_nth_data(results, RECENT_APPS_SHOWN - 1),
-                     status.query, APP_LAUNCH_MODE_GUI, true);
-        }
+        open_app(list_get(results, items_list.offset + (key - ASCII_1)),
+                 status.query, APP_LAUNCH_MODE_GUI, true);
+    } else if (key == ASCII_0) {
+        status.run_app = true;
+
+        open_app(list_get(results, RECENT_APPS_SHOWN - 1), status.query,
+                 APP_LAUNCH_MODE_GUI, true);
     }
 }
 
@@ -457,8 +458,8 @@ static void reset_query(void)
     status.query_len = 0;
     status.fixed_selection = false;
 
-    g_list_free(results);
-    results = NULL;
+    list_free(results);
+    results = list_new(10);
     items_list.selected = 0;
     items_list.offset = 0;
     show_recent_apps();
@@ -467,13 +468,12 @@ static void reset_query(void)
 
 static void complete_selected_entry(void)
 {
-    char *selected =
-        g_list_nth_data(results, items_list.selected + items_list.offset);
+    char *selected = list_get(results, items_list.selected + items_list.offset);
 
-    if (! selected)
+    if (!selected)
         return;
 
-    char *name = g_path_get_basename(selected);
+    char *name = (selected);
     strcpy(status.query, name);
     status.query_len = strlen(name);
     status.fixed_selection = true;
@@ -481,10 +481,10 @@ static void complete_selected_entry(void)
     if (name)
         free(name);
 
-    g_list_free(results);
-    results = NULL;
+    list_free(results);
+    results = list_new(10);
 
-    results = g_list_prepend(results, selected);
+    list_append(results, selected);
 }
 
 static int read_emacs_keys(const char *name)

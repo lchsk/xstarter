@@ -43,8 +43,8 @@ typedef struct {
     ConfigColors *section_colors;
 } Config;
 
-Config* config_load(CmdLine *cmdline);
-void config_free(Config* config);
+Config *config_load(CmdLine *cmdline);
+void config_free(Config *config);
 const Config *config_get();
 
 int cmdline_read(CmdLine *cmdline, int argc, char **argv);

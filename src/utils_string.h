@@ -22,6 +22,9 @@ char *expand_tilde(char *str, const char *home);
 /* Return a newly allocated dirname */
 char *xs_dirname(char *str);
 
+/* Return basename of path */
+char *xs_basename(const char *path);
+
 /* Copy string from src to destination */
 void str_copy(char *dest, const char *src, size_t dest_size);
 

@@ -17,7 +17,7 @@ StrArray *str_array_new(char *input_str, char const *delimiters)
 
     char *txt = strtok(input_str, delimiters);
 
-    if (! txt) {
+    if (!txt) {
         return out;
     }
 
@@ -142,6 +142,32 @@ char *xs_dirname(char *str)
     }
 
     return result;
+}
+
+char *xs_basename(const char *path)
+{
+    if (path[0] == '\0')
+        return xs_strdup(".");
+
+    size_t last_nonslash = strlen(path) - 1;
+
+    while (last_nonslash >= 0 && (path[last_nonslash] == '/'))
+        last_nonslash--;
+
+    if (last_nonslash == -1)
+        return xs_strdup("/");
+
+    size_t base = last_nonslash;
+
+    while (base >= 0 && (path[base] != '/'))
+        base--;
+
+    size_t len = last_nonslash - base;
+    char *basename = malloc(len + 1);
+    memcpy(basename, path + (base + 1), len);
+    basename[len] = '\0';
+
+    return basename;
 }
 
 char *xs_strdup(const char *str)

@@ -78,7 +78,8 @@ static void set_default_configuration(Config *conf)
     set_default_color_selected(conf);
 }
 
-static int parse_bool(const char* value, bool *b) {
+static int parse_bool(const char *value, bool *b)
+{
     if (strcmp(value, "true") == 0) {
         *b = true;
         return 1;
@@ -90,9 +91,10 @@ static int parse_bool(const char* value, bool *b) {
     return 0;
 }
 
-static int config_read(void* data, const char* section, const char* name, const char* value)
+static int config_read(void *data, const char *section, const char *name,
+                       const char *value)
 {
-    Config* conf = (Config*) data;
+    Config *conf = (Config *)data;
 
     if (MATCH("Main", "dirs")) {
         char *raw_dirs = expand_tilde(value, getenv("HOME"));
@@ -150,30 +152,31 @@ static int config_read(void* data, const char* section, const char* name, const 
     return 1;
 }
 
-static Config* config_new()
+static Config *config_new()
 {
-    ConfigMain* section_main = smalloc(sizeof(ConfigMain));
-    ConfigColors* section_colors = smalloc(sizeof(ConfigColors));
+    ConfigMain *section_main = smalloc(sizeof(ConfigMain));
+    ConfigColors *section_colors = smalloc(sizeof(ConfigColors));
 
-    Config* c = smalloc(sizeof(Config));
+    Config *c = smalloc(sizeof(Config));
 
-    *c = (Config) {.section_main = section_main,
-                     .section_colors = section_colors};
+    *c = (Config){.section_main = section_main,
+                  .section_colors = section_colors};
 
     return c;
 }
 
-Config* config_load(CmdLine* cmdline)
+Config *config_load(CmdLine *cmdline)
 {
     char path[1024];
-    Config* config = config_new();
+    Config *config = config_new();
 
     if (cmdline->config_path) {
         if (snprintf(path, sizeof(path), "%s", cmdline->config_path) < 0) {
             return config;
         }
     } else if (xstarter_dir_avail) {
-        if (snprintf(path, sizeof(path), "%s/%s", xstarter_dir, CONFIG_FILE) < 0) {
+        if (snprintf(path, sizeof(path), "%s/%s", xstarter_dir, CONFIG_FILE) <
+            0) {
             return config;
         }
     } else {
@@ -189,7 +192,7 @@ Config* config_load(CmdLine* cmdline)
     return config;
 }
 
-void config_free(Config* config)
+void config_free(Config *config)
 {
     if (!config) {
         return;

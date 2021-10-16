@@ -23,13 +23,13 @@ set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 # deb stuff
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://lchsk.com/xstarter.html")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libncurses5 (>= 5.0), libglib2.0-0 (>= 2.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libncurses5 (>= 5.0)")
 
 # rpm stuff
 set(CPACK_RPM_PACKAGE_LICENSE "GPL")
 set(CPACK_RPM_PACKAGE_URL "https://lchsk.com/xstarter.html")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "Application launcher for Linux")
-set(CPACK_RPM_PACKAGE_REQUIRES "ncurses >= 5.0, glib2 >= 2.0")
+set(CPACK_RPM_PACKAGE_REQUIRES "ncurses >= 5.0")
 
 include(CPack)
 
@@ -42,7 +42,6 @@ find_package(PkgConfig REQUIRED)
 message(STATUS "Cmake build type: " ${CMAKE_BUILD_TYPE})
 message(STATUS "Curses include directory: " ${CURSES_INCLUDE_DIR})
 
-pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(CURSES REQUIRED ncurses)
 
 add_library(lib-inih STATIC
@@ -52,7 +51,6 @@ add_library(lib-inih STATIC
 set_target_properties(lib-inih PROPERTIES LINKER_LANGUAGE C)
 
 include_directories(
-    ${GLIB_INCLUDE_DIRS}
     ${CURSES_INCLUDE_DIRS}
     external/
 )
@@ -64,11 +62,11 @@ add_executable(xstarter
     src/term.c
     src/utils.c
     src/utils_string.c
+    src/list.c
     xstarter.1
 )
 
 target_link_libraries(xstarter
-    ${GLIB_LIBRARIES}
     ${CURSES_LIBRARIES}
     -pthread
     -linih
