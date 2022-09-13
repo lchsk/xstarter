@@ -1,5 +1,9 @@
         xstarter change log
 
+	0.8.2
+	13/09/2022
+	* Remove glib dependency
+
         0.8.1
         25/05/2020
         * Make xstarter compile with gcc 10

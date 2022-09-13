@@ -4,7 +4,7 @@
 
 It lives in terminal and works well with tiling window managers (e.g. xmonad, i3 etc).
 
-Current version: 0.8.1
+Current version: 0.8.2
 
 | Branch | Build |
 | --- | --- |

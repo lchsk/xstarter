@@ -1,6 +1,6 @@
-# Maintainer: Maciej Lechowski <mjlechowski@gmail.com>
+# Maintainer: Maciej Lechowski <email@lchsk.com>
 pkgname=xstarter
-pkgver=0.8.1
+pkgver=0.8.2
 _gitname=xstarter
 pkgrel=1
 epoch=
@@ -20,7 +20,7 @@ backup=()
 options=()
 install=
 changelog=
-source=(https://github.com/lchsk/xstarter/releases/download/v0.8.1/xstarter-0.8.1-Linux.tar.gz)
+source=(https://github.com/lchsk/xstarter/releases/download/v0.8.2/xstarter-0.8.2-Linux.tar.gz)
 noextract=()
 md5sums=(e478ff94bd7cc9ca2e483c18fb260174)
 validpgpkeys=()
